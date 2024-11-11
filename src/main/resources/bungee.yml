@@ -1,0 +1,4 @@
+name: BeacmcAuth
+version: '${project.version}'
+main: com.beacmc.beacmcauth.BeacmcAuth
+author: beacmc
