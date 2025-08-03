@@ -1,0 +1,167 @@
+
+# General settings for the bot integration
+enable: false  # Disable the bot (set to true to enable)
+
+# Discord Bot Token for authentication (leave empty for now)
+token: ""
+
+# Discord Guild ID where the bot operates (replace with your actual guild ID)
+guild-id: 000000000000000
+
+# Time (in seconds) for account confirmation (e.g., time to confirm login request)
+time-per-confirm: 60
+
+# Length of the confirmation code for actions (e.g., link, reset password)
+code-length: 4
+
+# Length of the reset password code (this code will be sent to the user)
+reset-password-length: 15
+
+# Disable the unlink feature (true = disable unlinking, false = enable unlinking)
+disable-unlink: false
+
+# Maximum number of accounts that can be linked to a single Discord account
+max-link: 2
+
+# Character set for reset password code (can include special characters for security)
+reset-password-chars: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789#+=-;:@!$%"
+
+# Character set for confirmation codes (typically alphanumeric)
+code-chars: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+
+# Command to display account information
+accounts-command: "!accounts"
+
+# Command to link a player account to Discord
+link-command: "!link"
+
+# Activity settings for Discord integration
+activity:
+  # Enable or disable activity display on Discord
+  enable: true
+
+  # Type of activity being displayed (e.g., PLAYING, WATCHING, etc.)
+  type: STREAMING
+
+  # The text that will be displayed as the activity (e.g., "BeacmcAuth")
+  text: "BeacmcAuth"
+
+  # only in STREAMING activity type!
+  # example: https://youtube.com/... and https://twitch.tv/...
+  url: "https://twitch.tv/beacmc_"
+
+# Messages for various actions, interactions, and confirmations
+messages:
+  start-message: "Usage: !link <player>"
+  # Message sent when confirmation is required for login
+  confirmation-message: |-
+    Your account %name% is being accessed from the following IP address: %ip%
+    > Choose an action below
+  
+  # Button text for accepting confirmation
+  confirmation-button-accept-text: "Accept"
+
+  # Button text for declining confirmation
+  confirmation-button-decline-text: "Decline"
+
+  # Message when no confirmation is received
+  no-confirmation: "No confirmation for logging into the server was received"
+
+  # Success message after the user confirms their login
+  confirmation-success: "You have successfully confirmed logging in to the server"
+
+  # Message when the user denies the login request
+  confirmation-denied: "You refused to log on to the server"
+
+  # Message when a player is not online
+  player-offline: "The player is not in the game right now"
+
+  # Message indicating that a command can only be used in private messages with the bot
+  private-channel-only: "This command can only be used in private messages with the bot"
+
+  # Usage message for the link command
+  link-command-usage: "Usage: !link <player>"
+
+  # Message when the player is offline and cannot be linked
+  link-command-player-offline: "Player is offline"
+
+  # Message when the player cannot be found in the database
+  link-command-player-not-found: "Player not found"
+
+  # Message when the account is already linked
+  link-command-already-linked: "This account is already linked to Discord"
+
+  # Message when the link limit is reached
+  link-limit: "You have reached the limit of bindings per account"
+
+  # Message with the generated code to link the account
+  link-message: |-
+    You have created a code to link the account ***%name%***.
+    > `%code%`
+
+  # Prompt to choose an account when multiple accounts are available
+  choose-account: "Choose account please"
+
+  # Display account information such as name, IP addresses, and online status
+  account-info: |-
+    > Real name: `%name%` (`%lowercase_name%`)
+    > Last Ip Address: ||`%last_ip%`||
+    > Register Ip: ||`%reg_ip%||
+    
+    - Account status: %is_online%
+
+  # Button text for resetting a player's password
+  account-reset-password-button: "Reset password"
+
+  # Success message after resetting the password
+  account-reset-password: |-
+    You have successfully reset the password on your **%name%** account. 
+    > New password: ||`%password%`||
+
+  # Button text for unlinking the account
+  account-unlink-button: "Unlink account"
+
+  cooldown: "Wait before the next use"
+
+  # Message when the account is already unlinked
+  account-already-unlink: "You've already unlinked your Discord account."
+
+  # Success message when an account is unlinked
+  account-unlink-success: "You have successfully unlinked the account from Discord"
+
+  # Message when unlinking is disabled by the admin
+  unlink-disabled: "Account unlinking is not possible. Administration has switched off this feature"
+
+  # Message when an account is not linked to any Discord account
+  account-not-linked: "This account is in no way related to your Discord account"
+
+  # Online/offline status for a player
+  player-info-online: "Online"
+  player-info-offline: "Offline"
+
+  # Button text for kicking a player from the server
+  account-kick-button: "Kick"
+
+  # Success message when a player is kicked off the server
+  account-kick-success: "The account was kicked off the server"
+
+  # Button to toggle two-factor authentication (2FA)
+  account-2fa-toggle-button: "Toggle 2FA"
+
+  # Message when two-factor authentication (2FA) is enabled
+  account-2fa-enabled: "Two-step authorization enabled"
+
+  # Message when two-factor authentication (2FA) is disabled
+  account-2fa-disabled: "Two-step authorization disabled"
+
+  # Button to toggle account ban status
+  account-ban-toggle-button: "Toggle BAN"
+
+  # Success message when an account is banned
+  account-banned: "Account successfully banned"
+
+  # Success message when an account is unbanned
+  account-unbanned: "Account successfully unbanned"
+
+  # Message when no linked accounts are found
+  accounts-empty: "You don't have any linked accounts"
