@@ -1,9 +1,13 @@
 package com.beacmc.beacmcauth.api.cache;
 
+import lombok.SneakyThrows;
+import org.checkerframework.checker.signature.qual.SignatureUnknown;
+import org.checkerframework.checker.units.qual.C;
+
 import java.util.Iterator;
 import java.util.List;
 
-public interface Cache<T, ID> extends Iterable<T> {
+public interface Cache<T extends CachedData<ID>, ID> extends Iterable<T> {
 
     T updateCache(T data);
 
@@ -11,7 +15,7 @@ public interface Cache<T, ID> extends Iterable<T> {
         if (data != null) getCaches().add(data);
     }
 
-    default T addOrUpdateCache(T data) {
+    default CachedData<ID> addOrUpdateCache(T data) {
         if (data == null)
             return null;
 
@@ -29,7 +33,12 @@ public interface Cache<T, ID> extends Iterable<T> {
         getCaches().remove(data);
     }
 
-    T getCacheData(ID id);
+    default T getCacheData(ID id) {
+        return getCaches().stream()
+                .filter(data -> data.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
 
     List<T> getCaches();
 }
