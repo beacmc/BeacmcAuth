@@ -1,15 +1,18 @@
 package com.beacmc.beacmcauth.api.cache;
 
-import lombok.SneakyThrows;
-import org.checkerframework.checker.signature.qual.SignatureUnknown;
-import org.checkerframework.checker.units.qual.C;
-
 import java.util.Iterator;
 import java.util.List;
 
 public interface Cache<T extends CachedData<ID>, ID> extends Iterable<T> {
 
-    T updateCache(T data);
+    default T updateCache(T data) {
+        T oldData = getCacheData(data.getId());
+        if (oldData == null) return null;
+
+        getCaches().remove(oldData);
+        getCaches().add(data);
+        return data;
+    }
 
     default void addCache(T data) {
         if (data != null) getCaches().add(data);
