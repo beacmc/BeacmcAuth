@@ -1,5 +1,6 @@
 package com.beacmc.beacmcauth.api;
 
+import com.beacmc.beacmcauth.api.cache.CachedData;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import lombok.*;
@@ -15,7 +16,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @DatabaseTable(tableName = "auth_players")
-public class ProtectedPlayer {
+public class ProtectedPlayer implements CachedData<String> {
 
     @DatabaseField(columnName = "lowercase_name", id = true, canBeNull = false)
     private String lowercaseName;
@@ -79,5 +80,10 @@ public class ProtectedPlayer {
 
     public boolean isRegister() {
         return getPassword() != null;
+    }
+
+    @Override
+    public String getId() {
+        return getLowercaseName();
     }
 }
