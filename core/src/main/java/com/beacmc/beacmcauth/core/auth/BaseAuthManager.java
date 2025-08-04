@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class BaseAuthManager implements AuthManager {
 
@@ -33,6 +35,7 @@ public class BaseAuthManager implements AuthManager {
     private final ServerLogger logger;
     private final AzLinkPlatform azLinkPlatform;
     private final Cache<ProtectedPlayer, String> playerCache;
+    private final ExecutorService executorService;
 
     public BaseAuthManager(BeacmcAuth plugin) {
         this.plugin = plugin;
@@ -41,6 +44,7 @@ public class BaseAuthManager implements AuthManager {
         this.logger = plugin.getServerLogger();
         this.azLinkPlatform = plugin.getProxy().getPlugin("AzLink");
         this.dao = plugin.getDatabase().getProtectedPlayerDao();
+        this.executorService = Executors.newFixedThreadPool(6);
     }
 
     @Override
@@ -64,7 +68,7 @@ public class BaseAuthManager implements AuthManager {
 
         getProtectedPlayer(player.getLowercaseName()).thenCompose(protectedPlayer -> {
             if (protectedPlayer == null) {
-                return createProtectedPlayer(player.getLowercaseName(), player.getName(), null, 0, System.currentTimeMillis(), false, true, true, address.getHostAddress(), address.getHostAddress(), player.getUUID());
+                return createProtectedPlayer(player.getLowercaseName(), player.getName(), null, 0, System.currentTimeMillis(), address.getHostAddress(), address.getHostAddress(), player.getUUID());
             }
             return CompletableFuture.completedFuture(protectedPlayer);
         }).thenAccept(protectedPlayer -> {
@@ -178,10 +182,10 @@ public class BaseAuthManager implements AuthManager {
     }
 
     @Override
-    public CompletableFuture<ProtectedPlayer> createProtectedPlayer(String lowercaseName, String realName, String password, long session, long lastJoin, boolean banned, boolean discordTwoFaEnabled, boolean telegramTwoFaEnabled, String registerIp, String lastIp, UUID uuid) {
+    public CompletableFuture<ProtectedPlayer> createProtectedPlayer(String lowercaseName, String realName, String password, long session, long lastJoin, String registerIp, String lastIp, UUID uuid) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                ProtectedPlayer execute = new ProtectedPlayer(lowercaseName, realName, password, session, lastJoin, banned, discordTwoFaEnabled, telegramTwoFaEnabled, registerIp, lastIp, uuid);
+                ProtectedPlayer execute = new ProtectedPlayer(lowercaseName, realName, uuid, password, session, lastJoin, false, true, true, true, registerIp, lastIp, 0, 0, 0);
                 dao.create(execute);
                 playerCache.addOrUpdateCache(execute);
                 return execute;
@@ -189,7 +193,7 @@ public class BaseAuthManager implements AuthManager {
                 e.printStackTrace();
             }
             return null;
-        });
+        }, executorService);
     }
 
     @Override
@@ -207,7 +211,7 @@ public class BaseAuthManager implements AuthManager {
                 e.printStackTrace();
             }
             return null;
-        });
+        }, executorService);
     }
 
     @Override
@@ -231,7 +235,7 @@ public class BaseAuthManager implements AuthManager {
                 player.disconnect(plugin.getConfig().getMessage("internal-error"));
             }
             return protectedPlayer;
-        });
+        }, executorService);
     }
 
     @Override
@@ -253,7 +257,7 @@ public class BaseAuthManager implements AuthManager {
                 player.disconnect(config.getMessage("internal-error"));
             }
             return null;
-        });
+        }, executorService);
     }
 
     @Override

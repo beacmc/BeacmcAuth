@@ -28,7 +28,7 @@ public interface AuthManager {
 
     boolean isAuthenticating(ServerPlayer player);
 
-    CompletableFuture<ProtectedPlayer> createProtectedPlayer(String lowercaseName, String realName, String password, long session, long lastJoin, boolean banned, boolean discordTwoFaEnabled, boolean telegramTwoFaEnabled, String registerIp, String lastIp, UUID uuid);
+    CompletableFuture<ProtectedPlayer> createProtectedPlayer(String lowercaseName, String realName, String password, long session, long lastJoin, String registerIp, String lastIp, UUID uuid);
 
     CompletableFuture<ProtectedPlayer> getProtectedPlayer(String lowercaseName);
 
