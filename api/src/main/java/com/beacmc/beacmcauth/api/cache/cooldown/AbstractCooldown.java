@@ -14,25 +14,6 @@ public class AbstractCooldown<ID> implements Cache<CooldownUser<ID>, ID> {
     }
 
     @Override
-    public CooldownUser<ID> updateCache(CooldownUser<ID> data) {
-        CooldownUser<ID> oldData = getCacheData(data.getId());
-        if (oldData == null)
-            return null;
-
-        caches.remove(oldData);
-        caches.add(data);
-        return data;
-    }
-
-    @Override
-    public CooldownUser<ID> getCacheData(ID id) {
-        return caches.stream()
-                .filter(user -> user.getId().equals(id))
-                .findFirst()
-                .orElse(null);
-    }
-
-    @Override
     public List<CooldownUser<ID>> getCaches() {
         return caches;
     }
