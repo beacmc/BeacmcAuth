@@ -92,7 +92,7 @@ public class AccountPageClick implements ButtonClickListener {
                                 "%lowercase_name%", player.getLowercaseName(),
                                 "%last_ip%", player.getLastIp(),
                                 "%reg_ip%", player.getRegisterIp(),
-                                "%is_online%", plugin.getProxy().getPlayer(player.getUUID()) == null ? playerOffline : playerOnline
+                                "%is_online%", plugin.getProxy().getPlayer(player.getUuid()) == null ? playerOffline : playerOnline
                         )
                 );
 

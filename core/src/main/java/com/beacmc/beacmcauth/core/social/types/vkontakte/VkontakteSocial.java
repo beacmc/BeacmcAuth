@@ -15,6 +15,7 @@ import com.beacmc.beacmcauth.api.social.keyboard.button.Button;
 import com.beacmc.beacmcauth.api.social.keyboard.button.ButtonType;
 import com.beacmc.beacmcauth.core.cache.cooldown.VkontakteCooldown;
 import com.beacmc.beacmcauth.core.util.runnable.VkontakteRunnable;
+import com.ubivashka.vk.api.VkApiPlugin;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.exceptions.ApiException;
@@ -24,7 +25,10 @@ import com.vk.api.sdk.objects.messages.KeyboardButtonAction;
 import com.vk.api.sdk.objects.messages.KeyboardButtonColor;
 import com.vk.api.sdk.objects.messages.TemplateActionTypeNames;
 import com.vk.api.sdk.queries.messages.MessagesSendQuery;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -32,30 +36,38 @@ import java.util.*;
 @ToString
 public class VkontakteSocial implements Social<VkApiClient, Integer> {
 
-    private final VkApiClient client;
     private final BeacmcAuth plugin;
     private final VkontakteCooldown cooldown;
-    private final GroupActor groupActor;
     private final Random random;
     private final ServerLogger logger;
 
-    public VkontakteSocial(BeacmcAuth plugin, VkApiClient client) {
-        this.client = client;
+    @Getter
+    @Setter
+    private VkApiPlugin vkApiPlugin;
+    private VkApiClient client;
+    private GroupActor groupActor;
+
+    public VkontakteSocial(BeacmcAuth plugin) {
         this.plugin = plugin;
         this.logger = plugin.getServerLogger();
         this.cooldown = VkontakteCooldown.getInstance();
-        this.groupActor = plugin.getVkApiPlugin().getVkApiProvider().getActor();
         this.random = new Random();
+    }
+
+    public void setup(@NotNull VkApiPlugin plugin) {
+        this.vkApiPlugin = plugin;
+        this.client = plugin.getVkApiProvider().getVkApiClient();
+        this.groupActor = plugin.getVkApiProvider().getActor();
         try {
             client.groups()
-                    .setSettings(plugin.getVkApiPlugin().getVkApiProvider().getActor(), plugin.getVkApiPlugin().getVkApiProvider().getActor().getGroupId())
+                    .setSettings(vkApiPlugin.getVkApiProvider().getActor(), vkApiPlugin.getVkApiProvider().getActor().getGroupId())
                     .botsCapabilities(true)
                     .botsStartButton(true)
                     .messages(true)
                     .execute();
 
             client.groups()
-                    .setLongPollSettings(plugin.getVkApiPlugin().getVkApiProvider().getActor(), plugin.getVkApiPlugin().getVkApiProvider().getActor().getGroupId())
+                    .setLongPollSettings(vkApiPlugin.getVkApiProvider().getActor(), vkApiPlugin.getVkApiProvider().getActor().getGroupId())
                     .apiVersion("5.131")
                     .messageNew(true)
                     .messageEvent(true)
@@ -74,7 +86,7 @@ public class VkontakteSocial implements Social<VkApiClient, Integer> {
 
     @Override
     public boolean isInit() {
-        return isEnabled();
+        return isEnabled() && vkApiPlugin != null;
     }
 
     @Override

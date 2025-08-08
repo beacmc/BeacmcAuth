@@ -40,7 +40,7 @@ public class ConfirmationPlayer {
                 }
             }
         }
-        plugin.getAuthManager().connectGameServer(plugin.getProxy().getPlayer(player.getUUID()));
+        plugin.getAuthManager().connectGameServer(plugin.getProxy().getPlayer(player.getUuid()));
         plugin.getAuthManager().performLogin(player);
         return false;
     }

@@ -66,7 +66,7 @@ public class ProtectedPlayer implements CachedData<String> {
     public boolean isSessionActive(long sessionTime) {
         final long currentTimeMillis = System.currentTimeMillis();
         final long sessionTimeMillis = (sessionTime * 60) * 1000;
-
+        
         return getSession() + sessionTimeMillis > currentTimeMillis;
     }
 

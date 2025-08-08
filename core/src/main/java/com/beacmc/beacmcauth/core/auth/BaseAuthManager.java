@@ -39,12 +39,12 @@ public class BaseAuthManager implements AuthManager {
 
     public BaseAuthManager(BeacmcAuth plugin) {
         this.plugin = plugin;
+        this.executorService = plugin.getExecutorService();
         this.playerCache = new PlayerCache();
         this.authorizationPlayers = new HashMap<>();
         this.logger = plugin.getServerLogger();
         this.azLinkPlatform = plugin.getProxy().getPlugin("AzLink");
         this.dao = plugin.getDatabase().getProtectedPlayerDao();
-        this.executorService = Executors.newFixedThreadPool(6);
     }
 
     @Override

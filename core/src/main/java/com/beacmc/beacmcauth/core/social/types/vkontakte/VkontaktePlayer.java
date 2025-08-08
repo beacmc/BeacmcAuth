@@ -3,6 +3,7 @@ package com.beacmc.beacmcauth.core.social.types.vkontakte;
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.social.SocialPlayer;
+import com.beacmc.beacmcauth.api.social.SocialType;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.exceptions.ApiException;
@@ -20,18 +21,20 @@ public class VkontaktePlayer implements SocialPlayer<Integer, Integer> {
     private final Integer id;
     private final GroupActor groupActor;
     private final Random random;
+    private final VkontakteSocial vkontakteSocial;
 
     public VkontaktePlayer(BeacmcAuth plugin, Integer id) {
         this.plugin = plugin;
         this.id = id;
-        this.groupActor = plugin.getVkApiPlugin().getVkApiProvider().getActor();
+        this.vkontakteSocial = (VkontakteSocial) plugin.getSocialManager().getSocialByType(SocialType.VKONTAKTE);
+        this.groupActor = vkontakteSocial.getVkApiPlugin().getVkApiProvider().getActor();
         this.random = new Random();
     }
 
     @Override
     public void sendPrivateMessage(String message, @Nullable Object keyboard) {
         try {
-            VkApiClient client = plugin.getVkApiPlugin().getVkApiProvider().getVkApiClient();
+            VkApiClient client = vkontakteSocial.getVkApiPlugin().getVkApiProvider().getVkApiClient();
             MessagesSendQuery query = client.messages().send(groupActor).message(message);
 
 

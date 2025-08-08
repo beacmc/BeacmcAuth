@@ -31,6 +31,8 @@ import com.beacmc.beacmcauth.core.social.types.vkontakte.VkontakteSocial;
 import com.ubivashka.vk.api.VkApiPlugin;
 
 import java.io.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class BaseBeacmcAuth implements BeacmcAuth {
 
@@ -48,10 +50,12 @@ public class BaseBeacmcAuth implements BeacmcAuth {
     private DiscordConfig discordConfig;
     private VkontakteConfig vkontakteConfig;
     private SocialManager socialManager;
-    private VkApiPlugin vkApiPlugin;
+    private ExecutorService executorService;
 
     @Override
     public BeacmcAuth onEnable() {
+        executorService = Executors.newFixedThreadPool(8);
+
         configLoader = new BaseConfigLoader();
         config = new BaseConfig(this, configLoader);
         telegramConfig = new BaseTelegramConfig(this, configLoader);
@@ -70,7 +74,7 @@ public class BaseBeacmcAuth implements BeacmcAuth {
             socialManager.getSocials().add(new DiscordSocial(this));
         }
         if (vkontakteConfig.isEnabled()) {
-            socialManager.getSocials().add(new VkontakteSocial(this, vkApiPlugin.getVkApiProvider().getVkApiClient()));
+            socialManager.getSocials().add(new VkontakteSocial(this));
         }
 
         commandManager = new BaseCommandManager();
@@ -101,17 +105,6 @@ public class BaseBeacmcAuth implements BeacmcAuth {
     @Override
     public CommandManager getCommandManager() {
         return commandManager;
-    }
-
-    @Override
-    public VkApiPlugin getVkApiPlugin() {
-        return vkApiPlugin;
-    }
-
-    @Override
-    public BeacmcAuth setVkApiPlugin(VkApiPlugin vkApiPlugin) {
-        this.vkApiPlugin = vkApiPlugin;
-        return this;
     }
 
     @Override
@@ -149,6 +142,11 @@ public class BaseBeacmcAuth implements BeacmcAuth {
     @Override
     public LibraryProvider getLibraryProvider() {
         return libraryProvider;
+    }
+
+    @Override
+    public ExecutorService getExecutorService() {
+        return executorService;
     }
 
     @Override

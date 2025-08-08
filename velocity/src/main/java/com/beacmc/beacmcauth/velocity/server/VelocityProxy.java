@@ -47,6 +47,7 @@ public class VelocityProxy implements Proxy {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T getPlugin(@NotNull String name) {
         PluginContainer plugin = proxyServer.getPluginManager().getPlugin(name.toLowerCase()).orElse(null);
         return plugin != null ? (T) plugin.getInstance().orElse(null) : null;
@@ -112,6 +113,7 @@ public class VelocityProxy implements Proxy {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T getOriginalProxyServer() {
         return (T) proxyServer;
     }
