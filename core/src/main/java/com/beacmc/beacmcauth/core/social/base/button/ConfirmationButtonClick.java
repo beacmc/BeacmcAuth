@@ -3,6 +3,7 @@ package com.beacmc.beacmcauth.core.social.base.button;
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.config.Config;
+import com.beacmc.beacmcauth.api.config.ConfigMessages;
 import com.beacmc.beacmcauth.api.config.social.SocialConfig;
 import com.beacmc.beacmcauth.api.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.social.Social;
@@ -35,11 +36,11 @@ public class ConfirmationButtonClick implements ButtonClickListener {
                     || confirmationPlayer.getCurrentConfirmation() == null
                     || confirmationPlayer.getCurrentConfirmation().getType() != social.getType())
             {
-                socialPlayer.sendPrivateMessage(socialConfig.getMessage("no-confirmation"));
+                socialPlayer.sendPrivateMessage(socialConfig.getMessages().getNoConfirmation());
                 return;
             }
 
-            socialPlayer.sendPrivateMessage(socialConfig.getMessage("confirmation-success"));
+            socialPlayer.sendPrivateMessage(socialConfig.getMessages().getConfirmationSuccess());
             if (!confirmationPlayer.nextConfirmationSocial(plugin)) {
                 manager.getConfirmationPlayers().remove(confirmationPlayer);
             }
@@ -51,15 +52,22 @@ public class ConfirmationButtonClick implements ButtonClickListener {
                     || confirmationPlayer.getCurrentConfirmation() == null
                     || confirmationPlayer.getCurrentConfirmation().getType() != social.getType())
             {
-                socialPlayer.sendPrivateMessage(socialConfig.getMessage("no-confirmation"));
+                socialPlayer.sendPrivateMessage(socialConfig.getMessages().getNoConfirmation());
                 return;
             }
 
             ProtectedPlayer protectedPlayer = confirmationPlayer.getPlayer();
             ServerPlayer player = plugin.getProxy().getPlayer(protectedPlayer.getLowercaseName());
-            socialPlayer.sendPrivateMessage(socialConfig.getMessage("confirmation-denied"));
+            socialPlayer.sendPrivateMessage(socialConfig.getMessages().getConfirmationDenied());
+
             if (player != null) {
-                player.disconnect(config.getMessage(social.getGameConfigPrefixMessage() + "confirmation-denied"));
+                ConfigMessages messages = config.getMessages();
+                String disconnectMessage = switch (social.getType()) {
+                    case DISCORD ->  messages.getDiscordConfirmationDeniedDisconnect();
+                    case TELEGRAM -> messages.getTelegramConfirmationDeniedDisconnect();
+                    case VKONTAKTE -> messages.getVkontakteConfirmationDeniedDisconnect();
+                };
+                player.disconnect(disconnectMessage);
             }
         }
     }

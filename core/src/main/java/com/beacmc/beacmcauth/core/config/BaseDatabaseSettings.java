@@ -5,39 +5,29 @@ import com.beacmc.beacmcauth.api.config.DatabaseSettings;
 import com.beacmc.beacmcauth.api.config.loader.ConfigLoader;
 import com.beacmc.beacmcauth.api.config.loader.ConfigValue;
 import com.beacmc.beacmcauth.api.database.DatabaseType;
+import de.exlll.configlib.Configuration;
+import de.exlll.configlib.Ignore;
 import lombok.Getter;
 
 import java.io.File;
+import java.sql.SQLClientInfoException;
 
 @Getter
+@Configuration
+@SuppressWarnings("FieldMayBeFinal")
 public class BaseDatabaseSettings implements DatabaseSettings {
 
-    @ConfigValue(key = "database.type")
-    private DatabaseType type;
+    private DatabaseType type = DatabaseType.SQLITE;
+    private String host = "localhost:3306";
+    private String database = "database_name";
+    private String username = "username";
+    private String password = "password";
+    private boolean stopServerOnFailedConnection = true;
 
-    @ConfigValue(key = "database.host")
-    private String host;
-
-    @ConfigValue(key = "database.database")
-    private String database;
-
-    @ConfigValue(key = "database.username")
-    private String username;
-
-    @ConfigValue(key = "database.password")
-    private String password;
-
-    @ConfigValue(key = "database.stop-server-on-failed-connection")
-    private boolean stopServerOnFailedConnection;
-
-    private String url;
-
-    public BaseDatabaseSettings(BeacmcAuth plugin, ConfigLoader loader, File file) {
-        loader.loadConfig(file, this);
-        if (type.name().toLowerCase().equals("sqlite")) {
-            url = "jdbc:sqlite:" + plugin.getDataFolder().getAbsolutePath() + "/auth.db";
-        } else {
-            url = "jdbc:" + type.name().toLowerCase() + "://" + host + "/" + database;
-        }
+    @Override
+    public String getUrl(BeacmcAuth plugin) {
+        return type == DatabaseType.SQLITE
+                ? "jdbc:sqlite:%s/auth.db".formatted(plugin.getDataFolder().getAbsolutePath())
+                : "jdbc:%s://%s/%s".formatted(type.name().toLowerCase(), host, database);
     }
 }

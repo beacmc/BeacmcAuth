@@ -20,7 +20,7 @@ public class DiscordListener extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        if (!(event.getChannel() instanceof PrivateChannel channel)) return;
+        if (!(event.getChannel() instanceof PrivateChannel)) return;
 
         final String message = event.getMessage().getContentRaw();
         final Social<?, ?> discord = plugin.getSocialManager().getSocialByType(SocialType.DISCORD);

@@ -9,7 +9,7 @@ public class StartCommand implements SocialCommand {
     @Override
     public void execute(SocialPlayer<?, ?> socialPlayer, Social<?, ?> social, String prefix, String[] args) {
         if (prefix.startsWith("/start") || prefix.startsWith("Начать")) {
-            socialPlayer.sendPrivateMessage(social.getSocialConfig().getMessage("start-message"));
+            socialPlayer.sendPrivateMessage(social.getSocialConfig().getMessages().getStartMessage());
         }
     }
 }

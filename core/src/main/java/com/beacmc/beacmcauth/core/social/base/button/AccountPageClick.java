@@ -29,7 +29,7 @@ public class AccountPageClick implements ButtonClickListener {
             if (args.length < 2) return;
 
             if (social.isCooldown(socialPlayer.getID())) {
-                socialPlayer.sendPrivateMessage(socialConfig.getMessage("cooldown"));
+                socialPlayer.sendPrivateMessage(socialConfig.getMessages().getCooldown());
                 return;
             }
             social.createCooldown(socialPlayer.getID(), 6000L);
@@ -66,7 +66,7 @@ public class AccountPageClick implements ButtonClickListener {
             if (end < accountLinked.size()) pageButtons.add(nextPageButton);
             if (!pageButtons.isEmpty()) buttons.add(pageButtons);
 
-            socialPlayer.sendPrivateMessage(socialConfig.getMessage("choose-account"), social.createKeyboard(new Keyboard(buttons)));
+            socialPlayer.sendPrivateMessage(socialConfig.getMessages().getChooseAccount(), social.createKeyboard(new Keyboard(buttons)));
         }
 
         if (button.getCallbackData().startsWith("account")) {
@@ -74,51 +74,50 @@ public class AccountPageClick implements ButtonClickListener {
             if (args.length < 2) return;
 
             if (social.isCooldown(socialPlayer.getID())) {
-                socialPlayer.sendPrivateMessage(socialConfig.getMessage("cooldown"));
+                socialPlayer.sendPrivateMessage(socialConfig.getMessages().getCooldown());
                 return;
             }
             social.createCooldown(socialPlayer.getID(), 6000L);
 
             plugin.getAuthManager().getProtectedPlayer(args[1]).thenAccept(player -> {
                 if (!socialPlayer.checkAccountLink(player)) {
-                    socialPlayer.sendPrivateMessage(socialConfig.getMessage("account-not-linked"));
+                    socialPlayer.sendPrivateMessage(socialConfig.getMessages().getAccountNotLinked());
                     return;
                 }
 
-                String playerOnline = socialConfig.getMessage("player-info-online");
-                String playerOffline = socialConfig.getMessage("player-info-offline");
-                String message = socialConfig.getMessage("account-info", Map.of(
-                                "%name%", player.getRealName(),
-                                "%lowercase_name%", player.getLowercaseName(),
-                                "%last_ip%", player.getLastIp(),
-                                "%reg_ip%", player.getRegisterIp(),
-                                "%is_online%", plugin.getProxy().getPlayer(player.getUuid()) == null ? playerOffline : playerOnline
-                        )
-                );
+                String playerOnline = socialConfig.getMessages().getPlayerInfoOnline();
+                String playerOffline = socialConfig.getMessages().getPlayerOffline();
+                String message = socialConfig.getMessages().getAccountInfo()
+                        .replace("%name%", player.getRealName())
+                        .replace("%lowercase_name%", player.getLowercaseName())
+                        .replace("%last_ip%", player.getLastIp())
+                        .replace("%reg_ip%", player.getRegisterIp())
+                        .replace("%is_online%", plugin.getProxy().getPlayer(player.getUuid()) == null ? playerOffline : playerOnline);
+
 
                 String id = player.getLowercaseName();
 
                 List<List<Button>> buttons = new ArrayList<>();
                 buttons.add(List.of(
                         Button.builder()
-                                .label(socialConfig.getMessage("account-2fa-toggle-button"))
+                                .label(socialConfig.getMessages().getAccount2faToggleButton())
                                 .callbackData("toggle-2fa:" + id)
                                 .type(ButtonType.SECONDARY)
                                 .build(),
                         Button.builder()
-                                .label(socialConfig.getMessage("account-reset-password-button"))
+                                .label(socialConfig.getMessages().getAccountResetPasswordButton())
                                 .callbackData("reset-password:" + id)
                                 .type(ButtonType.SECONDARY)
                                 .build()
                 ));
                 buttons.add(List.of(
                         Button.builder()
-                                .label(socialConfig.getMessage("account-ban-toggle-button"))
+                                .label(socialConfig.getMessages().getAccountBanToggleButton())
                                 .callbackData("toggle-ban:" + id)
                                 .type(ButtonType.SECONDARY)
                                 .build(),
                         Button.builder()
-                                .label(socialConfig.getMessage("account-kick-button"))
+                                .label(socialConfig.getMessages().getAccountKickButton())
                                 .callbackData("kick:" + id)
                                 .type(ButtonType.SECONDARY)
                                 .build()
@@ -127,7 +126,7 @@ public class AccountPageClick implements ButtonClickListener {
                 if (!socialConfig.isDisableUnlink()) {
                     buttons.add(List.of(
                             Button.builder()
-                                    .label(socialConfig.getMessage("account-unlink-button"))
+                                    .label(socialConfig.getMessages().getAccountUnlinkButton())
                                     .callbackData("unlink:" + id)
                                     .type(ButtonType.DANGER)
                                     .build()

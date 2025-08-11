@@ -12,12 +12,6 @@ public interface Config {
 
     Server findServer(List<String> configServers);
 
-    String getMessage(String path, Map<String, String> placeholders);
-
-    default String getMessage(String path) {
-        return getMessage(path, null);
-    }
-
     List<String> getDisabledServers();
 
     boolean isNameCaseControl();
@@ -46,7 +40,9 @@ public interface Config {
 
     List<String> getAuthServers();
 
-    List<String> getGameServers();
+    List<String> getLobbyServers();
 
     boolean isDebugEnabled();
+
+    ConfigMessages getMessages();
 }

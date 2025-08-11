@@ -5,5 +5,4 @@ author: beacmc
 softDepends:
   - LuckPerms
   - VK-API
-  - packetevents
   - AzLink

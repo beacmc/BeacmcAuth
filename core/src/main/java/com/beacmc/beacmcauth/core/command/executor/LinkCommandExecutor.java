@@ -38,7 +38,7 @@ public class LinkCommandExecutor implements CommandExecutor {
         final Config config = plugin.getConfig();
 
         if (cooldown.isCooldown(player.getLowercaseName())) {
-            player.sendMessage(config.getMessage("cooldown"));
+            player.sendMessage(config.getMessages().getCooldown());
             return;
         }
         cooldown.createCooldown(player.getLowercaseName(), 10000L);
@@ -46,12 +46,12 @@ public class LinkCommandExecutor implements CommandExecutor {
         final List<LinkPlayer<?>> linkPlayers = linkManager.getPlayersByName(player.getName());
 
         if (linkPlayers.isEmpty()) {
-            player.sendMessage(config.getMessage("link-code-absent"));
+            player.sendMessage(config.getMessages().getLinkCodeAbsent());
             return;
         }
 
         if (args.length < 1) {
-            player.sendMessage(config.getMessage("link-command-usage"));
+            player.sendMessage(config.getMessages().getLinkCommandUsage());
             return;
         }
 
@@ -61,19 +61,19 @@ public class LinkCommandExecutor implements CommandExecutor {
                 .orElse(null);
 
         if (linkPlayer == null || linkPlayer.getCode() == null) {
-            player.sendMessage(config.getMessage("incorrect-code"));
+            player.sendMessage(config.getMessages().getIncorrectCode());
             return;
         }
         Social<?, ?> social = socialManager.getSocialByType(linkPlayer.getSocialType());
 
         if (social != null) {
             if (social.isPlayerLinked(linkPlayer.getPlayer())) {
-                player.sendMessage(config.getMessage("already-linked"));
+                player.sendMessage(config.getMessages().getAlreadyLinked());
                 return;
             }
             social.linkPlayer(linkPlayer.getPlayer(), linkPlayer.getId());
             linkManager.getLinkPlayers().remove(linkPlayer);
-            player.sendMessage(config.getMessage("link-success"));
+            player.sendMessage(config.getMessages().getLinkSuccess());
         }
     }
 }

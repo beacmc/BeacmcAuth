@@ -4,6 +4,7 @@ import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.cache.cooldown.AbstractCooldown;
 import com.beacmc.beacmcauth.api.config.social.SocialConfig;
+import com.beacmc.beacmcauth.api.config.social.TelegramConfig;
 import com.beacmc.beacmcauth.api.database.dao.ProtectedPlayerDao;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
 import com.beacmc.beacmcauth.api.player.ServerPlayer;
@@ -164,23 +165,25 @@ public class TelegramSocial implements Social<TelegramBot, Long> {
         }
 
         if (confirmationPlayer == null || player.getTelegram() == 0) {
-            serverPlayer.disconnect(plugin.getConfig().getMessage("internal-error"));
+            serverPlayer.disconnect(plugin.getConfig().getMessages().getInternalError());
             return false;
         }
 
         new TelegramRunnable(plugin, serverPlayer, player);
-        SendMessage sendMessage = new SendMessage(player.getTelegram(), getSocialConfig().getMessage("confirmation-message",
-                Map.of("%name%", player.getLowercaseName(), "%ip%", serverPlayer.getInetAddress().getHostAddress())));
+        SendMessage sendMessage = new SendMessage(player.getTelegram(), getSocialConfig().getMessages().getConfirmationMessage()
+                .replace("%name%", player.getLowercaseName())
+                .replace("%ip%", serverPlayer.getInetAddress().getHostAddress()));
+
         Keyboard keyboard = Keyboard.builder()
                 .buttons(List.of(List.of(
                         Button.builder()
                                 .type(ButtonType.SUCCESS)
-                                .label(getSocialConfig().getMessage("confirmation-button-accept-text"))
+                                .label(getSocialConfig().getMessages().getConfirmationButtonAcceptText())
                                 .callbackData("confirm-accept:" + player.getLowercaseName())
                                 .build(),
                         Button.builder()
                                 .type(ButtonType.DANGER)
-                                .label(getSocialConfig().getMessage("confirmation-button-decline-text"))
+                                .label(getSocialConfig().getMessages().getConfirmationButtonDeclineText())
                                 .callbackData("confirm-decline:" + player.getLowercaseName())
                                 .build()
                 )))
@@ -191,7 +194,7 @@ public class TelegramSocial implements Social<TelegramBot, Long> {
         }
 
         if (execute(sendMessage) == 403) {
-            serverPlayer.disconnect(plugin.getConfig().getMessage("telegram-private-messages-closed"));
+            serverPlayer.disconnect(plugin.getConfig().getMessages().getTelegramPrivateMessagesClosed());
             return false;
         }
         return true;
@@ -212,14 +215,10 @@ public class TelegramSocial implements Social<TelegramBot, Long> {
     }
 
     @Override
-    public SocialConfig getSocialConfig() {
+    public TelegramConfig getSocialConfig() {
         return plugin.getTelegramConfig();
     }
 
-    @Override
-    public String getGameConfigPrefixMessage() {
-        return "telegram-";
-    }
 
     public int execute(BaseRequest<?, ?> request) {
         BaseResponse response = telegramBot.execute(request);

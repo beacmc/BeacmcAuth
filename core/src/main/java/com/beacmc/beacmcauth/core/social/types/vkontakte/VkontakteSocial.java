@@ -4,6 +4,7 @@ import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.cache.cooldown.AbstractCooldown;
 import com.beacmc.beacmcauth.api.config.social.SocialConfig;
+import com.beacmc.beacmcauth.api.config.social.VkontakteConfig;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
 import com.beacmc.beacmcauth.api.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.social.Social;
@@ -173,7 +174,7 @@ public class VkontakteSocial implements Social<VkApiClient, Integer> {
     }
 
     @Override
-    public SocialConfig getSocialConfig() {
+    public VkontakteConfig getSocialConfig() {
         return plugin.getVkontakteConfig();
     }
 
@@ -210,7 +211,7 @@ public class VkontakteSocial implements Social<VkApiClient, Integer> {
         }
 
         if (confirmationPlayer == null || player.getVkontakte() == 0) {
-            serverPlayer.disconnect(plugin.getConfig().getMessage("internal-error"));
+            serverPlayer.disconnect(plugin.getConfig().getMessages().getInternalError());
             return false;
         }
 
@@ -218,17 +219,20 @@ public class VkontakteSocial implements Social<VkApiClient, Integer> {
 
         try {
             MessagesSendQuery query = client.messages().send(groupActor).peerId(player.getVkontakte());
-            query.message(getSocialConfig().getMessage("confirmation-message", Map.of("%name%", player.getLowercaseName(), "%ip%", serverPlayer.getInetAddress().getHostAddress())));
+            query.message(getSocialConfig().getMessages().getConfirmationMessage()
+                    .replace("%name%", player.getLowercaseName())
+                    .replace("%ip%", serverPlayer.getInetAddress().getHostAddress()));
+
             Keyboard keyboard = Keyboard.builder()
                     .buttons(List.of(List.of(
                             Button.builder()
                                     .type(ButtonType.SUCCESS)
-                                    .label(getSocialConfig().getMessage("confirmation-button-accept-text"))
+                                    .label(getSocialConfig().getMessages().getConfirmationButtonAcceptText())
                                     .callbackData("confirm-accept:" + player.getLowercaseName())
                                     .build(),
                             Button.builder()
                                     .type(ButtonType.DANGER)
-                                    .label(getSocialConfig().getMessage("confirmation-button-decline-text"))
+                                    .label(getSocialConfig().getMessages().getConfirmationButtonDeclineText())
                                     .callbackData("confirm-decline:" + player.getLowercaseName())
                                     .build()
                     )))
@@ -240,21 +244,16 @@ public class VkontakteSocial implements Social<VkApiClient, Integer> {
             query.randomId(random.nextInt()).execute();
         } catch (ApiException e) {
             if (e.getCode() == 901) {
-                serverPlayer.disconnect(plugin.getConfig().getMessage("vkontakte-private-messages-closed"));
+                serverPlayer.disconnect(plugin.getConfig().getMessages().getTelegramPrivateMessagesClosed());
             } else {
                 e.printStackTrace();
             }
         } catch (ClientException e) {
-            serverPlayer.disconnect(plugin.getConfig().getMessage("internal-error"));
+            serverPlayer.disconnect(plugin.getConfig().getMessages().getInternalError());
             e.printStackTrace();
             return false;
         }
         return true;
-    }
-
-    @Override
-    public String getGameConfigPrefixMessage() {
-        return "vkontakte-";
     }
 
     @Override

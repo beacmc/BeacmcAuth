@@ -1,22 +1,12 @@
 package com.beacmc.beacmcauth.api.config.loader;
 
+import de.exlll.configlib.YamlConfigurationProperties;
+
 import java.io.File;
 
 public interface ConfigLoader {
 
-    void loadConfig(File file, Object object);
+    <T> T load(File file, Class<T> clazz, T obj);
 
-    Object get(String path, Object def);
-
-    default Object get(String path) {
-        return get(path, null);
-    }
-
-    default String getString(String path, String def) {
-        return String.valueOf(get(path, def));
-    }
-
-    default boolean getBoolean(String path, boolean def) {
-        return (Boolean) get(path, def);
-    }
+    YamlConfigurationProperties getDefaultConfigProperties();
 }

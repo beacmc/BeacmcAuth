@@ -3,6 +3,7 @@ package com.beacmc.beacmcauth.core.social.types.discord;
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.cache.cooldown.AbstractCooldown;
+import com.beacmc.beacmcauth.api.config.social.DiscordConfig;
 import com.beacmc.beacmcauth.api.config.social.SocialConfig;
 import com.beacmc.beacmcauth.api.database.dao.ProtectedPlayerDao;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
@@ -145,7 +146,7 @@ public class DiscordSocial implements Social<JDA, Long> {
     }
 
     @Override
-    public SocialConfig getSocialConfig() {
+    public DiscordConfig getSocialConfig() {
         return plugin.getDiscordConfig();
     }
 
@@ -182,35 +183,33 @@ public class DiscordSocial implements Social<JDA, Long> {
         }
 
         if (confirmationPlayer == null || player.getDiscord() == 0 || user == null) {
-            serverPlayer.disconnect(plugin.getConfig().getMessage("internal-error"));
+            serverPlayer.disconnect(plugin.getConfig().getMessages().getInternalError());
             return false;
         }
 
         new DiscordRunnable(plugin, serverPlayer, player);
-        String message = getSocialConfig().getMessage("confirmation-message", Map.of("%name%", player.getLowercaseName(), "%ip%", serverPlayer.getInetAddress().getHostAddress()));
+        String message = getSocialConfig().getMessages().getConfirmationMessage()
+                .replace("%name%", player.getLowercaseName())
+                .replace("%ip%", serverPlayer.getInetAddress().getHostAddress());
+
         DiscordPlayer discordPlayer = new DiscordPlayer(user);
 
         Keyboard keyboard = Keyboard.builder()
                 .buttons(List.of(List.of(
                         com.beacmc.beacmcauth.api.social.keyboard.button.Button.builder()
                                 .type(ButtonType.SUCCESS)
-                                .label(getSocialConfig().getMessage("confirmation-button-accept-text"))
+                                .label(getSocialConfig().getMessages().getConfirmationButtonAcceptText())
                                 .callbackData("confirm-accept:" + player.getLowercaseName())
                                 .build(),
                         com.beacmc.beacmcauth.api.social.keyboard.button.Button.builder()
                                 .type(ButtonType.DANGER)
-                                .label(getSocialConfig().getMessage("confirmation-button-decline-text"))
+                                .label(getSocialConfig().getMessages().getConfirmationButtonDeclineText())
                                 .callbackData("confirm-decline:" + player.getLowercaseName())
                                 .build()
                 )))
                 .build();
         discordPlayer.sendPrivateMessage(message, createKeyboard(keyboard));
         return true;
-    }
-
-    @Override
-    public String getGameConfigPrefixMessage() {
-        return "discord-";
     }
 
     @Override

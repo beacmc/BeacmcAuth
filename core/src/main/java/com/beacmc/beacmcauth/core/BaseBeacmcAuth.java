@@ -57,10 +57,7 @@ public class BaseBeacmcAuth implements BeacmcAuth {
         executorService = Executors.newFixedThreadPool(8);
 
         configLoader = new BaseConfigLoader();
-        config = new BaseConfig(this, configLoader);
-        telegramConfig = new BaseTelegramConfig(this, configLoader);
-        vkontakteConfig = new BaseVkontakteConfig(this, configLoader);
-        discordConfig = new BaseDiscordConfig(this, configLoader);
+        reloadAllConfigurations();
         database = new BaseDatabase(this);
         database.init();
         authManager = new BaseAuthManager(this);
@@ -96,10 +93,10 @@ public class BaseBeacmcAuth implements BeacmcAuth {
 
     @Override
     public void reloadAllConfigurations() {
-        config = new BaseConfig(this, configLoader);
-        telegramConfig = new BaseTelegramConfig(this, configLoader);
-        discordConfig = new BaseDiscordConfig(this, configLoader);
-        vkontakteConfig = new BaseVkontakteConfig(this, configLoader);
+        config = configLoader.load(new File(getDataFolder(), "config.yml"), BaseConfig.class, new BaseConfig());
+        telegramConfig = configLoader.load(new File(getDataFolder(), "telegram.yml"), BaseTelegramConfig.class, new BaseTelegramConfig());
+        discordConfig = configLoader.load(new File(getDataFolder(), "discord.yml"), BaseDiscordConfig.class, new BaseDiscordConfig());
+        vkontakteConfig = configLoader.load(new File(getDataFolder(), "vkontakte.yml"), BaseVkontakteConfig.class, new BaseVkontakteConfig());
     }
 
     @Override

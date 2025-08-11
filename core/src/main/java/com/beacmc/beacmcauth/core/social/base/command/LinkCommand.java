@@ -27,12 +27,12 @@ public class LinkCommand implements SocialCommand {
         SocialConfig socialConfig = social.getSocialConfig();
 
         if (args.length < 1) {
-            socialPlayer.sendPrivateMessage(socialConfig.getMessage("link-command-usage"));
+            socialPlayer.sendPrivateMessage(socialConfig.getMessages().getLinkCommandUsage());
             return;
         }
 
         if (social.isCooldown(socialPlayer)) {
-            socialPlayer.sendPrivateMessage(socialConfig.getMessage("cooldown"));
+            socialPlayer.sendPrivateMessage(socialConfig.getMessages().getCooldown());
             return;
         }
         social.createCooldown(socialPlayer.getID(), 6000L);
@@ -40,30 +40,32 @@ public class LinkCommand implements SocialCommand {
         String playerName = args[0].toLowerCase();
         plugin.getAuthManager().getProtectedPlayer(playerName).thenAccept(protectedPlayer -> {
             if (protectedPlayer == null) {
-                socialPlayer.sendPrivateMessage(socialConfig.getMessage("link-command-player-not-found"));
+                socialPlayer.sendPrivateMessage(socialConfig.getMessages().getLinkCommandPlayerNotFound());
                 return;
             }
 
             ServerPlayer player = plugin.getProxy().getPlayer(protectedPlayer.getLowercaseName());
 
             if (player == null) {
-                socialPlayer.sendPrivateMessage(socialConfig.getMessage("link-command-player-offline"));
+                socialPlayer.sendPrivateMessage(socialConfig.getMessages().getLinkCommandPlayerOffline());
                 return;
             }
 
             if (social.isPlayerLinked(protectedPlayer)) {
-                socialPlayer.sendPrivateMessage(socialConfig.getMessage("link-command-already-linked"));
+                socialPlayer.sendPrivateMessage(socialConfig.getMessages().getLinkCommandAlreadyLinked());
                 return;
             }
 
             if (social.getLinkedPlayersById(socialPlayer.getID()).size() < socialConfig.getMaxLink()) {
                 String code = CodeGenerator.generate(socialConfig.getCodeChars(), socialConfig.getCodeLength());
 
-                socialPlayer.sendPrivateMessage(socialConfig.getMessage("link-message", Map.of("%name%", player.getName(), "%code%", code)));
+                socialPlayer.sendPrivateMessage(socialConfig.getMessages().getLinkMessage()
+                        .replace("%name%", player.getName())
+                        .replace("%code%", code));
                 plugin.getSocialManager().getLinkManager().createLinkRequest(protectedPlayer, socialPlayer.getID(), code, social.getType());
                 return;
             }
-            socialPlayer.sendPrivateMessage(socialConfig.getMessage("link-limit"));
+            socialPlayer.sendPrivateMessage(socialConfig.getMessages().getLinkLimit());
         });
     }
 }

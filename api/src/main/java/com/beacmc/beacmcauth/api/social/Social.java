@@ -41,7 +41,5 @@ public interface Social<T, ID> {
 
     boolean startConfirmation(ProtectedPlayer player);
 
-    String getGameConfigPrefixMessage();
-
     List<ProtectedPlayer> getLinkedPlayersById(Object id);
 }
