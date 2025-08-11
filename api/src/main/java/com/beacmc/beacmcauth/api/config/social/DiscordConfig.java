@@ -15,7 +15,4 @@ public interface DiscordConfig extends SocialConfig {
 
     String getActivityUrl();
 
-    Role getRoleByGroup(String group);
-
-    Configuration getSyncRoles();
 }

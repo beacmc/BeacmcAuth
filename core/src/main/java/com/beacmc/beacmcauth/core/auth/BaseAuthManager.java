@@ -39,12 +39,12 @@ public class BaseAuthManager implements AuthManager {
 
     public BaseAuthManager(BeacmcAuth plugin) {
         this.plugin = plugin;
+        this.executorService = plugin.getExecutorService();
         this.playerCache = new PlayerCache();
         this.authorizationPlayers = new HashMap<>();
         this.logger = plugin.getServerLogger();
         this.azLinkPlatform = plugin.getProxy().getPlugin("AzLink");
         this.dao = plugin.getDatabase().getProtectedPlayerDao();
-        this.executorService = Executors.newFixedThreadPool(6);
     }
 
     @Override
@@ -55,14 +55,14 @@ public class BaseAuthManager implements AuthManager {
         final InetAddress address = player.getInetAddress();
 
         if (address == null || isAuthenticating(player)) {
-            player.disconnect(config.getMessage("internal-error"));
+            player.disconnect(config.getMessages().getInternalError());
             return;
         }
 
         logger.debug("Check player(" + player.getName() + ") nickname matcher(" + config.getNicknameRegex() + "). Success: " + config.getNicknameRegex().matcher(player.getName()).matches());
 
         if (!config.getNicknameRegex().matcher(player.getName()).matches()) {
-            player.disconnect(config.getMessage("invalid-character-in-name"));
+            player.disconnect(config.getMessages().getInvalidCharacterInName());
             return;
         }
 
@@ -73,17 +73,19 @@ public class BaseAuthManager implements AuthManager {
             return CompletableFuture.completedFuture(protectedPlayer);
         }).thenAccept(protectedPlayer -> {
             if (protectedPlayer == null) {
-                player.disconnect(config.getMessage("internal-error"));
+                player.disconnect(config.getMessages().getInternalError());
                 return;
             }
 
             if (protectedPlayer.isBanned()) {
-                player.disconnect(config.getMessage("account-banned"));
+                player.disconnect(config.getMessages().getAccountBanned());
                 return;
             }
 
             if (config.isNameCaseControl() && !protectedPlayer.getRealName().equals(player.getName())) {
-                player.disconnect(config.getMessage("name-case-failed", Map.of("%current_name%", player.getName(), "%need_name%", protectedPlayer.getRealName())));
+                player.disconnect(config.getMessages().getNameCaseFailed()
+                        .replace("%current_name%", player.getName())
+                        .replace("%need_name%", protectedPlayer.getRealName()));
                 return;
             }
 
@@ -101,8 +103,8 @@ public class BaseAuthManager implements AuthManager {
             if (protectedPlayer.isSessionActive(config.getSessionTime()) && protectedPlayer.isValidIp(address.getHostAddress())) {
                 logger.debug("the player(" + player.getName() + ") has an active session and a valid IP-address(" + address.getHostAddress() + ")");
 
-                player.sendMessage(config.getMessage("session-active"));
-                this.connectPlayer(player, config.findServer(config.getGameServers()));
+                player.sendMessage(config.getMessages().getSessionActive());
+                this.connectPlayer(player, config.findServer(config.getLobbyServers()));
                 return;
             }
 
@@ -171,7 +173,7 @@ public class BaseAuthManager implements AuthManager {
     @Override
     public void connectGameServer(ServerPlayer player) {
         final Config config = plugin.getConfig();
-        connectPlayer(player, config.findServer(config.getGameServers()));
+        connectPlayer(player, config.findServer(config.getLobbyServers()));
     }
 
     @Override
@@ -187,7 +189,6 @@ public class BaseAuthManager implements AuthManager {
             try {
                 ProtectedPlayer execute = new ProtectedPlayer(lowercaseName, realName, uuid, password, session, lastJoin, false, true, true, true, registerIp, lastIp, 0, 0, 0);
                 dao.create(execute);
-                playerCache.addOrUpdateCache(execute);
                 return execute;
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -232,7 +233,7 @@ public class BaseAuthManager implements AuthManager {
                 playerCache.addOrUpdateCache(protectedPlayer);
             } catch (SQLException e) {
                 e.printStackTrace();
-                player.disconnect(plugin.getConfig().getMessage("internal-error"));
+                player.disconnect(plugin.getConfig().getMessages().getInternalError());
             }
             return protectedPlayer;
         }, executorService);
@@ -254,7 +255,7 @@ public class BaseAuthManager implements AuthManager {
                 playerCache.addOrUpdateCache(protectedPlayer);
             } catch (SQLException e) {
                 e.printStackTrace();
-                player.disconnect(config.getMessage("internal-error"));
+                player.disconnect(config.getMessages().getInternalError());
             }
             return null;
         }, executorService);

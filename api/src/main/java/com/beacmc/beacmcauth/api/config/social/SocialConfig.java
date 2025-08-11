@@ -1,7 +1,5 @@
 package com.beacmc.beacmcauth.api.config.social;
 
-import java.util.Map;
-
 public interface SocialConfig {
 
     String getResetPasswordChars();
@@ -26,9 +24,5 @@ public interface SocialConfig {
 
     String getLinkCommand();
 
-    String getMessage(String messagePath, Map<String, String> placeholders);
-
-    default String getMessage(String messagePath) {
-        return getMessage(messagePath, null);
-    }
+    SocialMessages getMessages();
 }

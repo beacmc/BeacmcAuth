@@ -45,13 +45,13 @@ public class AuthCommandExecutor implements CommandExecutor {
             return;
         }
 
-        sender.sendMessage(config.getMessage("auth-help"));
+        sender.sendMessage(config.getMessages().getAuthHelp());
     }
 
     private void handleReloadConfig(CommandSender sender, String[] ignored) {
         final Config config = plugin.getConfig();
 
-        sender.sendMessage(config.getMessage("auth-reload"));
+        sender.sendMessage(config.getMessages().getAuthReload());
         plugin.reloadAllConfigurations();
     }
 
@@ -60,7 +60,7 @@ public class AuthCommandExecutor implements CommandExecutor {
 
         authManager.getProtectedPlayer(args[1].toLowerCase()).thenAccept(protectedPlayer -> {
             if (protectedPlayer == null) {
-                sender.sendMessage(config.getMessage("account-not-found"));
+                sender.sendMessage(config.getMessages().getAccountNotFound());
                 return;
             }
 
@@ -68,11 +68,11 @@ public class AuthCommandExecutor implements CommandExecutor {
 
             try {
                 if (player != null) {
-                    player.disconnect(config.getMessage("your-account-deleted-disconnect"));
+                    player.disconnect(config.getMessages().getYourAccountDeletedDisconnect());
                 }
                 dao.delete(protectedPlayer);
                 authManager.getPlayerCache().removeCache(protectedPlayer);
-                sender.sendMessage(config.getMessage("account-deleted"));
+                sender.sendMessage(config.getMessages().getAccountDeleted());
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -84,20 +84,20 @@ public class AuthCommandExecutor implements CommandExecutor {
 
         authManager.getProtectedPlayer(args[1].toLowerCase()).thenAccept(protectedPlayer -> {
             if (protectedPlayer == null) {
-                sender.sendMessage(config.getMessage("account-not-found"));
+                sender.sendMessage(config.getMessages().getAccountNotFound());
                 return;
             }
 
             if (!protectedPlayer.isRegister()) {
-                sender.sendMessage(config.getMessage("account-not-found"));
+                sender.sendMessage(config.getMessages().getAccountNotFound());
                 return;
             }
 
             try {
                 dao.createOrUpdate(protectedPlayer.setSession(0).setPassword(BCrypt.hashpw(args[2], BCrypt.gensalt(config.getBCryptRounds()))));
                 authManager.getPlayerCache().addOrUpdateCache(protectedPlayer);
-                authManager.onAzLinkChangePassword(protectedPlayer.getRealName(), protectedPlayer.getUUID(), args[2]);
-                sender.sendMessage(config.getMessage("account-password-changed"));
+                authManager.onAzLinkChangePassword(protectedPlayer.getRealName(), protectedPlayer.getUuid(), args[2]);
+                sender.sendMessage(config.getMessages().getAccountPasswordChanged());
             } catch (SQLException e) {
                 e.printStackTrace();
             }

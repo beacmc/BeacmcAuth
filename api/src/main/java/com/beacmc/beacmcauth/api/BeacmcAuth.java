@@ -16,6 +16,7 @@ import com.ubivashka.vk.api.VkApiPlugin;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.concurrent.ExecutorService;
 
 public interface BeacmcAuth {
 
@@ -36,8 +37,6 @@ public interface BeacmcAuth {
     BeacmcAuth setMessageProvider(MessageProvider messageProvider);
 
     Proxy getProxy();
-
-    VkApiPlugin getVkApiPlugin();
 
     TelegramConfig getTelegramConfig();
 
@@ -61,11 +60,11 @@ public interface BeacmcAuth {
 
     BeacmcAuth setProxy(Proxy proxy);
 
-    BeacmcAuth setVkApiPlugin(VkApiPlugin plugin);
-
     BeacmcAuth setLibraryProvider(LibraryProvider libraryProvider);
 
     BeacmcAuth setServerLogger(ServerLogger serverLogger);
 
     LibraryProvider getLibraryProvider();
+
+    ExecutorService getExecutorService();
 }

@@ -1,12 +1,13 @@
 package com.beacmc.beacmcauth.api.config;
 
+import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.database.DatabaseType;
 
 public interface DatabaseSettings {
 
     boolean isStopServerOnFailedConnection();
 
-    String getUrl();
+    String getUrl(BeacmcAuth plugin);
 
     DatabaseType getType();
 

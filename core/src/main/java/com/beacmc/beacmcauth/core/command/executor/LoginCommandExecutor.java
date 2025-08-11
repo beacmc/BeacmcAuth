@@ -8,7 +8,6 @@ import com.beacmc.beacmcauth.api.command.executor.CommandExecutor;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.player.ServerPlayer;
 
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class LoginCommandExecutor implements CommandExecutor {
@@ -31,7 +30,7 @@ public class LoginCommandExecutor implements CommandExecutor {
         final Config config = plugin.getConfig();
 
         if (!authManager.getAuthPlayers().containsKey(player.getName().toLowerCase())) {
-            player.sendMessage(config.getMessage("already-authed"));
+            player.sendMessage(config.getMessages().getAlreadyAuthed());
             return;
         }
 
@@ -39,12 +38,12 @@ public class LoginCommandExecutor implements CommandExecutor {
 
         future.thenAccept(protectedPlayer -> {
             if (!protectedPlayer.isRegister()) {
-                player.sendMessage(config.getMessage("not-register"));
+                player.sendMessage(config.getMessages().getNotRegistered());
                 return;
             }
 
             if (args.length < 1) {
-                player.sendMessage(config.getMessage("enter-password"));
+                player.sendMessage(config.getMessages().getEnterPassword());
                 return;
             }
 
@@ -52,14 +51,16 @@ public class LoginCommandExecutor implements CommandExecutor {
                 int attempts = authManager.getAuthPlayers().get(protectedPlayer.getLowercaseName());
                 authManager.getAuthPlayers().put(protectedPlayer.getLowercaseName(), attempts - 1);
 
-                player.sendMessage(config.getMessage("wrong-password", Map.of("%attempts%", String.valueOf(attempts - 1))));
+                player.sendMessage(config.getMessages().getWrongPassword()
+                        .replace("%attempts%", String.valueOf(attempts - 1)));
+
                 if (authManager.getAuthPlayers().get(protectedPlayer.getLowercaseName()) <= 0) {
-                    player.disconnect(config.getMessage("attempts-left"));
+                    player.disconnect(config.getMessages().getAttemptsLeft());
                 }
                 return;
             }
 
-            player.sendMessage(config.getMessage("login-success"));
+            player.sendMessage(config.getMessages().getLoginSuccess());
             authManager.getAuthPlayers().remove(protectedPlayer.getLowercaseName());
 
             if (config.isAzLinkIntegration()) {
@@ -68,7 +69,7 @@ public class LoginCommandExecutor implements CommandExecutor {
 
             if (!plugin.getSocialManager().startPlayerConfirmations(protectedPlayer)) {
                 authManager.performLogin(protectedPlayer);
-                authManager.connectPlayer(player, config.findServer(config.getGameServers()));
+                authManager.connectPlayer(player, config.findServer(config.getLobbyServers()));
             }
         });
     }

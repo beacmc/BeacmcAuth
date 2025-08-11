@@ -29,7 +29,7 @@ public class RegisterCommandExecutor implements CommandExecutor {
         final Config config = plugin.getConfig();
 
         if (!authManager.getAuthPlayers().containsKey(player.getName().toLowerCase())) {
-            player.sendMessage(config.getMessage("already-authed"));
+            player.sendMessage(config.getMessages().getAlreadyAuthed());
             return;
         }
 
@@ -39,34 +39,34 @@ public class RegisterCommandExecutor implements CommandExecutor {
 
         future.thenAccept(protectedPlayer -> {
             if (protectedPlayer.isRegister()) {
-                player.sendMessage(config.getMessage("already-register"));
+                player.sendMessage(config.getMessages().getAlreadyRegister());
                 return;
             }
 
             if (args.length < 2) {
-                player.sendMessage(config.getMessage("confirm-password"));
+                player.sendMessage(config.getMessages().getConfirmPassword());
                 return;
             }
 
             if (!args[0].equals(args[1])) {
-                player.sendMessage(config.getMessage("passwords-dont-match"));
+                player.sendMessage(config.getMessages().getPasswordsDontMatch());
                 return;
             }
 
             if (args[0].length() < minLength) {
-                player.sendMessage(config.getMessage("low-character-password"));
+                player.sendMessage(config.getMessages().getLowCharacterPassword());
                 return;
             }
 
             if (args[0].length() > maxLength) {
-                player.sendMessage(config.getMessage("high-character-password"));
+                player.sendMessage(config.getMessages().getHighCharacterPassword());
                 return;
             }
 
-            player.sendMessage(config.getMessage("register-success"));
+            player.sendMessage(config.getMessages().getRegisterSuccess());
             authManager.getAuthPlayers().remove(protectedPlayer.getLowercaseName());
             authManager.register(protectedPlayer, args[0]);
-            authManager.connectPlayer(player, config.findServer(config.getGameServers()));
+            authManager.connectPlayer(player, config.findServer(config.getLobbyServers()));
             authManager.onAzLinkRegister(player.getName(), player.getUUID(), args[0], player.getInetAddress());
         });
     }

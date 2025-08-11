@@ -42,12 +42,12 @@ public class ChangepasswordCommandExecutor implements CommandExecutor {
 
 
         if (args.length < 2) {
-            player.sendMessage(config.getMessage("change-password-command-usage"));
+            player.sendMessage(config.getMessages().getChangePasswordCommandUsage());
             return;
         }
 
         if (cooldown.isCooldown(player.getLowercaseName())) {
-            player.sendMessage(config.getMessage("cooldown"));
+            player.sendMessage(config.getMessages().getCooldown());
             return;
         }
 
@@ -56,22 +56,22 @@ public class ChangepasswordCommandExecutor implements CommandExecutor {
         CompletableFuture<ProtectedPlayer> future = authManager.getProtectedPlayer(player.getLowercaseName());
         future.thenAccept(protectedPlayer -> {
             if (!protectedPlayer.checkPassword(args[0])) {
-                player.sendMessage(config.getMessage("old-password-wrong"));
+                player.sendMessage(config.getMessages().getOldPasswordWrong());
                 return;
             }
 
             if (args[1].length() < minLength) {
-                player.sendMessage(config.getMessage("low-character-password"));
+                player.sendMessage(config.getMessages().getLowCharacterPassword());
                 return;
             }
 
             if (args[1].length() > maxLength) {
-                player.sendMessage(config.getMessage("high-character-password"));
+                player.sendMessage(config.getMessages().getHighCharacterPassword());
                 return;
             }
 
             if (args[1].equals(args[0])) {
-                player.sendMessage(config.getMessage("passwords-match"));
+                player.sendMessage(config.getMessages().getPasswordsMatch());
                 return;
             }
 
@@ -79,7 +79,7 @@ public class ChangepasswordCommandExecutor implements CommandExecutor {
                 try {
                     dao.createOrUpdate(protectedPlayer.setPassword(BCrypt.hashpw(args[1], BCrypt.gensalt(config.getBCryptRounds()))));
                     authManager.getPlayerCache().addOrUpdateCache(protectedPlayer);
-                    player.sendMessage(config.getMessage("change-password-success"));
+                    player.sendMessage(config.getMessages().getChangePasswordSuccess());
                     authManager.onAzLinkChangePassword(player.getName(), player.getUUID(), args[1]);
                 } catch (SQLException e) {
                     e.printStackTrace();

@@ -4,6 +4,7 @@ import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.cache.cooldown.AbstractCooldown;
 import com.beacmc.beacmcauth.api.config.social.SocialConfig;
+import com.beacmc.beacmcauth.api.config.social.VkontakteConfig;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
 import com.beacmc.beacmcauth.api.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.social.Social;
@@ -15,6 +16,7 @@ import com.beacmc.beacmcauth.api.social.keyboard.button.Button;
 import com.beacmc.beacmcauth.api.social.keyboard.button.ButtonType;
 import com.beacmc.beacmcauth.core.cache.cooldown.VkontakteCooldown;
 import com.beacmc.beacmcauth.core.util.runnable.VkontakteRunnable;
+import com.ubivashka.vk.api.VkApiPlugin;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.exceptions.ApiException;
@@ -24,7 +26,10 @@ import com.vk.api.sdk.objects.messages.KeyboardButtonAction;
 import com.vk.api.sdk.objects.messages.KeyboardButtonColor;
 import com.vk.api.sdk.objects.messages.TemplateActionTypeNames;
 import com.vk.api.sdk.queries.messages.MessagesSendQuery;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -32,30 +37,38 @@ import java.util.*;
 @ToString
 public class VkontakteSocial implements Social<VkApiClient, Integer> {
 
-    private final VkApiClient client;
     private final BeacmcAuth plugin;
     private final VkontakteCooldown cooldown;
-    private final GroupActor groupActor;
     private final Random random;
     private final ServerLogger logger;
 
-    public VkontakteSocial(BeacmcAuth plugin, VkApiClient client) {
-        this.client = client;
+    @Getter
+    @Setter
+    private VkApiPlugin vkApiPlugin;
+    private VkApiClient client;
+    private GroupActor groupActor;
+
+    public VkontakteSocial(BeacmcAuth plugin) {
         this.plugin = plugin;
         this.logger = plugin.getServerLogger();
         this.cooldown = VkontakteCooldown.getInstance();
-        this.groupActor = plugin.getVkApiPlugin().getVkApiProvider().getActor();
         this.random = new Random();
+    }
+
+    public void setup(@NotNull VkApiPlugin plugin) {
+        this.vkApiPlugin = plugin;
+        this.client = plugin.getVkApiProvider().getVkApiClient();
+        this.groupActor = plugin.getVkApiProvider().getActor();
         try {
             client.groups()
-                    .setSettings(plugin.getVkApiPlugin().getVkApiProvider().getActor(), plugin.getVkApiPlugin().getVkApiProvider().getActor().getGroupId())
+                    .setSettings(vkApiPlugin.getVkApiProvider().getActor(), vkApiPlugin.getVkApiProvider().getActor().getGroupId())
                     .botsCapabilities(true)
                     .botsStartButton(true)
                     .messages(true)
                     .execute();
 
             client.groups()
-                    .setLongPollSettings(plugin.getVkApiPlugin().getVkApiProvider().getActor(), plugin.getVkApiPlugin().getVkApiProvider().getActor().getGroupId())
+                    .setLongPollSettings(vkApiPlugin.getVkApiProvider().getActor(), vkApiPlugin.getVkApiProvider().getActor().getGroupId())
                     .apiVersion("5.131")
                     .messageNew(true)
                     .messageEvent(true)
@@ -74,7 +87,7 @@ public class VkontakteSocial implements Social<VkApiClient, Integer> {
 
     @Override
     public boolean isInit() {
-        return isEnabled();
+        return isEnabled() && vkApiPlugin != null;
     }
 
     @Override
@@ -161,7 +174,7 @@ public class VkontakteSocial implements Social<VkApiClient, Integer> {
     }
 
     @Override
-    public SocialConfig getSocialConfig() {
+    public VkontakteConfig getSocialConfig() {
         return plugin.getVkontakteConfig();
     }
 
@@ -198,7 +211,7 @@ public class VkontakteSocial implements Social<VkApiClient, Integer> {
         }
 
         if (confirmationPlayer == null || player.getVkontakte() == 0) {
-            serverPlayer.disconnect(plugin.getConfig().getMessage("internal-error"));
+            serverPlayer.disconnect(plugin.getConfig().getMessages().getInternalError());
             return false;
         }
 
@@ -206,17 +219,20 @@ public class VkontakteSocial implements Social<VkApiClient, Integer> {
 
         try {
             MessagesSendQuery query = client.messages().send(groupActor).peerId(player.getVkontakte());
-            query.message(getSocialConfig().getMessage("confirmation-message", Map.of("%name%", player.getLowercaseName(), "%ip%", serverPlayer.getInetAddress().getHostAddress())));
+            query.message(getSocialConfig().getMessages().getConfirmationMessage()
+                    .replace("%name%", player.getLowercaseName())
+                    .replace("%ip%", serverPlayer.getInetAddress().getHostAddress()));
+
             Keyboard keyboard = Keyboard.builder()
                     .buttons(List.of(List.of(
                             Button.builder()
                                     .type(ButtonType.SUCCESS)
-                                    .label(getSocialConfig().getMessage("confirmation-button-accept-text"))
+                                    .label(getSocialConfig().getMessages().getConfirmationButtonAcceptText())
                                     .callbackData("confirm-accept:" + player.getLowercaseName())
                                     .build(),
                             Button.builder()
                                     .type(ButtonType.DANGER)
-                                    .label(getSocialConfig().getMessage("confirmation-button-decline-text"))
+                                    .label(getSocialConfig().getMessages().getConfirmationButtonDeclineText())
                                     .callbackData("confirm-decline:" + player.getLowercaseName())
                                     .build()
                     )))
@@ -228,21 +244,16 @@ public class VkontakteSocial implements Social<VkApiClient, Integer> {
             query.randomId(random.nextInt()).execute();
         } catch (ApiException e) {
             if (e.getCode() == 901) {
-                serverPlayer.disconnect(plugin.getConfig().getMessage("vkontakte-private-messages-closed"));
+                serverPlayer.disconnect(plugin.getConfig().getMessages().getTelegramPrivateMessagesClosed());
             } else {
                 e.printStackTrace();
             }
         } catch (ClientException e) {
-            serverPlayer.disconnect(plugin.getConfig().getMessage("internal-error"));
+            serverPlayer.disconnect(plugin.getConfig().getMessages().getInternalError());
             e.printStackTrace();
             return false;
         }
         return true;
-    }
-
-    @Override
-    public String getGameConfigPrefixMessage() {
-        return "vkontakte-";
     }
 
     @Override

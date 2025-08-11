@@ -26,14 +26,14 @@ public class AccountListCommand implements SocialCommand {
         SocialConfig socialConfig = social.getSocialConfig();
 
         if (social.isCooldown(socialPlayer.getID())) {
-            socialPlayer.sendPrivateMessage(socialConfig.getMessage("cooldown"));
+            socialPlayer.sendPrivateMessage(socialConfig.getMessages().getCooldown());
             return;
         }
         social.createCooldown(socialPlayer.getID(), 6000L);
 
         List<ProtectedPlayer> accountLinked = social.getLinkedPlayersById(socialPlayer.getID());
         if (accountLinked.isEmpty()) {
-            socialPlayer.sendPrivateMessage(socialConfig.getMessage("accounts-empty"));
+            socialPlayer.sendPrivateMessage(socialConfig.getMessages().getAccountsEmpty());
             return;
         }
 
@@ -57,6 +57,6 @@ public class AccountListCommand implements SocialCommand {
         if (end < accountLinked.size())
             buttons.add(List.of(nextPageButton));
 
-        socialPlayer.sendPrivateMessage(socialConfig.getMessage("choose-account"), social.createKeyboard(new Keyboard(buttons)));
+        socialPlayer.sendPrivateMessage(socialConfig.getMessages().getChooseAccount(), social.createKeyboard(new Keyboard(buttons)));
     }
 }

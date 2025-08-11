@@ -1,7 +1,9 @@
 package com.beacmc.beacmcauth.velocity;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
+import com.beacmc.beacmcauth.api.social.SocialType;
 import com.beacmc.beacmcauth.core.BaseBeacmcAuth;
+import com.beacmc.beacmcauth.core.social.types.vkontakte.VkontakteSocial;
 import com.beacmc.beacmcauth.velocity.library.VelocityLibraryProvider;
 import com.beacmc.beacmcauth.velocity.logger.VelocityServerLogger;
 import com.beacmc.beacmcauth.velocity.message.VelocityMessageProvider;
@@ -61,10 +63,12 @@ public final class VelocityBeacmcAuth {
                 .setMessageProvider(new VelocityMessageProvider())
                 .setServerLogger(new VelocityServerLogger(beacmcAuth));
 
-        if (this.getVelocityProxyServer().getPluginManager().getPlugin("vk-api").isPresent()) {
-            beacmcAuth.setVkApiPlugin(VelocityVkApiPlugin.getInstance());
-        }
         beacmcAuth.onEnable();
+
+        VkontakteSocial vkSocial = (VkontakteSocial) beacmcAuth.getSocialManager().getSocialByType(SocialType.VKONTAKTE);
+        if (this.getVelocityProxyServer().getPluginManager().getPlugin("vk-api").isPresent() && vkSocial != null) {
+            vkSocial.setup(VelocityVkApiPlugin.getInstance());
+        }
 
         proxyServer.getEventManager().register(this, new AuthListener(beacmcAuth));
         proxyServer.getEventManager().register(this, new VkontakteListener(beacmcAuth));

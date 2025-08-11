@@ -35,6 +35,11 @@
             <version>2.20.0</version>
         </dependency>
         <dependency>
+            <groupId>de.exlll</groupId>
+            <artifactId>configlib-yaml</artifactId>
+            <version>4.6.1</version>
+        </dependency>
+        <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-config</artifactId>
             <version>1.21-R0.1-SNAPSHOT</version>

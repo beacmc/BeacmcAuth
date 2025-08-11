@@ -39,8 +39,8 @@ public class BaseDatabase implements Database {
 
         try {
             loadDatabaseLibrary(databaseSettings.getType().name().toLowerCase());
-            connectionSource = new JdbcConnectionSource(databaseSettings.getUrl(), databaseSettings.getUsername(), databaseSettings.getPassword());
-            protectedPlayerDao = new BaseProtectPlayerDao(connectionSource);
+            connectionSource = new JdbcConnectionSource(databaseSettings.getUrl(plugin), databaseSettings.getUsername(), databaseSettings.getPassword());
+            protectedPlayerDao = new BaseProtectPlayerDao(plugin, connectionSource);
             TableUtils.createTableIfNotExists(connectionSource, ProtectedPlayer.class);
             migrate();
         } catch (Throwable e) {
@@ -60,11 +60,11 @@ public class BaseDatabase implements Database {
     private void migrate() throws SQLException {
         if (!getExistingColumns("auth_players").contains("vkontakte")) {
             protectedPlayerDao.executeRaw("ALTER TABLE `auth_players` ADD COLUMN vkontakte INTEGER DEFAULT 0;");
-            protectedPlayerDao = new BaseProtectPlayerDao(connectionSource);
+            protectedPlayerDao = new BaseProtectPlayerDao(plugin, connectionSource);
         }
         if (!getExistingColumns("auth_players").contains("vkontakte_2fa")) {
             protectedPlayerDao.executeRaw("ALTER TABLE `auth_players` ADD COLUMN vkontakte_2fa BOOLEAN DEFAULT true;");
-            protectedPlayerDao = new BaseProtectPlayerDao(connectionSource);
+            protectedPlayerDao = new BaseProtectPlayerDao(plugin, connectionSource);
         }
     }
 
