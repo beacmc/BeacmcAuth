@@ -1,0 +1,8 @@
+name: BeacmcAuth
+version: '${project.version}'
+main: com.beacmc.beacmcauth.bungeecord.BungeeBeacmcAuth
+author: beacmc
+softDepends:
+  - LuckPerms
+  - VK-API
+  - AzLink

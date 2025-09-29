@@ -1,0 +1,18 @@
+[
+    {
+        "modid": "azlink",
+        "name": "AzLink",
+        "version": "1.3.8",
+        "description": "The plugin to link your Azuriom website with your server.",
+        "url": "https://azuriom.com",
+        "authorList": [
+            "Azuriom Team"
+        ],
+        "dependencies": [
+            "spongeapi"
+        ],
+        "requiredMods": [
+            "spongeapi"
+        ]
+    }
+]

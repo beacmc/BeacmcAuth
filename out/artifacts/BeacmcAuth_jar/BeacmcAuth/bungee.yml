@@ -1,0 +1,8 @@
+name: BeacmcAuth
+version: '2.0-BETA'
+main: com.beacmc.beacmcauth.bungeecord.BungeeBeacmcAuth
+author: beacmc
+softDepends:
+  - LuckPerms
+  - VK-API
+  - AzLink

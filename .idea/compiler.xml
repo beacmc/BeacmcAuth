@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+    </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="BeacmcAuth" options="-proc:none" />
+      <module name="api" options="-proc:none" />
+      <module name="bungeecord" options="-proc:none" />
+      <module name="core" options="-proc:none" />
+      <module name="velocity" options="-proc:none" />
+    </option>
+  </component>
+</project>
