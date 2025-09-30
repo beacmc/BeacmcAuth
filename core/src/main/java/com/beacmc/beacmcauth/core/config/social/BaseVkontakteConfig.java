@@ -5,6 +5,7 @@ import com.beacmc.beacmcauth.api.config.loader.ConfigLoader;
 import com.beacmc.beacmcauth.api.config.loader.ConfigValue;
 import com.beacmc.beacmcauth.api.config.social.SocialMessages;
 import com.beacmc.beacmcauth.api.config.social.VkontakteConfig;
+import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
 import lombok.Getter;
 import net.md_5.bungee.config.ConfigurationProvider;
@@ -26,11 +27,16 @@ public class BaseVkontakteConfig implements VkontakteConfig {
     private Integer codeLength = 6;
     private Integer passwordResetLength = 21;
     private Integer timePerConfirm = 60;
+    @Comment({"", "Maximum number of links per social network user"})
     private Integer maxLink = 3;
+    @Comment({"", "Command prefixes"})
     private String linkCommand = "!link";
     private String accountsCommand = "!accounts";
+    @Comment({"", "Characters from which codes and passwords will be created"})
     private String codeChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private String resetPasswordChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789#+=-;:@!$%";
+
+    @Comment("")
     private Messages messages = new Messages();
 
     @Getter

@@ -2,6 +2,7 @@ package com.beacmc.beacmcauth.core.config.social;
 
 import com.beacmc.beacmcauth.api.config.social.DiscordConfig;
 import com.beacmc.beacmcauth.api.config.social.SocialMessages;
+import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
 import lombok.Getter;
 import net.dv8tion.jda.api.entities.Activity;
@@ -18,15 +19,19 @@ public class BaseDiscordConfig implements DiscordConfig {
     private Integer codeLength = 6;
     private Integer passwordResetLength = 21;
     private Integer timePerConfirm = 60;
+    @Comment({"", "Maximum number of links per social network user"})
     private Integer maxLink = 3;
+    @Comment({"", "Command prefixes"})
     private String linkCommand = "!link";
     private String accountsCommand = "!accounts";
+    @Comment({"", "Characters from which codes and passwords will be created"})
+    private String codeChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    private String resetPasswordChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789#+=-;:@!$%";
     private boolean activityEnabled = true;
     private Activity.ActivityType activityType = Activity.ActivityType.PLAYING;
     private String activityText = "BeacmcAuth";
     private String activityUrl = "https://twitch.tv/beacmc_";
-    private String codeChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    private String resetPasswordChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789#+=-;:@!$%";
+    @Comment("")
     private Messages messages = new Messages();
 
     @Getter

@@ -5,6 +5,7 @@ import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.config.ConfigMessages;
 import com.beacmc.beacmcauth.api.config.DatabaseSettings;
 import com.beacmc.beacmcauth.api.server.Server;
+import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
 import de.exlll.configlib.Ignore;
 import lombok.Getter;
@@ -20,21 +21,30 @@ public class BaseConfig implements Config {
 
     private Integer sessionTime = 60;
     private boolean debugEnabled = false;
+    @Comment({"", "Read more on the website: https://azuriom.com"})
     private boolean azLinkIntegration = false;
     private Integer timePerLogin = 60;
     private Integer timePerRegister = 60;
+    @Comment({"", "A parameter of the bcrypt password hashing algorithm that determines", "the computational cost and, consequently, the time required to compute the hash."})
     private Integer bCryptRounds = 12;
     private Integer passwordMinLength = 8;
     private Integer passwordMaxLength = 72;
     private Integer passwordAttempts = 3;
+
+    @Comment({"", "Time unit types: DAYS, HOURS, MINUTES, SECONDS, MILLISECONDS, MICROSECONDS, NANOSECONDS"})
     private TimeUnit premiumCacheTimeUnit = TimeUnit.HOURS;
     private long premiumCacheTimeUnitValue = 1;
     private TimeUnit lifetimeOfTemporaryPremiumVerificationTimeUnit = TimeUnit.MINUTES;
     private long lifetimeOfTemporaryPremiumVerificationTimeUnitValue = 3;
+
+    @Comment({"", "Authorization servers and server lobby.", "Creation format: server-name:maximum-online"})
     private List<String> authServers = List.of("auth-1:100", "auth-2:100");
-    private String linkCommand = "link";
-    private List<String> disabledServers = List.of("anarchy-1", "anarchy-2");
     private List<String> lobbyServers = List.of("lobby-1:100", "lobby-2:100");
+    @Comment("")
+    private String linkCommand = "link";
+    @Comment({"", "Servers that cannot be accessed during authorization.", "Please observe the case sensitivity of server names!"})
+    private List<String> disabledServers = List.of("anarchy-1", "anarchy-2");
+    @Comment({"", "Commands available upon authorization and registration"})
     private List<String> whitelistCommands = List.of("/l", "/log", "/login", "/reg", "/register");
     private boolean nameCaseControl = true;
     private Pattern nicknameRegex = Pattern.compile("[a-zA-Z0-9_]*");
