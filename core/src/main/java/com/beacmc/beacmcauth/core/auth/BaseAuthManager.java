@@ -127,6 +127,7 @@ public class BaseAuthManager implements AuthManager {
                             protectedPlayer.setOnlineUuid(onlineUuid);
                         }
                         premiumPlayers.addOrUpdateCache(new PremiumPlayer(premiumPlayer.getLowercaseName(), false, 0));
+                        connectGameServer(player);
                     }
 
                     logger.debug("Automatic login for player(%s) with premium status".formatted(player.getName()));
@@ -151,7 +152,7 @@ public class BaseAuthManager implements AuthManager {
 
                 authorizationPlayers.put(player.getLowercaseName(), config.getPasswordAttempts());
                 new LoginRunnable(plugin, player);
-                this.connectPlayer(player, config.findServer(config.getAuthServers()));
+                connectAuthServer(player);
             } catch (Throwable e) {
                 player.disconnect(config.getMessages().getInternalError());
                 e.printStackTrace();
