@@ -12,7 +12,7 @@
     <parent>
         <groupId>com.beacmc.beacmcauth</groupId>
         <artifactId>BeacmcAuth</artifactId>
-        <version>2.1-BETA</version>
+        <version>2.2-BETA</version>
     </parent>
 
     <repositories>
@@ -40,12 +40,7 @@
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-api</artifactId>
-            <version>1.21-R0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>net.md-5</groupId>
-            <artifactId>bungeecord-config</artifactId>
-            <version>1.21-R0.1-SNAPSHOT</version>
+            <version>1.21-R0.4</version>
         </dependency>
         <dependency>
             <groupId>com.beacmc.beacmcauth</groupId>
