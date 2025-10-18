@@ -1,1 +1,0 @@
-{"id":"beacmcauth","name":"BeacmcAuth","version":"v1.4-BETA","authors":["beacmc"],"dependencies":[{"id":"luckperms","optional":true},{"id":"vk-api","optional":true},{"id":"packetevents","optional":true},{"id":"azlink","optional":true}],"main":"com.beacmc.beacmcauth.velocity.VelocityBeacmcAuth"}
