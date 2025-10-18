@@ -24,6 +24,7 @@ public class DiscordRunnable implements Runnable {
     private final TaskScheduler task;
     private final SocialManager manager;
     private final ProtectedPlayer protectedPlayer;
+    private final int messageSendDelay;
     private Integer timer;
 
     public DiscordRunnable(BeacmcAuth plugin, ServerPlayer player, ProtectedPlayer protectedPlayer) {
@@ -40,6 +41,7 @@ public class DiscordRunnable implements Runnable {
         title = config.getMessages().getDiscordConfirmationTitle();
         subtitle = config.getMessages().getDiscordConfirmationSubtitle();
         message = config.getMessages().getDiscordConfirmationChat();
+        messageSendDelay = discordConfig.getMessageSendDelaySeconds();
 
         in = 0;
         stay = 25;
@@ -76,7 +78,9 @@ public class DiscordRunnable implements Runnable {
             return;
         }
 
-        player.sendMessage(message);
-        player.sendTitle(title, subtitle, in, stay, out);
+        if (timer % messageSendDelay == 0) {
+            player.sendMessage(message);
+            player.sendTitle(title, subtitle, in, stay, out);
+        }
     }
 }

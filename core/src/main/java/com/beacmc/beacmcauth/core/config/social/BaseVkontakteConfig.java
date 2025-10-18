@@ -1,19 +1,10 @@
 package com.beacmc.beacmcauth.core.config.social;
 
-import com.beacmc.beacmcauth.api.BeacmcAuth;
-import com.beacmc.beacmcauth.api.config.loader.ConfigLoader;
-import com.beacmc.beacmcauth.api.config.loader.ConfigValue;
 import com.beacmc.beacmcauth.api.config.social.SocialMessages;
 import com.beacmc.beacmcauth.api.config.social.VkontakteConfig;
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
 import lombok.Getter;
-import net.md_5.bungee.config.ConfigurationProvider;
-import net.md_5.bungee.config.YamlConfiguration;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Map;
 
 @Getter
 @Configuration
@@ -35,6 +26,7 @@ public class BaseVkontakteConfig implements VkontakteConfig {
     @Comment({"", "Characters from which codes and passwords will be created"})
     private String codeChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private String resetPasswordChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789#+=-;:@!$%";
+    private int messageSendDelaySeconds = 3;
 
     @Comment("")
     private Messages messages = new Messages();

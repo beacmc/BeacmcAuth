@@ -14,13 +14,14 @@ public class RegisterRunnable implements Runnable {
     private final String title;
     private final String subtitle;
     private final Integer in, stay, out;
-    private final String registerMessage;
+    private final String message;
     private final AuthManager authManager;
     private final Integer maxTimeAuth;
     private final ServerPlayer player;
     private final BeacmcAuth plugin;
     private final TaskScheduler task;
     private final ServerLogger logger;
+    private final int messageSendDelay;
     private Integer timer;
 
     public RegisterRunnable(BeacmcAuth plugin, ServerPlayer player) {
@@ -34,7 +35,8 @@ public class RegisterRunnable implements Runnable {
 
         title = config.getMessages().getRegisterTitle();
         subtitle = config.getMessages().getRegisterSubtitle();
-        registerMessage = config.getMessages().getRegisterChat();
+        message = config.getMessages().getRegisterChat();
+        messageSendDelay = config.getRegisterMessageSendDelaySeconds();
         in = 0;
         stay = 25;
         out = 0;
@@ -67,7 +69,9 @@ public class RegisterRunnable implements Runnable {
             return;
         }
 
-        player.sendMessage(registerMessage);
-        player.sendTitle(title, subtitle, in, stay, out);
+        if (timer % messageSendDelay == 0) {
+            player.sendMessage(message);
+            player.sendTitle(title, subtitle, in, stay, out);
+        }
     }
 }

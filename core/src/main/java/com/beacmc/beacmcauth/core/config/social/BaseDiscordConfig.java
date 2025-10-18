@@ -27,6 +27,7 @@ public class BaseDiscordConfig implements DiscordConfig {
     @Comment({"", "Characters from which codes and passwords will be created"})
     private String codeChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private String resetPasswordChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789#+=-;:@!$%";
+    private int messageSendDelaySeconds = 3;
     private boolean activityEnabled = true;
     private Activity.ActivityType activityType = Activity.ActivityType.PLAYING;
     private String activityText = "BeacmcAuth";

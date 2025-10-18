@@ -24,6 +24,7 @@ public class TelegramRunnable implements Runnable {
     private final BeacmcAuth plugin;
     private final TaskScheduler task;
     private final ProtectedPlayer protectedPlayer;
+    private final int messageSendDelay;
     private Integer timer;
 
     public TelegramRunnable(BeacmcAuth plugin, ServerPlayer player, ProtectedPlayer protectedPlayer) {
@@ -44,6 +45,7 @@ public class TelegramRunnable implements Runnable {
         in = 0;
         stay = 25;
         out = 0;
+        messageSendDelay = telegramConfig.getMessageSendDelaySeconds();
 
         task = plugin.getProxy().runTaskDelay(this, 1, TimeUnit.SECONDS);
     }
@@ -76,7 +78,9 @@ public class TelegramRunnable implements Runnable {
             return;
         }
 
-        player.sendMessage(message);
-        player.sendTitle(title, subtitle, in, stay, out);
+        if (timer % messageSendDelay == 0) {
+            player.sendMessage(message);
+            player.sendTitle(title, subtitle, in, stay, out);
+        }
     }
 }

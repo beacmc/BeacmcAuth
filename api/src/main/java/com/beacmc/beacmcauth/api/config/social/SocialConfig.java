@@ -27,6 +27,8 @@ public interface SocialConfig {
 
     boolean isDisableUnlink();
 
+    int getMessageSendDelaySeconds();
+
     Integer getPasswordResetLength();
 
     String getLinkCommand();

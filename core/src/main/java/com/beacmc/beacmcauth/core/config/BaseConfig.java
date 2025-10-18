@@ -25,6 +25,8 @@ public class BaseConfig implements Config {
     private boolean azLinkIntegration = false;
     private Integer timePerLogin = 60;
     private Integer timePerRegister = 60;
+    private int registerMessageSendDelaySeconds = 3;
+    private int loginMessageSendDelaySeconds = 3;
     @Comment({"", "A parameter of the bcrypt password hashing algorithm that determines", "the computational cost and, consequently, the time required to compute the hash."})
     private Integer bCryptRounds = 12;
     private Integer passwordMinLength = 8;

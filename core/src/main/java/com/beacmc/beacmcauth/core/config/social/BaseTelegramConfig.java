@@ -26,6 +26,7 @@ public class BaseTelegramConfig implements TelegramConfig {
     @Comment({"", "Characters from which codes and passwords will be created"})
     private String codeChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private String resetPasswordChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789#+=-;:@!$%";
+    private int messageSendDelaySeconds = 3;
 
     @Comment("")
     private Messages messages = new Messages();
