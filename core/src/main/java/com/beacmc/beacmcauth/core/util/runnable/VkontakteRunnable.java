@@ -4,6 +4,7 @@ import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.config.social.TelegramConfig;
+import com.beacmc.beacmcauth.api.config.social.VkontakteConfig;
 import com.beacmc.beacmcauth.api.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.scheduler.TaskScheduler;
 import com.beacmc.beacmcauth.api.social.SocialManager;
@@ -32,11 +33,11 @@ public class VkontakteRunnable implements Runnable {
         this.manager = plugin.getSocialManager();
         this.protectedPlayer = protectedPlayer;
         Config config = plugin.getConfig();
-        TelegramConfig telegramConfig = plugin.getTelegramConfig();
+        VkontakteConfig vkontakteConfig = plugin.getVkontakteConfig();
 
         timer = 0;
 
-        maxTimeAuth = telegramConfig.getTimePerConfirm();
+        maxTimeAuth = vkontakteConfig.getTimePerConfirm();
         title = config.getMessages().getVkontakteConfirmationTitle();
         subtitle = config.getMessages().getVkontakteConfirmationSubtitle();
         message = config.getMessages().getVkontakteConfirmationChat();
