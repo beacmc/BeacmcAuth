@@ -61,6 +61,7 @@ public class LoginCommandExecutor implements CommandExecutor {
             }
 
             player.sendMessage(config.getMessages().getLoginSuccess());
+            player.sendTitle("&7", "&7", 0, 25, 0);
             authManager.getAuthPlayers().remove(protectedPlayer.getLowercaseName());
 
             if (config.isAzLinkIntegration()) {
