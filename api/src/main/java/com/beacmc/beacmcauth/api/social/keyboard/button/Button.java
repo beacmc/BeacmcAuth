@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 @Builder
+@Configuration
 public class Button {
 
     String label;
