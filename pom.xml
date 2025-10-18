@@ -16,7 +16,7 @@
 
     <groupId>com.beacmc.beacmcauth</groupId>
     <artifactId>BeacmcAuth</artifactId>
-    <version>2.2-BETA</version>
+    <version>2.3-BETA</version>
     <packaging>pom</packaging>
 
     <name>BeacmcAuth</name>

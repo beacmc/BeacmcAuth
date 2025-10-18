@@ -32,7 +32,7 @@ import java.nio.file.Path;
 @Plugin(
         id = "beacmcauth",
         name = "BeacmcAuth",
-        version = "v2.1-BETA",
+        version = "v2.3-BETA",
         authors = {"beacmc"},
         dependencies = {
                 @Dependency(id = "luckperms", optional = true),
