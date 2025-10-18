@@ -1,0 +1,52 @@
+# Compiled class files
+*.class
+
+# Build directories
+/build/
+/out/
+/target/
+/bin/
+
+# Maven
+.mvn/
+!.mvn/wrapper/maven-wrapper.jar
+
+# Gradle
+.gradle/
+build/
+
+# Logs
+*.log
+
+# IDE files
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# Eclipse
+.project
+.classpath
+.settings/
+.metadata/
+
+# VS Code
+.vscode/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.swp
+
+# Java package caches
+*.jar
+*.war
+*.ear
+
+# Secrets/configs (если есть)
+config.yml
+*.secret
