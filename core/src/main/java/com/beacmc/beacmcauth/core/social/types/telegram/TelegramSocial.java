@@ -21,16 +21,16 @@ import com.beacmc.beacmcauth.core.util.runnable.TelegramRunnable;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
+import com.pengrad.telegrambot.model.request.KeyboardButton;
+import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.BaseResponse;
 import lombok.ToString;
 
+import java.sql.Array;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @ToString
 public class TelegramSocial implements Social<TelegramBot, Long> {
@@ -171,21 +171,7 @@ public class TelegramSocial implements Social<TelegramBot, Long> {
                 .replace("%name%", player.getLowercaseName())
                 .replace("%ip%", serverPlayer.getInetAddress().getHostAddress()));
 
-        Keyboard keyboard = Keyboard.builder()
-                .buttons(List.of(List.of(
-                        Button.builder()
-                                .type(ButtonType.SUCCESS)
-                                .label(getSocialConfig().getMessages().getConfirmationButtonAcceptText())
-                                .callbackData("confirm-accept:" + player.getLowercaseName())
-                                .build(),
-                        Button.builder()
-                                .type(ButtonType.DANGER)
-                                .label(getSocialConfig().getMessages().getConfirmationButtonDeclineText())
-                                .callbackData("confirm-decline:" + player.getLowercaseName())
-                                .build()
-                )))
-                .build();
-        Object objectKeyboard = createKeyboard(keyboard);
+        Object objectKeyboard = createKeyboard(getSocialConfig().getKeyboards().createConfirmationKeyboard(player));
         if (objectKeyboard instanceof InlineKeyboardMarkup markup) {
             sendMessage.replyMarkup(markup);
         }

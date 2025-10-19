@@ -193,22 +193,9 @@ public class DiscordSocial implements Social<JDA, Long> {
                 .replace("%ip%", serverPlayer.getInetAddress().getHostAddress());
 
         DiscordPlayer discordPlayer = new DiscordPlayer(user);
-
-        Keyboard keyboard = Keyboard.builder()
-                .buttons(List.of(List.of(
-                        com.beacmc.beacmcauth.api.social.keyboard.button.Button.builder()
-                                .type(ButtonType.SUCCESS)
-                                .label(getSocialConfig().getMessages().getConfirmationButtonAcceptText())
-                                .callbackData("confirm-accept:" + player.getLowercaseName())
-                                .build(),
-                        com.beacmc.beacmcauth.api.social.keyboard.button.Button.builder()
-                                .type(ButtonType.DANGER)
-                                .label(getSocialConfig().getMessages().getConfirmationButtonDeclineText())
-                                .callbackData("confirm-decline:" + player.getLowercaseName())
-                                .build()
-                )))
-                .build();
-        discordPlayer.sendPrivateMessage(message, createKeyboard(keyboard));
+        
+        Object objectKeyboard = createKeyboard(getSocialConfig().getKeyboards().createConfirmationKeyboard(player));
+        discordPlayer.sendPrivateMessage(message, objectKeyboard);
         return true;
     }
 

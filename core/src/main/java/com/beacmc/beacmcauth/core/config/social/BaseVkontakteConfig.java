@@ -2,6 +2,7 @@ package com.beacmc.beacmcauth.core.config.social;
 
 import com.beacmc.beacmcauth.api.config.social.SocialMessages;
 import com.beacmc.beacmcauth.api.config.social.VkontakteConfig;
+import com.beacmc.beacmcauth.core.config.social.settings.BaseKeyboardsSettings;
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
 import lombok.Getter;
@@ -27,6 +28,7 @@ public class BaseVkontakteConfig implements VkontakteConfig {
     private String codeChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private String resetPasswordChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789#+=-;:@!$%";
     private int messageSendDelaySeconds = 3;
+    private BaseKeyboardsSettings keyboards = new BaseKeyboardsSettings();
 
     @Comment("")
     private Messages messages = new Messages();

@@ -1,7 +1,9 @@
 package com.beacmc.beacmcauth.api.social.keyboard.button;
 
+import de.exlll.configlib.Configuration;
 import lombok.*;
 
+import java.util.Map;
 
 @Getter
 @Setter

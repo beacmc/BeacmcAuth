@@ -31,6 +31,10 @@ public interface Config {
 
     DatabaseSettings getDatabaseSettings();
 
+    int getRegisterMessageSendDelaySeconds();
+
+    int getLoginMessageSendDelaySeconds();
+
     Integer getPasswordMinLength();
 
     Integer getSessionTime();

@@ -2,6 +2,7 @@ package com.beacmc.beacmcauth.core.config.social;
 
 import com.beacmc.beacmcauth.api.config.social.DiscordConfig;
 import com.beacmc.beacmcauth.api.config.social.SocialMessages;
+import com.beacmc.beacmcauth.core.config.social.settings.BaseKeyboardsSettings;
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
 import lombok.Getter;
@@ -28,6 +29,7 @@ public class BaseDiscordConfig implements DiscordConfig {
     private String codeChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private String resetPasswordChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789#+=-;:@!$%";
     private int messageSendDelaySeconds = 3;
+    private BaseKeyboardsSettings keyboards = new BaseKeyboardsSettings();
     private boolean activityEnabled = true;
     private Activity.ActivityType activityType = Activity.ActivityType.PLAYING;
     private String activityText = "BeacmcAuth";

@@ -36,36 +36,11 @@ public class AccountPageClick implements ButtonClickListener {
             final List<ProtectedPlayer> accountLinked = social.getLinkedPlayersById(socialPlayer.getID());
             final int currentPage = Integer.parseInt(args[1]);
             final int page = button.getCallbackData().startsWith("previous") ? currentPage - 1 : currentPage + 1;
-            final int start = page * 4;
-            final int end = Math.min(4, accountLinked.size());
-            final List<ProtectedPlayer> pageContent = accountLinked.subList(start, end);
 
-            List<List<Button>> buttons = new ArrayList<>();
-            pageContent.forEach(account -> buttons.add(List.of(
-                    Button.builder()
-                            .label(account.getRealName())
-                            .type(ButtonType.SECONDARY)
-                            .callbackData("account:%s".formatted(account.getLowercaseName()))
-                            .build()
-            )));
-            Button nextPageButton = Button.builder()
-                    .type(ButtonType.PRIMARY)
-                    .label("⏩")
-                    .callbackData("next:%d".formatted(page))
-                    .build();
-            Button previousPageButton = Button.builder()
-                    .label("⏪")
-                    .callbackData("previous:%d".formatted(page))
-                    .type(ButtonType.PRIMARY)
-                    .build();
-
-            List<Button> pageButtons = new ArrayList<>();
-
-            if (page > 0) pageButtons.add(previousPageButton);
-            if (end < accountLinked.size()) pageButtons.add(nextPageButton);
-            if (!pageButtons.isEmpty()) buttons.add(pageButtons);
-
-            socialPlayer.sendPrivateMessage(socialConfig.getMessages().getChooseAccount(), social.createKeyboard(new Keyboard(buttons)));
+            Keyboard keyboard = socialConfig.getKeyboards().createAccountsListKeyboard(accountLinked, page);
+            if (keyboard != null) {
+                socialPlayer.sendPrivateMessage(socialConfig.getMessages().getChooseAccount(), social.createKeyboard(keyboard));
+            }
         }
 
         if (button.getCallbackData().startsWith("account")) {
@@ -93,46 +68,7 @@ public class AccountPageClick implements ButtonClickListener {
                         .replace("%reg_ip%", player.getRegisterIp())
                         .replace("%is_online%", plugin.getProxy().getPlayer(player.getUuid()) == null ? playerOffline : playerOnline);
 
-
-                String id = player.getLowercaseName();
-
-                List<List<Button>> buttons = new ArrayList<>();
-                buttons.add(List.of(
-                        Button.builder()
-                                .label(socialConfig.getMessages().getAccount2faToggleButton())
-                                .callbackData("toggle-2fa:" + id)
-                                .type(ButtonType.SECONDARY)
-                                .build(),
-                        Button.builder()
-                                .label(socialConfig.getMessages().getAccountResetPasswordButton())
-                                .callbackData("reset-password:" + id)
-                                .type(ButtonType.SECONDARY)
-                                .build()
-                ));
-                buttons.add(List.of(
-                        Button.builder()
-                                .label(socialConfig.getMessages().getAccountBanToggleButton())
-                                .callbackData("toggle-ban:" + id)
-                                .type(ButtonType.SECONDARY)
-                                .build(),
-                        Button.builder()
-                                .label(socialConfig.getMessages().getAccountKickButton())
-                                .callbackData("kick:" + id)
-                                .type(ButtonType.SECONDARY)
-                                .build()
-                ));
-
-                if (!socialConfig.isDisableUnlink()) {
-                    buttons.add(List.of(
-                            Button.builder()
-                                    .label(socialConfig.getMessages().getAccountUnlinkButton())
-                                    .callbackData("unlink:" + id)
-                                    .type(ButtonType.DANGER)
-                                    .build()
-                    ));
-                }
-
-                socialPlayer.sendPrivateMessage(message, social.createKeyboard(new Keyboard(buttons)));
+                socialPlayer.sendPrivateMessage(message, social.createKeyboard(socialConfig.getKeyboards().createAccountManageKeyboard(player)));
             });
         }
     }

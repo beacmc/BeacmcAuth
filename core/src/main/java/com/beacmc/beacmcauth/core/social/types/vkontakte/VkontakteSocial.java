@@ -220,21 +220,8 @@ public class VkontakteSocial implements Social<VkApiClient, Integer> {
                     .replace("%name%", player.getLowercaseName())
                     .replace("%ip%", serverPlayer.getInetAddress().getHostAddress()));
 
-            Keyboard keyboard = Keyboard.builder()
-                    .buttons(List.of(List.of(
-                            Button.builder()
-                                    .type(ButtonType.SUCCESS)
-                                    .label(getSocialConfig().getMessages().getConfirmationButtonAcceptText())
-                                    .callbackData("confirm-accept:" + player.getLowercaseName())
-                                    .build(),
-                            Button.builder()
-                                    .type(ButtonType.DANGER)
-                                    .label(getSocialConfig().getMessages().getConfirmationButtonDeclineText())
-                                    .callbackData("confirm-decline:" + player.getLowercaseName())
-                                    .build()
-                    )))
-                    .build();
-            Object objectKeyboard = createKeyboard(keyboard);
+
+            Object objectKeyboard = createKeyboard(getSocialConfig().getKeyboards().createConfirmationKeyboard(player));
             if (objectKeyboard instanceof com.vk.api.sdk.objects.messages.Keyboard markup) {
                 query.keyboard(markup);
             }
