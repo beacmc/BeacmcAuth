@@ -13,20 +13,17 @@ import com.beacmc.beacmcauth.velocity.server.command.*;
 import com.beacmc.beacmcauth.velocity.server.listener.AuthListener;
 import com.beacmc.beacmcauth.velocity.server.listener.VkontakteListener;
 import com.google.inject.Inject;
-import com.sun.jdi.InvocationException;
-import com.ubivashka.vk.velocity.VelocityVkApiPlugin;
 import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
+import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import org.slf4j.Logger;
 
-import java.lang.reflect.InvocationTargetException;
-import java.nio.InvalidMarkException;
 import java.nio.file.Path;
 
 @Plugin(
@@ -72,10 +69,10 @@ public final class VelocityBeacmcAuth {
         VkontakteSocial vkSocial = (VkontakteSocial) beacmcAuth.getSocialManager().getSocialByType(SocialType.VKONTAKTE);
         if (this.getVelocityProxyServer().getPluginManager().getPlugin("vk-api").isPresent() && vkSocial != null) {
             try {
-                Class<?> vkApiClass = Class.forName("com.ubivashka.vk.api.VkApiPlugin");
-                Object instance = vkApiClass.getMethod("getInstance").invoke(null);
+                Class.forName("com.ubivashka.vk.api.VkApiPlugin");
+                Object instance = proxyServer.getPluginManager().getPlugin("vk-api").flatMap(PluginContainer::getInstance).orElse(null);
                 vkSocial.setup(instance);
-            } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
+            } catch (Exception ignored) {
             }
             proxyServer.getEventManager().register(this, new VkontakteListener(beacmcAuth));
         }
