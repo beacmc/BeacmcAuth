@@ -6,8 +6,8 @@ import com.beacmc.beacmcauth.api.social.command.SocialCommandRegistry;
 import com.beacmc.beacmcauth.api.social.confirmation.ConfirmationPlayer;
 import com.beacmc.beacmcauth.api.social.link.LinkManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 public interface SocialManager {

@@ -10,7 +10,7 @@ import com.beacmc.beacmcauth.api.database.dao.ProtectedPlayerDao;
 import com.beacmc.beacmcauth.api.player.ServerPlayer;
 import org.mindrot.jbcrypt.BCrypt;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.sql.SQLException;
 
 public class AuthCommandExecutor implements CommandExecutor {

@@ -1,0 +1,1 @@
+package com.beacmc.beacmcauth.api.auth.premium;

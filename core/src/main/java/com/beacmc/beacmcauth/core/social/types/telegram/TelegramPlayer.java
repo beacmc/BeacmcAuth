@@ -7,7 +7,7 @@ import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.ToString;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 @ToString
 public class TelegramPlayer implements SocialPlayer<User, Long> {

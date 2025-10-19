@@ -15,8 +15,16 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 
+/**
+ * Interaction manager of all authorization functions
+ */
 public interface AuthManager {
 
+    /**
+     * Player processing when entering the server
+     *
+     * @param player - Proxy ServerPlayer
+     */
     void onLogin(ServerPlayer player);
 
     <T> void onPremiumLogin(String playerName, PremiumProvider<T> premiumProvider, T obj);

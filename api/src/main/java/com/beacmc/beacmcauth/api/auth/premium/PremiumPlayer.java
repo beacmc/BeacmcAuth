@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * Temporary or permanent premium player
+ */
 @Getter
 @Setter
 @ToString
@@ -21,6 +24,9 @@ public class PremiumPlayer implements CachedData<String> {
         return lowercaseName;
     }
 
+    /**
+    * @return true, if templateLifeTimeMillis is greater than the current time.
+    */
     public boolean isValidTemplateTime() {
         return templateLifetimeMillis >= System.currentTimeMillis();
     }
