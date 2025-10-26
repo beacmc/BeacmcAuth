@@ -55,7 +55,25 @@ public class VelocityServerPlayer implements ServerPlayer {
     @Override
     public void connect(Server server) {
         logger.debug("Create connection request. Player(" + player.getUsername() + "), Server(" + server.getName() + ")");
-        player.createConnectionRequest(server.getOriginalServer()).fireAndForget();
+        player.createConnectionRequest(server.getOriginalServer()).connect().whenComplete((result, throwable) -> {
+            if (throwable != null) {
+                logger.warn("%s failed connect to server %s".formatted(player.getUsername(), server.getName()));
+                logger.warn(throwable.getMessage());
+                return;
+            }
+
+            switch (result.getStatus()) {
+                case SUCCESS:
+                case ALREADY_CONNECTED:
+                case CONNECTION_IN_PROGRESS:
+                    break;
+
+                case SERVER_DISCONNECTED:
+                case CONNECTION_CANCELLED:
+                    logger.warn("%s failed connect to server %s".formatted(player.getUsername(), server.getName()));
+                    break;
+            }
+        });
     }
 
     @Override
