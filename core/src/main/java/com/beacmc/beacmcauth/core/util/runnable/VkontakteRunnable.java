@@ -67,6 +67,7 @@ public class VkontakteRunnable implements Runnable {
                 || confirmationPlayer.getCurrentConfirmation().getType() != SocialType.VKONTAKTE
                 || !player.isConnected()) {
             task.cancel();
+            plugin.getSongManager().stop(player.getUUID());
             return;
         }
 
@@ -76,6 +77,7 @@ public class VkontakteRunnable implements Runnable {
             player.disconnect(config.getMessages().getTimeIsUp());
             manager.getConfirmationPlayers().remove(confirmationPlayer);
             task.cancel();
+            plugin.getSongManager().stop(player.getUUID());
             return;
         }
 

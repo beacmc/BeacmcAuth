@@ -70,6 +70,7 @@ public class LoginCommandExecutor implements CommandExecutor {
 
             if (!plugin.getSocialManager().startPlayerConfirmations(protectedPlayer)) {
                 authManager.performLogin(protectedPlayer);
+                plugin.getSongManager().stop(player.getUUID());
                 authManager.connectPlayer(player, config.findServer(config.getLobbyServers()));
             }
         });

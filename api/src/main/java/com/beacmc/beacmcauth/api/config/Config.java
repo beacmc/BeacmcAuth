@@ -23,6 +23,8 @@ public interface Config {
 
     String getLinkCommand();
 
+    boolean isNbsSongSupport();
+
     List<String> getWhitelistCommands();
 
     Integer getPasswordAttempts();

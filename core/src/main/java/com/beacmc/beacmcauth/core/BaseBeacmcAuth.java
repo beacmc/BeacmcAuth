@@ -25,11 +25,13 @@ import com.beacmc.beacmcauth.core.config.social.BaseTelegramConfig;
 import com.beacmc.beacmcauth.core.config.social.BaseVkontakteConfig;
 import com.beacmc.beacmcauth.core.database.BaseDatabase;
 import com.beacmc.beacmcauth.core.library.Libraries;
+import com.beacmc.beacmcauth.core.packet.BasePlayerPositionTracker;
 import com.beacmc.beacmcauth.core.social.BaseSocialManager;
 import com.beacmc.beacmcauth.core.social.types.discord.DiscordSocial;
 import com.beacmc.beacmcauth.core.social.types.telegram.TelegramSocial;
 import com.beacmc.beacmcauth.core.social.types.vkontakte.VkontakteSocial;
-import com.ubivashka.vk.api.VkApiPlugin;
+import com.beacmc.beacmcauth.core.song.BaseSongManager;
+import lombok.Getter;
 
 import java.io.*;
 import java.util.concurrent.ExecutorService;
@@ -53,6 +55,8 @@ public class BaseBeacmcAuth implements BeacmcAuth {
     private VkontakteConfig vkontakteConfig;
     private SocialManager socialManager;
     private ExecutorService executorService;
+    private SongManager songManager;
+    private PlayerPositionTracker playerPositionTracker;
 
     @Override
     public BeacmcAuth onEnable() {
@@ -75,6 +79,14 @@ public class BaseBeacmcAuth implements BeacmcAuth {
         if (vkontakteConfig.isEnabled()) {
             socialManager.getSocials().add(new VkontakteSocial(this));
         }
+
+        playerPositionTracker = new BasePlayerPositionTracker(this);
+        Path songs = getDataFolder().toPath().resolve("songs");
+        if (!songs.toFile().exists()) {
+            songs.toFile().mkdirs();
+        }
+        songManager = new BaseSongManager(this);
+        songManager.loadSongs(songs);
 
         commandManager = new BaseCommandManager();
         commandManager.register("register", new RegisterCommandExecutor(this));

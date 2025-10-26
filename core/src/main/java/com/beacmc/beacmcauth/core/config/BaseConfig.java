@@ -50,6 +50,8 @@ public class BaseConfig implements Config {
     private List<String> whitelistCommands = List.of("/l", "/log", "/login", "/reg", "/register");
     private boolean nameCaseControl = true;
     private Pattern nicknameRegex = Pattern.compile("[a-zA-Z0-9_]*");
+    @Comment({"", "PacketEvents required"})
+    private boolean nbsSongSupport = true;
     private BaseDatabaseSettings databaseSettings = new BaseDatabaseSettings();
     private Messages messages = new Messages();
 

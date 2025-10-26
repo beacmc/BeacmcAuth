@@ -72,4 +72,8 @@ public interface BeacmcAuth {
     LibraryProvider getLibraryProvider();
 
     ExecutorService getExecutorService();
+
+    SongManager getSongManager();
+
+    PlayerPositionTracker getPlayerPositionTracker();
 }

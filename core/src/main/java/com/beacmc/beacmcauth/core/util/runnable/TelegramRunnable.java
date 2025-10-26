@@ -66,6 +66,7 @@ public class TelegramRunnable implements Runnable {
                 || confirmationPlayer.getCurrentConfirmation().getType() != SocialType.TELEGRAM
                 || !player.isConnected()) {
             task.cancel();
+            plugin.getSongManager().stop(player.getUUID());
             return;
         }
 
@@ -75,6 +76,7 @@ public class TelegramRunnable implements Runnable {
             player.disconnect(config.getMessages().getTimeIsUp());
             manager.getConfirmationPlayers().remove(confirmationPlayer);
             task.cancel();
+            plugin.getSongManager().stop(player.getUUID());
             return;
         }
 

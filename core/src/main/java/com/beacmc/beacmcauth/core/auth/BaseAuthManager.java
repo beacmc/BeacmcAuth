@@ -115,6 +115,7 @@ public class BaseAuthManager implements AuthManager {
                     authorizationPlayers.put(player.getLowercaseName(), config.getPasswordAttempts());
                     new RegisterRunnable(plugin, player);
                     this.connectPlayer(player, config.findServer(config.getAuthServers()));
+                    plugin.getSongManager().play(player, plugin.getSongManager().findRandomSong());
                     return;
                 }
 
@@ -153,6 +154,7 @@ public class BaseAuthManager implements AuthManager {
                 authorizationPlayers.put(player.getLowercaseName(), config.getPasswordAttempts());
                 new LoginRunnable(plugin, player);
                 connectAuthServer(player);
+                plugin.getSongManager().play(player, plugin.getSongManager().findRandomSong());
             } catch (Throwable e) {
                 player.disconnect(config.getMessages().getInternalError());
                 e.printStackTrace();
