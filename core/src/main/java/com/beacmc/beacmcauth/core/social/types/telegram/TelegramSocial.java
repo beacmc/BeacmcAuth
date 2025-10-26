@@ -3,7 +3,6 @@ package com.beacmc.beacmcauth.core.social.types.telegram;
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.cache.cooldown.AbstractCooldown;
-import com.beacmc.beacmcauth.api.config.social.SocialConfig;
 import com.beacmc.beacmcauth.api.config.social.TelegramConfig;
 import com.beacmc.beacmcauth.api.database.dao.ProtectedPlayerDao;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
@@ -13,24 +12,21 @@ import com.beacmc.beacmcauth.api.social.SocialManager;
 import com.beacmc.beacmcauth.api.social.SocialType;
 import com.beacmc.beacmcauth.api.social.confirmation.ConfirmationPlayer;
 import com.beacmc.beacmcauth.api.social.keyboard.Keyboard;
-import com.beacmc.beacmcauth.api.social.keyboard.button.Button;
-import com.beacmc.beacmcauth.api.social.keyboard.button.ButtonType;
 import com.beacmc.beacmcauth.core.cache.cooldown.TelegramCooldown;
 import com.beacmc.beacmcauth.core.social.types.telegram.listener.TelegramUpdatesListener;
 import com.beacmc.beacmcauth.core.util.runnable.TelegramRunnable;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
-import com.pengrad.telegrambot.model.request.KeyboardButton;
-import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.BaseResponse;
 import lombok.ToString;
 
-import java.sql.Array;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 @ToString
 public class TelegramSocial implements Social<TelegramBot, Long> {

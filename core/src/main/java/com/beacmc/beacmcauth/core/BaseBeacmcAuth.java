@@ -13,8 +13,10 @@ import com.beacmc.beacmcauth.api.database.Database;
 import com.beacmc.beacmcauth.api.library.LibraryProvider;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
 import com.beacmc.beacmcauth.api.message.MessageProvider;
+import com.beacmc.beacmcauth.api.packet.PlayerPositionTracker;
 import com.beacmc.beacmcauth.api.server.Proxy;
 import com.beacmc.beacmcauth.api.social.SocialManager;
+import com.beacmc.beacmcauth.api.song.SongManager;
 import com.beacmc.beacmcauth.core.auth.BaseAuthManager;
 import com.beacmc.beacmcauth.core.command.BaseCommandManager;
 import com.beacmc.beacmcauth.core.command.executor.*;
@@ -34,9 +36,11 @@ import com.beacmc.beacmcauth.core.song.BaseSongManager;
 import lombok.Getter;
 
 import java.io.*;
+import java.nio.file.Path;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+@Getter
 public class BaseBeacmcAuth implements BeacmcAuth {
 
     private Proxy proxy;
@@ -117,39 +121,9 @@ public class BaseBeacmcAuth implements BeacmcAuth {
     }
 
     @Override
-    public CommandManager getCommandManager() {
-        return commandManager;
-    }
-
-    @Override
-    public PremiumProvider<?> getPremiumProvider() {
-        return premiumProvider;
-    }
-
-    @Override
     public <T> BeacmcAuth setPremiumProvider(PremiumProvider<T> premiumProvider) {
         this.premiumProvider = premiumProvider;
         return this;
-    }
-
-    @Override
-    public Database getDatabase() {
-        return database;
-    }
-
-    @Override
-    public Config getConfig() {
-        return config;
-    }
-
-    @Override
-    public DiscordConfig getDiscordConfig() {
-        return discordConfig;
-    }
-
-    @Override
-    public Proxy getProxy() {
-        return proxy;
     }
 
     @Override
@@ -164,30 +138,6 @@ public class BaseBeacmcAuth implements BeacmcAuth {
         return this;
     }
 
-    @Override
-    public LibraryProvider getLibraryProvider() {
-        return libraryProvider;
-    }
-
-    @Override
-    public ExecutorService getExecutorService() {
-        return executorService;
-    }
-
-    @Override
-    public TelegramConfig getTelegramConfig() {
-        return telegramConfig;
-    }
-
-    @Override
-    public VkontakteConfig getVkontakteConfig() {
-        return vkontakteConfig;
-    }
-
-    @Override
-    public SocialManager getSocialManager() {
-        return socialManager;
-    }
 
     @Override
     public BeacmcAuth setMessageProvider(MessageProvider messageProvider) {
@@ -199,26 +149,6 @@ public class BaseBeacmcAuth implements BeacmcAuth {
     public BeacmcAuth setServerLogger(ServerLogger serverLogger) {
         this.serverLogger = serverLogger;
         return this;
-    }
-
-    @Override
-    public MessageProvider getMessageProvider() {
-        return messageProvider;
-    }
-
-    @Override
-    public ServerLogger getServerLogger() {
-        return serverLogger;
-    }
-
-    @Override
-    public AuthManager getAuthManager() {
-        return authManager;
-    }
-
-    @Override
-    public File getDataFolder() {
-        return dataFolder;
     }
 
     @Override
@@ -264,9 +194,5 @@ public class BaseBeacmcAuth implements BeacmcAuth {
     @Override
     public InputStream getResource(String file) {
         return getClass().getClassLoader().getResourceAsStream(file);
-    }
-
-    public ConfigLoader getConfigLoader() {
-        return configLoader;
     }
 }

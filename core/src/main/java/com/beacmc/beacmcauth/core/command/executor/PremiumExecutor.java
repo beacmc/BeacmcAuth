@@ -1,7 +1,6 @@
 package com.beacmc.beacmcauth.core.command.executor;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
-import com.beacmc.beacmcauth.api.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.auth.AuthManager;
 import com.beacmc.beacmcauth.api.auth.premium.PremiumPlayer;
 import com.beacmc.beacmcauth.api.command.CommandSender;

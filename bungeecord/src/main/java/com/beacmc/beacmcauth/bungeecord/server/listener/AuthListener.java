@@ -9,7 +9,6 @@ import com.beacmc.beacmcauth.api.server.Server;
 import com.beacmc.beacmcauth.bungeecord.BungeeBeacmcAuth;
 import com.beacmc.beacmcauth.bungeecord.player.BungeeServerPlayer;
 import com.beacmc.beacmcauth.bungeecord.server.BungeeServer;
-import lombok.SneakyThrows;
 import net.md_5.bungee.api.connection.Connection;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;

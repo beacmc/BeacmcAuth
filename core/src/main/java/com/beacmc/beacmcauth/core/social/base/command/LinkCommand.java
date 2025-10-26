@@ -2,14 +2,11 @@ package com.beacmc.beacmcauth.core.social.base.command;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.config.social.SocialConfig;
-import com.beacmc.beacmcauth.api.database.dao.ProtectedPlayerDao;
 import com.beacmc.beacmcauth.api.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.social.Social;
 import com.beacmc.beacmcauth.api.social.SocialPlayer;
 import com.beacmc.beacmcauth.api.social.command.SocialCommand;
 import com.beacmc.beacmcauth.core.util.CodeGenerator;
-
-import java.util.Map;
 
 public class LinkCommand implements SocialCommand {
 

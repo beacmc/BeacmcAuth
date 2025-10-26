@@ -6,26 +6,16 @@ import com.beacmc.beacmcauth.api.packet.PlayerPositionTracker;
 import com.beacmc.beacmcauth.api.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.song.SongManager;
 import com.beacmc.beacmcauth.api.song.SongPlayer;
-import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.protocol.player.User;
-import com.github.retrooper.packetevents.protocol.sound.Sound;
-import com.github.retrooper.packetevents.protocol.sound.SoundCategory;
-import com.github.retrooper.packetevents.protocol.sound.Sounds;
-import com.github.retrooper.packetevents.util.Vector3d;
-import com.github.retrooper.packetevents.util.Vector3i;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSoundEffect;
-import cz.koca2000.nbs4j.Note;
 import cz.koca2000.nbs4j.Song;
 import cz.koca2000.nbs4j.SongCorruptedException;
 import lombok.Getter;
-import org.apache.logging.log4j.core.util.JsonUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Getter
 public class BaseSongManager implements SongManager {

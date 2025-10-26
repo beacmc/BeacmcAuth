@@ -1,9 +1,9 @@
 package com.beacmc.beacmcauth.api.social;
 
 import com.beacmc.beacmcauth.api.ProtectedPlayer;
-import com.beacmc.beacmcauth.api.social.keyboard.button.listener.ButtonClickRegistry;
 import com.beacmc.beacmcauth.api.social.command.SocialCommandRegistry;
 import com.beacmc.beacmcauth.api.social.confirmation.ConfirmationPlayer;
+import com.beacmc.beacmcauth.api.social.keyboard.button.listener.ButtonClickRegistry;
 import com.beacmc.beacmcauth.api.social.link.LinkManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

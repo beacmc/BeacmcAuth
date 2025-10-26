@@ -5,13 +5,11 @@ import com.beacmc.beacmcauth.api.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.config.social.SocialConfig;
 import com.beacmc.beacmcauth.api.social.Social;
 import com.beacmc.beacmcauth.api.social.SocialPlayer;
-import com.beacmc.beacmcauth.api.social.keyboard.button.listener.ButtonClickListener;
 import com.beacmc.beacmcauth.api.social.keyboard.Keyboard;
 import com.beacmc.beacmcauth.api.social.keyboard.button.Button;
-import com.beacmc.beacmcauth.api.social.keyboard.button.ButtonType;
+import com.beacmc.beacmcauth.api.social.keyboard.button.listener.ButtonClickListener;
 import lombok.AllArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor

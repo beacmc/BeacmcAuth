@@ -8,8 +8,8 @@ import com.beacmc.beacmcauth.api.database.dao.ProtectedPlayerDao;
 import com.beacmc.beacmcauth.api.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.social.Social;
 import com.beacmc.beacmcauth.api.social.SocialPlayer;
-import com.beacmc.beacmcauth.api.social.keyboard.button.listener.ButtonClickListener;
 import com.beacmc.beacmcauth.api.social.keyboard.button.Button;
+import com.beacmc.beacmcauth.api.social.keyboard.button.listener.ButtonClickListener;
 import com.beacmc.beacmcauth.core.util.CodeGenerator;
 import org.mindrot.jbcrypt.BCrypt;
 

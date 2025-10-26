@@ -28,9 +28,9 @@ public class BaseDatabase implements Database {
 
     private final ServerLogger logger;
     private final BeacmcAuth plugin;
+    private final Cache<ProtectedPlayer, UUID> playersCache;
     private ConnectionSource connectionSource;
     private ProtectedPlayerDao protectedPlayerDao;
-    private Cache<ProtectedPlayer, UUID> playersCache;
 
     public BaseDatabase(BeacmcAuth plugin) {
         this.plugin = plugin;

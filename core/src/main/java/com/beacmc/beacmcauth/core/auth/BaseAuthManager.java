@@ -17,7 +17,6 @@ import com.beacmc.beacmcauth.api.social.SocialManager;
 import com.beacmc.beacmcauth.api.social.confirmation.ConfirmationPlayer;
 import com.beacmc.beacmcauth.core.cache.PremiumPlayerCache;
 import com.beacmc.beacmcauth.core.cache.PremiumUserCache;
-import com.beacmc.beacmcauth.core.command.executor.PremiumExecutor;
 import com.beacmc.beacmcauth.core.util.UuidGenerator;
 import com.beacmc.beacmcauth.core.util.runnable.LoginRunnable;
 import com.beacmc.beacmcauth.core.util.runnable.RegisterRunnable;

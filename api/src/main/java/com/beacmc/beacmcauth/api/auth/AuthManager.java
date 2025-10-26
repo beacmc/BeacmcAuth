@@ -8,12 +8,10 @@ import com.beacmc.beacmcauth.api.cache.Cache;
 import com.beacmc.beacmcauth.api.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.server.Server;
 
-import java.awt.desktop.AboutEvent;
 import java.net.InetAddress;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
 
 /**
  * Interaction manager of all authorization functions

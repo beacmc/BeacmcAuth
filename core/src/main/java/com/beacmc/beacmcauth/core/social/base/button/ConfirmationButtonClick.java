@@ -9,9 +9,9 @@ import com.beacmc.beacmcauth.api.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.social.Social;
 import com.beacmc.beacmcauth.api.social.SocialManager;
 import com.beacmc.beacmcauth.api.social.SocialPlayer;
-import com.beacmc.beacmcauth.api.social.keyboard.button.listener.ButtonClickListener;
 import com.beacmc.beacmcauth.api.social.confirmation.ConfirmationPlayer;
 import com.beacmc.beacmcauth.api.social.keyboard.button.Button;
+import com.beacmc.beacmcauth.api.social.keyboard.button.listener.ButtonClickListener;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

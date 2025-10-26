@@ -3,7 +3,6 @@ package com.beacmc.beacmcauth.core.config;
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.config.ConfigMessages;
-import com.beacmc.beacmcauth.api.config.DatabaseSettings;
 import com.beacmc.beacmcauth.api.server.Server;
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;

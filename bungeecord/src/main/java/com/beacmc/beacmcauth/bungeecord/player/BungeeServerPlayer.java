@@ -7,7 +7,6 @@ import com.beacmc.beacmcauth.api.server.Server;
 import com.beacmc.beacmcauth.bungeecord.BungeeBeacmcAuth;
 import com.beacmc.beacmcauth.bungeecord.server.BungeeServer;
 import com.beacmc.beacmcauth.core.util.UuidGenerator;
-import lombok.EqualsAndHashCode;
 import net.md_5.bungee.api.Title;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;

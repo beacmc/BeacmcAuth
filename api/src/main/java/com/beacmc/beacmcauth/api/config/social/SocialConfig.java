@@ -1,12 +1,6 @@
 package com.beacmc.beacmcauth.api.config.social;
 
 import com.beacmc.beacmcauth.api.config.social.settings.KeyboardsSettings;
-import com.beacmc.beacmcauth.api.social.keyboard.button.Button;
-import com.vk.api.sdk.objects.newsfeed.ListFull;
-import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
-
-import javax.swing.*;
-import java.util.List;
 
 public interface SocialConfig {
 

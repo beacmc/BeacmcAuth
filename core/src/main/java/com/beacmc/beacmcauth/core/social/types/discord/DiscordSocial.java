@@ -4,7 +4,6 @@ import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.cache.cooldown.AbstractCooldown;
 import com.beacmc.beacmcauth.api.config.social.DiscordConfig;
-import com.beacmc.beacmcauth.api.config.social.SocialConfig;
 import com.beacmc.beacmcauth.api.database.dao.ProtectedPlayerDao;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
 import com.beacmc.beacmcauth.api.player.ServerPlayer;
@@ -30,7 +29,10 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.internal.utils.JDALogger;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 @ToString
 public class DiscordSocial implements Social<JDA, Long> {

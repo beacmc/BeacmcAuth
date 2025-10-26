@@ -6,7 +6,6 @@ import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.ToString;
-
 import org.jetbrains.annotations.Nullable;
 
 @ToString

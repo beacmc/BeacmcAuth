@@ -2,7 +2,6 @@ package com.beacmc.beacmcauth.api.config;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.database.DatabaseType;
-import de.exlll.configlib.Configuration;
 
 public interface DatabaseSettings {
 

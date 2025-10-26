@@ -2,9 +2,10 @@ package com.beacmc.beacmcauth.api.song;
 
 import com.beacmc.beacmcauth.api.player.ServerPlayer;
 import cz.koca2000.nbs4j.Song;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
-import java.util.UUID;
 import java.util.concurrent.ScheduledFuture;
 
 @Getter

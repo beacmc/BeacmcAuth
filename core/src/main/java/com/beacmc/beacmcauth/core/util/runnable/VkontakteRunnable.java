@@ -3,7 +3,6 @@ package com.beacmc.beacmcauth.core.util.runnable;
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.config.Config;
-import com.beacmc.beacmcauth.api.config.social.TelegramConfig;
 import com.beacmc.beacmcauth.api.config.social.VkontakteConfig;
 import com.beacmc.beacmcauth.api.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.scheduler.TaskScheduler;

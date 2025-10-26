@@ -3,7 +3,6 @@ package com.beacmc.beacmcauth.core.social.types.vkontakte;
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.cache.cooldown.AbstractCooldown;
-import com.beacmc.beacmcauth.api.config.social.SocialConfig;
 import com.beacmc.beacmcauth.api.config.social.VkontakteConfig;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
 import com.beacmc.beacmcauth.api.player.ServerPlayer;
@@ -12,7 +11,6 @@ import com.beacmc.beacmcauth.api.social.SocialManager;
 import com.beacmc.beacmcauth.api.social.SocialType;
 import com.beacmc.beacmcauth.api.social.confirmation.ConfirmationPlayer;
 import com.beacmc.beacmcauth.api.social.keyboard.Keyboard;
-import com.beacmc.beacmcauth.api.social.keyboard.button.Button;
 import com.beacmc.beacmcauth.api.social.keyboard.button.ButtonType;
 import com.beacmc.beacmcauth.core.cache.cooldown.VkontakteCooldown;
 import com.beacmc.beacmcauth.core.util.runnable.VkontakteRunnable;
@@ -32,7 +30,10 @@ import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 @ToString
 public class VkontakteSocial implements Social<VkApiClient, Integer> {

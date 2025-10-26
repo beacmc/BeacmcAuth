@@ -1,7 +1,6 @@
 package com.beacmc.beacmcauth.bungeecord;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
-import com.beacmc.beacmcauth.api.social.Social;
 import com.beacmc.beacmcauth.api.social.SocialType;
 import com.beacmc.beacmcauth.bungeecord.auth.BungeePremiumProvider;
 import com.beacmc.beacmcauth.bungeecord.library.BungeeLibraryProvider;
@@ -13,7 +12,6 @@ import com.beacmc.beacmcauth.bungeecord.server.listener.AuthListener;
 import com.beacmc.beacmcauth.bungeecord.server.listener.VkontakteListener;
 import com.beacmc.beacmcauth.core.BaseBeacmcAuth;
 import com.beacmc.beacmcauth.core.social.types.vkontakte.VkontakteSocial;
-import com.ubivashka.vk.api.VkApiPlugin;
 import com.ubivashka.vk.bungee.BungeeVkApiPlugin;
 import net.md_5.bungee.api.plugin.Plugin;
 

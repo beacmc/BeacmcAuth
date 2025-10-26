@@ -2,16 +2,10 @@ package com.beacmc.beacmcauth.core.config;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.config.DatabaseSettings;
-import com.beacmc.beacmcauth.api.config.loader.ConfigLoader;
-import com.beacmc.beacmcauth.api.config.loader.ConfigValue;
 import com.beacmc.beacmcauth.api.database.DatabaseType;
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
-import de.exlll.configlib.Ignore;
 import lombok.Getter;
-
-import java.io.File;
-import java.sql.SQLClientInfoException;
 
 @Getter
 @Configuration
