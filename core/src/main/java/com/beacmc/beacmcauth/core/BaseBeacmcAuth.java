@@ -87,7 +87,7 @@ public class BaseBeacmcAuth implements BeacmcAuth {
         playerPositionTracker = new BasePlayerPositionTracker(this);
         Path songs = getDataFolder().toPath().resolve("songs");
         if (!songs.toFile().exists()) {
-            songs.toFile().mkdirs();
+            saveResource("songs/Panda.nbs");
         }
         songManager = new BaseSongManager(this);
         songManager.loadSongs(songs);
