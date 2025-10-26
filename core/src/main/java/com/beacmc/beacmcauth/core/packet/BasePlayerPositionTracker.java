@@ -1,23 +1,20 @@
 package com.beacmc.beacmcauth.core.packet;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
-import com.beacmc.beacmcauth.api.packet.PlayerPositionTracker;
+import com.beacmc.beacmcauth.api.packet.position.PlayerPosition;
+import com.beacmc.beacmcauth.api.packet.position.PlayerPositionTracker;
 import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.event.PacketListener;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
-import com.github.retrooper.packetevents.event.PacketReceiveEvent;
-import com.github.retrooper.packetevents.protocol.packettype.PacketType;
-import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.util.Vector3d;
-import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerPosition;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Constructor;
 import java.util.*;
 
-public class BasePlayerPositionTracker implements PlayerPositionTracker, PacketListener {
+public class BasePlayerPositionTracker implements PlayerPositionTracker {
 
-    private final Map<UUID, Vector3d> locations;
+    private final Map<UUID, PlayerPosition> locations;
     @Getter
     private boolean enabled;
 
@@ -25,22 +22,30 @@ public class BasePlayerPositionTracker implements PlayerPositionTracker, PacketL
         locations = new HashMap<>();
         enabled = false;
         if (plugin.getProxy().getPlugin("packetevents") != null) {
-            PacketEvents.getAPI().getEventManager().registerListener(this, PacketListenerPriority.HIGHEST);
-            enabled = true;
+            try {
+                Class<?> packetEventsClass = Class.forName("com.github.retrooper.packetevents.PacketEvents");
+                Object api = packetEventsClass.getMethod("getAPI").invoke(null);
+
+                Object eventManager = api.getClass().getMethod("getEventManager").invoke(api);
+
+                Class<?> listenerClass = Class.forName("com.beacmc.beacmcauth.core.packet.PositionListener");
+                Object listener = listenerClass.getConstructor(Map.class).newInstance(locations);
+
+                Class<?> priorityClass = Class.forName("com.github.retrooper.packetevents.event.PacketListenerPriority");
+                Object highestPriority = Enum.valueOf((Class<Enum>) priorityClass, "HIGHEST");
+
+                eventManager.getClass()
+                        .getMethod("registerListener", Object.class, priorityClass)
+                        .invoke(eventManager, listener, highestPriority);
+
+                enabled = true;
+            } catch (Throwable ignored) {
+            }
         }
     }
 
     @Override
-    public void onPacketReceive(PacketReceiveEvent event) {
-        if (event.getPacketType() == PacketType.Play.Client.PLAYER_POSITION) {
-            WrapperPlayClientPlayerPosition packet = new WrapperPlayClientPlayerPosition(event);
-            User user = PacketEvents.getAPI().getPlayerManager().getUser(event.getPlayer());
-            locations.put(user.getUUID(), packet.getPosition());
-        }
-    }
-
-    @Override
-    public @NotNull Vector3d getPlayerPosition(UUID uuid) {
-        return locations.getOrDefault(uuid, new Vector3d(0, 64, 0));
+    public @NotNull PlayerPosition getPlayerPosition(UUID uuid) {
+        return locations.getOrDefault(uuid, new PlayerPosition());
     }
 }

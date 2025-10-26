@@ -1,7 +1,8 @@
 package com.beacmc.beacmcauth.core.song;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
-import com.beacmc.beacmcauth.api.packet.PlayerPositionTracker;
+import com.beacmc.beacmcauth.api.packet.position.PlayerPosition;
+import com.beacmc.beacmcauth.api.packet.position.PlayerPositionTracker;
 import com.beacmc.beacmcauth.api.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.song.SongPlayer;
 import com.github.retrooper.packetevents.PacketEvents;
@@ -74,12 +75,7 @@ public final class BaseSongPlayer extends SongPlayer {
 
             float pitch = (float) Math.pow(2.0, (note.getKey() - 45) / 12.0);
             int instrument = note.getInstrument();
-            Vector3d pos = positionTracker.getPlayerPosition(getPlayer().getUUID());
-            Vector3i location = new Vector3i(
-                    (int) pos.x,
-                    (int) pos.y,
-                    (int) pos.z
-            );
+            PlayerPosition pos = positionTracker.getPlayerPosition(getPlayer().getUUID());
             String soundName;
 
             if (instrument >= 16) {
@@ -91,7 +87,7 @@ public final class BaseSongPlayer extends SongPlayer {
                 soundName = getInstrumentName(instrument);
             }
 
-            player.playSound(user, Sounds.getByName(soundName), note.getVolume(), pitch, location);
+            player.playSound(user, Sounds.getByName(soundName), note.getVolume(), pitch, pos.asVector3i());
         }
     }
 

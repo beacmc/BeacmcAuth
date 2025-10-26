@@ -2,7 +2,7 @@ package com.beacmc.beacmcauth.core.song;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
-import com.beacmc.beacmcauth.api.packet.PlayerPositionTracker;
+import com.beacmc.beacmcauth.api.packet.position.PlayerPositionTracker;
 import com.beacmc.beacmcauth.api.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.song.SongManager;
 import com.beacmc.beacmcauth.api.song.SongPlayer;
