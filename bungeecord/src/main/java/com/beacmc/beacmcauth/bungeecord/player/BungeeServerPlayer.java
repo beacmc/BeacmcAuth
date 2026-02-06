@@ -42,7 +42,9 @@ public class BungeeServerPlayer implements ServerPlayer {
 
     @Override
     public void sendMessage(String message) {
-        player.sendMessage(messageProvider.createMessage(message).toBaseComponent());
+        if (isConnected()) {
+            player.sendMessage(messageProvider.createMessage(message).toBaseComponent());
+        }
     }
 
     @Override
@@ -65,6 +67,8 @@ public class BungeeServerPlayer implements ServerPlayer {
 
     @Override
     public void sendTitle(String title, String subtitle, long in, long stay, long out) {
+        if (!isConnected()) return;
+
         Title execute = BungeeBeacmcAuth.getInstance().getProxy().createTitle()
                 .title(messageProvider.createMessage(title).toBaseComponent())
                 .subTitle(messageProvider.createMessage(subtitle).toBaseComponent())

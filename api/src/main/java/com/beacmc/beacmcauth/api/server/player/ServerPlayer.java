@@ -33,14 +33,16 @@ public interface ServerPlayer extends CommandSender {
     boolean isConnected();
 
     default void playSound(User user, Sound sound, float volume, float pitch, Vector3i location) {
-        WrapperPlayServerSoundEffect packet = new WrapperPlayServerSoundEffect(
-                sound,
-                SoundCategory.PLAYER,
-                location,
-                volume,
-                pitch
-        );
-        user.sendPacket(packet);
+        if (isConnected()) {
+            WrapperPlayServerSoundEffect packet = new WrapperPlayServerSoundEffect(
+                    sound,
+                    SoundCategory.PLAYER,
+                    location,
+                    volume,
+                    pitch
+            );
+            user.sendPacket(packet);
+        }
     }
 
     default void playSound(Sound sound, float volume, float pitch, Vector3i location) {

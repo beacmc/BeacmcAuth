@@ -39,13 +39,15 @@ public class VelocityServerPlayer implements ServerPlayer {
 
     @Override
     public void sendMessage(String message) {
-        logger.debug("Send message to player(" + player.getUsername() + "): " + message);
-        player.sendMessage(messageProvider.createMessage(message).toComponent());
+        if (isConnected()) {
+            logger.debug("Send message to player(" + player.getUsername() + "): " + message);
+            player.sendMessage(messageProvider.createMessage(message).toComponent());
+        }
     }
 
     @Override
     public boolean isConnected() {
-        return player.isActive();
+        return player.isActive() && player.getCurrentServer().isPresent();
     }
 
 
@@ -81,6 +83,8 @@ public class VelocityServerPlayer implements ServerPlayer {
 
     @Override
     public void sendTitle(String title, String subtitle, long in, long stay, long out) {
+        if (!isConnected()) return;
+
         logger.debug("send title to player(" + player.getUsername() + "); title: " + title + "; subtitle: " + subtitle + "; fadeIn:" + in + "; stay:" + stay + "; fadeOut:" + out);
         player.showTitle(Title.title(
                 messageProvider.createMessage(title).toComponent(),
