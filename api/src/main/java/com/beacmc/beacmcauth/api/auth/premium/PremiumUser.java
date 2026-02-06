@@ -1,37 +1,43 @@
 package com.beacmc.beacmcauth.api.auth.premium;
 
 import com.beacmc.beacmcauth.api.cache.CachedData;
+import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.time.Duration;
 import java.util.UUID;
 
-/**
- * Temporarily cached premium user
- */
 @Getter
 @ToString
+@NoArgsConstructor
 @AllArgsConstructor
 public class PremiumUser implements CachedData<String> {
 
-    /**
-     * Keeps the last name of the player
-     */
-    private final String id;
-    /**
-     * Store a premium unique ide user
-     */
-    private final UUID uuid;
-    /**
-     * Keeps the life of a cache
-     */
-    private final long limeTimeMillis;
+    private String name;
+    private UUID uuid;
+    private long lifetime;
 
-    /**
-     * @return Truth if the cache time has not yet happened
-     */
-    public boolean isExpired() {
-        return System.currentTimeMillis() >= limeTimeMillis;
+    public boolean isValid() {
+        return lifetime >= System.currentTimeMillis();
+    }
+
+    public static @NotNull PremiumUser create(@NotNull String name, @NotNull UUID uuid, @NotNull Duration lifetime) {
+        long time = System.currentTimeMillis() + lifetime.toMillis();
+        return new PremiumUser(name.toLowerCase(), uuid, time);
+    }
+
+    public static @Nullable PremiumUser create(ProtectedPlayer player, Duration lifetime) {
+        UUID uuid = player.getOnlineUuid();
+        return uuid != null ? create(player.getLowercaseName(), uuid, lifetime) : null;
+    }
+
+    @Override
+    public String getId() {
+        return name;
     }
 }

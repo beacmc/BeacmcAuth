@@ -2,11 +2,12 @@ package com.beacmc.beacmcauth.bungeecord.player;
 
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
 import com.beacmc.beacmcauth.api.message.MessageProvider;
-import com.beacmc.beacmcauth.api.player.ServerPlayer;
+import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.server.Server;
 import com.beacmc.beacmcauth.bungeecord.BungeeBeacmcAuth;
 import com.beacmc.beacmcauth.bungeecord.server.BungeeServer;
-import com.beacmc.beacmcauth.core.util.UuidGenerator;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import net.md_5.bungee.api.Title;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -15,18 +16,18 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.UUID;
 
+@ToString
+@EqualsAndHashCode
 public class BungeeServerPlayer implements ServerPlayer {
 
     private final ProxiedPlayer player;
     private final ServerLogger logger;
     private final MessageProvider messageProvider;
-    private final UUID playerUuid;
 
     public BungeeServerPlayer(ProxiedPlayer player) {
         this.player = player;
         this.logger = BungeeBeacmcAuth.getInstance().getBeacmcAuth().getServerLogger();
         this.messageProvider = BungeeBeacmcAuth.getInstance().getBeacmcAuth().getMessageProvider();
-        this.playerUuid = UuidGenerator.byName(getName());
     }
 
     @Override
@@ -36,7 +37,7 @@ public class BungeeServerPlayer implements ServerPlayer {
 
     @Override
     public UUID getUUID() {
-        return playerUuid;
+        return player.getUniqueId();
     }
 
     @Override
@@ -95,18 +96,5 @@ public class BungeeServerPlayer implements ServerPlayer {
     public Server getCurrentServer() {
         net.md_5.bungee.api.connection.Server connection = player.getServer();
         return connection != null ? new BungeeServer(connection.getInfo()) : null;
-    }
-
-    @Override
-    public String toString() {
-        return player.getDisplayName();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof String) {
-            return obj.equals(getName());
-        }
-        return super.equals(obj);
     }
 }

@@ -2,9 +2,8 @@ package com.beacmc.beacmcauth.velocity.player;
 
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
 import com.beacmc.beacmcauth.api.message.MessageProvider;
-import com.beacmc.beacmcauth.api.player.ServerPlayer;
+import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.server.Server;
-import com.beacmc.beacmcauth.core.util.UuidGenerator;
 import com.beacmc.beacmcauth.velocity.VelocityBeacmcAuth;
 import com.beacmc.beacmcauth.velocity.server.VelocityServer;
 import com.velocitypowered.api.proxy.Player;
@@ -20,14 +19,12 @@ public class VelocityServerPlayer implements ServerPlayer {
 
     private final Player player;
     private final MessageProvider messageProvider;
-    private final ServerLogger logger;
-    private final UUID playerUuid;
+    private final ServerLogger logger;;
 
     public VelocityServerPlayer(Player player) {
         this.player = player;
         this.messageProvider = VelocityBeacmcAuth.getInstance().getBeacmcAuth().getMessageProvider();
         this.logger = VelocityBeacmcAuth.getInstance().getBeacmcAuth().getServerLogger();
-        this.playerUuid = UuidGenerator.byName(getName());
     }
 
     @Override
@@ -37,7 +34,7 @@ public class VelocityServerPlayer implements ServerPlayer {
 
     @Override
     public UUID getUUID() {
-        return playerUuid;
+        return player.getUniqueId();
     }
 
     @Override

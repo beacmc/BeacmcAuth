@@ -4,17 +4,17 @@ import com.beacmc.beacmcauth.api.auth.premium.PremiumUser;
 import com.beacmc.beacmcauth.api.cache.Cache;
 import lombok.Getter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
 public class PremiumUserCache implements Cache<PremiumUser, String> {
 
-    private final List<PremiumUser> caches = new ArrayList<>();
+    private final Map<String, PremiumUser> caches = new ConcurrentHashMap<>();
 
     @Override
-    public PremiumUser getCacheData(String s) {
-        PremiumUser user = Cache.super.getCacheData(s);
-        return user != null && user.isExpired() ? null : user;
+    public PremiumUser getCacheData(String id) {
+        PremiumUser user = Cache.super.getCacheData(id);
+        return user != null && user.isValid() ? user : null;
     }
 }

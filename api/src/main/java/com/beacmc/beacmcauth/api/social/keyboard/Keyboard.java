@@ -23,7 +23,7 @@ public class Keyboard {
     public Keyboard parsePlaceholders(Map<String, ?> placeholders) {
         return new Keyboard(buttons.stream()
                 .map(buttonsCopy -> buttonsCopy.stream()
-                        .map(button -> button.parsePlaceholders(placeholders))
+                        .map(button -> button.parseButtonPlaceholders(placeholders))
                         .toList())
                 .toList());
     }

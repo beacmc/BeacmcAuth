@@ -1,7 +1,9 @@
 package com.beacmc.beacmcauth.core.database;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
-import com.beacmc.beacmcauth.api.ProtectedPlayer;
+import com.beacmc.beacmcauth.api.config.HikariSettings;
+import com.beacmc.beacmcauth.api.database.DatabaseType;
+import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.cache.Cache;
 import com.beacmc.beacmcauth.api.config.DatabaseSettings;
 import com.beacmc.beacmcauth.api.database.Database;
@@ -11,17 +13,17 @@ import com.beacmc.beacmcauth.api.logger.ServerLogger;
 import com.beacmc.beacmcauth.core.cache.PlayerCache;
 import com.beacmc.beacmcauth.core.database.dao.BaseProtectPlayerDao;
 import com.beacmc.beacmcauth.core.library.Libraries;
+import com.j256.ormlite.jdbc.DataSourceConnectionSource;
+import com.j256.ormlite.jdbc.JdbcCompiledStatement;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
-import com.j256.ormlite.stmt.StatementBuilder;
-import com.j256.ormlite.support.CompiledStatement;
+import com.j256.ormlite.logger.Level;
+import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.support.DatabaseConnection;
-import com.j256.ormlite.support.DatabaseResults;
 import com.j256.ormlite.table.TableUtils;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 import java.sql.SQLException;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.UUID;
 
 public class BaseDatabase implements Database {
@@ -41,10 +43,22 @@ public class BaseDatabase implements Database {
     @Override
     public void init() {
         final DatabaseSettings databaseSettings = plugin.getConfig().getDatabaseSettings();
+        final DatabaseType type = databaseSettings.getType();
 
         try {
-            loadDatabaseLibrary(databaseSettings.getType().name().toLowerCase());
-            connectionSource = new JdbcConnectionSource(databaseSettings.getUrl(plugin), databaseSettings.getUsername(), databaseSettings.getPassword());
+            Logger.setGlobalLogLevel(Level.WARNING);
+
+            loadDatabaseLibrary(type);
+            String url = databaseSettings.getUrl(plugin);
+
+            HikariConfig config = databaseSettings.getHikariSettings().createHikariInstance();
+            config.setJdbcUrl(url);
+            config.setUsername(databaseSettings.getUsername());
+            config.setPassword(databaseSettings.getPassword());
+
+            connectionSource = type != DatabaseType.SQLITE
+                    ? new DataSourceConnectionSource(new HikariDataSource(config), url)
+                    : new JdbcConnectionSource(url);
             protectedPlayerDao = new BaseProtectPlayerDao(plugin, connectionSource);
             TableUtils.createTableIfNotExists(connectionSource, ProtectedPlayer.class);
             migrate();
@@ -54,6 +68,7 @@ public class BaseDatabase implements Database {
                 logger.error("error message: " + e.getMessage());
                 plugin.getProxy().shutdown();
             }
+            return;
         }
 
         if (connectionSource == null && databaseSettings.isStopServerOnFailedConnection()) {
@@ -63,48 +78,31 @@ public class BaseDatabase implements Database {
     }
 
     private void migrate() throws SQLException {
-        if (!getExistingColumns("auth_players").contains("vkontakte")) {
+        if (!isColumnExists("vkontakte")) {
             protectedPlayerDao.executeRaw("ALTER TABLE `auth_players` ADD COLUMN vkontakte INTEGER DEFAULT 0;");
             protectedPlayerDao = new BaseProtectPlayerDao(plugin, connectionSource);
         }
-        if (!getExistingColumns("auth_players").contains("vkontakte_2fa")) {
+        if (!isColumnExists("vkontakte_2fa")) {
             protectedPlayerDao.executeRaw("ALTER TABLE `auth_players` ADD COLUMN vkontakte_2fa BOOLEAN DEFAULT true;");
             protectedPlayerDao = new BaseProtectPlayerDao(plugin, connectionSource);
         }
-        if (!getExistingColumns("auth_players").contains("online_uuid")) {
+        if (!isColumnExists("online_uuid")) {
             protectedPlayerDao.executeRaw("ALTER TABLE `auth_players` ADD COLUMN online_uuid CHAR(36) default NULL;");
             protectedPlayerDao = new BaseProtectPlayerDao(plugin, connectionSource);
         }
     }
 
-    private List<String> getExistingColumns(String tableName) throws SQLException {
-        List<String> columns = new LinkedList<>();
-
-        DatabaseConnection connection = connectionSource.getReadOnlyConnection(tableName);
-        try (CompiledStatement stmt = connection.compileStatement("PRAGMA table_info(" + tableName + ")", StatementBuilder.StatementType.SELECT, protectedPlayerDao.getTableInfo().getFieldTypes(), DatabaseConnection.DEFAULT_RESULT_FLAGS, true);
-             DatabaseResults results = stmt.runQuery(null)) {
-
-            while (results.next()) {
-                String columnName = results.getString(1);
-                columns.add(columnName.toLowerCase());
-            }
-
-        } catch (Exception ignore) {
-
-        } finally {
-            connectionSource.releaseConnection(connection);
-        }
-
-        return columns;
+    private boolean isColumnExists(String columnName) {
+        return protectedPlayerDao.getTableInfo().hasColumnName(columnName);
     }
 
-    private void loadDatabaseLibrary(String databaseType) {
+    private void loadDatabaseLibrary(DatabaseType databaseType) {
         final LibraryProvider libraryLoader = plugin.getLibraryProvider();
 
         switch (databaseType) {
-            case "sqlite" -> libraryLoader.loadLibrary(Libraries.SQLITE);
-            case "mariadb" -> libraryLoader.loadLibrary(Libraries.MARIADB);
-            case "postgresql" -> libraryLoader.loadLibrary(Libraries.POSTGRESQL);
+            case SQLITE -> libraryLoader.loadLibrary(Libraries.SQLITE);
+            case MARIADB -> libraryLoader.loadLibrary(Libraries.MARIADB);
+            case POSTGRESQL -> libraryLoader.loadLibrary(Libraries.POSTGRESQL);
         }
     }
 

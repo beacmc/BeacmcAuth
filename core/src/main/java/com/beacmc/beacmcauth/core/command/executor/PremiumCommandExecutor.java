@@ -7,17 +7,16 @@ import com.beacmc.beacmcauth.api.command.CommandSender;
 import com.beacmc.beacmcauth.api.command.executor.CommandExecutor;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.config.ConfigMessages;
-import com.beacmc.beacmcauth.api.player.ServerPlayer;
+import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.core.cache.cooldown.GameCooldown;
-import java.util.UUID;
 
-public class PremiumExecutor implements CommandExecutor {
+public class PremiumCommandExecutor implements CommandExecutor {
 
     private final AuthManager authManager;
     private final BeacmcAuth plugin;
     private final GameCooldown cooldown;
 
-    public PremiumExecutor(BeacmcAuth plugin) {
+    public PremiumCommandExecutor(BeacmcAuth plugin) {
         this.plugin = plugin;
 
         authManager = plugin.getAuthManager();
@@ -27,30 +26,35 @@ public class PremiumExecutor implements CommandExecutor {
     @Override
     public void execute(CommandSender sender, String[] args) {
         if (!(sender instanceof ServerPlayer player)) return;
+        if (!player.hasPermission("beacmcauth.premium")) return;
 
         final Config config = plugin.getConfig();
         final ConfigMessages messages = config.getMessages();
 
+        if (cooldown.isCooldown(player.getLowercaseName())) {
+            player.sendMessage(config.getMessages().getCooldown());
+            return;
+        }
+        cooldown.createCooldown(player.getLowercaseName(), 5_000);
+
         authManager.getProtectedPlayer(player.getUUID()).thenAccept(protectedPlayer -> {
             if (protectedPlayer == null) return;
-
             if (protectedPlayer.getOnlineUuid() != null) {
                 player.sendMessage(messages.getAlreadyPremium());
                 return;
             }
 
-            UUID uuid = authManager.getPremiumUuid(player.getLowercaseName());
-            if (uuid == null) {
-                player.sendMessage(messages.getPremiumAccountNotFound());
-                return;
-            }
+            plugin.getProxy().runTask(() -> {
+                PremiumPlayer premiumPlayer = new PremiumPlayer(
+                        protectedPlayer.getLowercaseName(),
+                        null,
+                        true,
+                        System.currentTimeMillis() + config.getLifetimeOfTemporaryPremiumVerificationTimeUnit().toMillis(config.getLifetimeOfTemporaryPremiumVerificationTimeUnitValue())
+                );
 
-            authManager.getPremiumPlayerCache().addCache(new PremiumPlayer(
-                    protectedPlayer.getLowercaseName(),
-                    true,
-                    System.currentTimeMillis() + config.getLifetimeOfTemporaryPremiumVerificationTimeUnit().toMillis(config.getLifetimeOfTemporaryPremiumVerificationTimeUnitValue())
-            ));
-            player.disconnect(messages.getPremiumSuccess());
+                authManager.getPremiumPlayerCache().addCache(premiumPlayer);
+                player.disconnect(messages.getPremiumSuccess());
+            });
         });
     }
 }

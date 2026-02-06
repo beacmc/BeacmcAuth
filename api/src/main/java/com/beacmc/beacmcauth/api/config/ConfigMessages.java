@@ -10,9 +10,7 @@ public interface ConfigMessages {
 
     String getPasswordsDontMatch();
 
-    String getLowCharacterPassword();
-
-    String getHighCharacterPassword();
+    String getInvalidPassword();
 
     String getNotRegistered();
 
@@ -25,6 +23,8 @@ public interface ConfigMessages {
     String getLoginChat();
 
     String getLoginTitle();
+
+    String getLogoutDisconnect();
 
     String getLoginSubtitle();
 
@@ -57,6 +57,8 @@ public interface ConfigMessages {
     String getAuthHelp();
 
     String getAlreadyAuthed();
+
+    String getNotAuthed();
 
     String getEnterPassword();
 
@@ -141,4 +143,56 @@ public interface ConfigMessages {
     String getPremiumAccountNotFound();
 
     String getPremiumAccountAutoLogin();
+
+    String getAltsCommandUsage();
+
+    String getAltsAccountsEmpty();
+
+    String getAlternativeAccountsLimitReached();
+
+    String getSecretAnswerAlreadyCreated();
+
+    String getSecretAnswerCreated();
+
+    String getSecretAnswerNotCreated();
+
+    String getInvalidSecretAnswerDisconnect();
+
+    String getSecretAnswerSuccessUsedDisconnect();
+
+    String getSecretAnswerRemoved();
+
+    String getSecretCommandUsage();
+
+    String getSecretSetCommandUsage();
+
+    String getSecretRecovery();
+
+    String getAnswerTooLong();
+
+    String getSecretInvalidSyntax();
+
+    String getEmailCommandUsage();
+
+    String getEmailAddCommandUsage();
+
+    String getEmailRecoveryDisconnect();
+
+    String getEmailRemoved();
+
+    String getEmailAdded();
+
+    String getEmailInvalid();
+
+    String getEmailRecoveryInvalidDisconnect();
+
+    String getEmailNotAdded();
+
+    String getEmailAlreadyAdded();
+
+    String getEmailRecoveryCommandUsage();
+
+    String getCouldNotSendEmailMessages();
+
+    String getEmailAlreadyTaken();
 }

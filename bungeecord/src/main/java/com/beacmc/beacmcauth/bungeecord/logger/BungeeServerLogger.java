@@ -35,6 +35,6 @@ public class BungeeServerLogger implements ServerLogger {
     @Override
     public void debug(String message) {
         final Config config = plugin.getConfig();
-        if (config.isDebugEnabled()) logger.severe("[DEBUG] " + message);
+        if (config.isDebugEnabled()) logger.warning("[DEBUG] " + message);
     }
 }

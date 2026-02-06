@@ -1,6 +1,6 @@
 package com.beacmc.beacmcauth.api.song;
 
-import com.beacmc.beacmcauth.api.player.ServerPlayer;
+import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import cz.koca2000.nbs4j.Song;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

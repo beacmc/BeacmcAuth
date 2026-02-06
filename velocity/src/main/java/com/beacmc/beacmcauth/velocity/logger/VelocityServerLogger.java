@@ -34,6 +34,6 @@ public class VelocityServerLogger implements ServerLogger {
     @Override
     public void debug(String message) {
         final Config config = plugin.getConfig();
-        if (config.isDebugEnabled()) logger.error("[DEBUG] " + message);
+        if (config.isDebugEnabled()) logger.warn("[DEBUG] " + message);
     }
 }

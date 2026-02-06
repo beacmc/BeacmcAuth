@@ -1,18 +1,19 @@
 package com.beacmc.beacmcauth.core.command.executor;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
-import com.beacmc.beacmcauth.api.ProtectedPlayer;
+import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.auth.AuthManager;
 import com.beacmc.beacmcauth.api.command.CommandSender;
 import com.beacmc.beacmcauth.api.command.executor.CommandExecutor;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.database.dao.ProtectedPlayerDao;
-import com.beacmc.beacmcauth.api.player.ServerPlayer;
+import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.core.cache.cooldown.GameCooldown;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.SQLException;
 import java.util.concurrent.CompletableFuture;
+import java.util.regex.Pattern;
 
 public class ChangepasswordCommandExecutor implements CommandExecutor {
 
@@ -37,9 +38,7 @@ public class ChangepasswordCommandExecutor implements CommandExecutor {
         }
 
         final Config config = plugin.getConfig();
-        final Integer minLength = config.getPasswordMinLength();
-        final Integer maxLength = config.getPasswordMaxLength();
-
+        final Pattern passwordPattern = config.getPasswordRegex();
 
         if (args.length < 2) {
             player.sendMessage(config.getMessages().getChangePasswordCommandUsage());
@@ -51,7 +50,7 @@ public class ChangepasswordCommandExecutor implements CommandExecutor {
             return;
         }
 
-        cooldown.createCooldown(player.getLowercaseName(), 5000L);
+        cooldown.createCooldown(player.getLowercaseName(), 5_000);
 
         CompletableFuture<ProtectedPlayer> future = authManager.getProtectedPlayer(player.getLowercaseName());
         future.thenAccept(protectedPlayer -> {
@@ -60,13 +59,8 @@ public class ChangepasswordCommandExecutor implements CommandExecutor {
                 return;
             }
 
-            if (args[1].length() < minLength) {
-                player.sendMessage(config.getMessages().getLowCharacterPassword());
-                return;
-            }
-
-            if (args[1].length() > maxLength) {
-                player.sendMessage(config.getMessages().getHighCharacterPassword());
+            if (!passwordPattern.matcher(args[1]).matches()) {
+                player.sendMessage(config.getMessages().getInvalidPassword());
                 return;
             }
 
@@ -84,7 +78,7 @@ public class ChangepasswordCommandExecutor implements CommandExecutor {
                     e.printStackTrace();
                 }
                 return null;
-            });
+            }, authManager.getExecutorService());
         });
     }
 }

@@ -1,7 +1,8 @@
 package com.beacmc.beacmcauth.api.song;
 
-import com.beacmc.beacmcauth.api.player.ServerPlayer;
+import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import cz.koca2000.nbs4j.Song;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.UUID;
 
 public interface SongManager {
 
-    default Song findFirstSong() {
+    default @Nullable Song findFirstSong() {
         return getSongs().stream()
                 .findFirst()
                 .orElse(null);

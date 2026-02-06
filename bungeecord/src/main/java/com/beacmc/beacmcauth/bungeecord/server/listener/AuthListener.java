@@ -2,13 +2,18 @@ package com.beacmc.beacmcauth.bungeecord.server.listener;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.auth.AuthManager;
-import com.beacmc.beacmcauth.api.auth.premium.PremiumProvider;
+import com.beacmc.beacmcauth.api.auth.premium.mojang.PremiumChangerProvider;
 import com.beacmc.beacmcauth.api.config.Config;
-import com.beacmc.beacmcauth.api.player.ServerPlayer;
+import com.beacmc.beacmcauth.api.logger.ServerLogger;
+import com.beacmc.beacmcauth.api.message.Message;
+import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.server.Server;
+import com.beacmc.beacmcauth.api.song.SongManager;
 import com.beacmc.beacmcauth.bungeecord.BungeeBeacmcAuth;
 import com.beacmc.beacmcauth.bungeecord.player.BungeeServerPlayer;
 import com.beacmc.beacmcauth.bungeecord.server.BungeeServer;
+import com.beacmc.beacmcauth.core.util.UUIDFetcher;
+import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.Connection;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -18,29 +23,70 @@ import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 
 import java.util.List;
+import java.util.UUID;
 
 public class AuthListener implements Listener {
 
     private final BeacmcAuth plugin;
     private final AuthManager authManager;
+    private final SongManager songManager;
+    private final ServerLogger logger;
 
     public AuthListener(BeacmcAuth plugin) {
         this.plugin = plugin;
+        this.logger = plugin.getServerLogger();
         this.authManager = plugin.getAuthManager();
-    }
-
-    @EventHandler
-    public void onLogin(PostLoginEvent event) {
-        authManager.onLogin(new BungeeServerPlayer(event.getPlayer()));
+        this.songManager = plugin.getSongManager();
     }
 
     @EventHandler
     @SuppressWarnings("unchecked")
     public void onPreLogin(PreLoginEvent event) {
-        event.registerIntent(BungeeBeacmcAuth.getInstance());
-        PendingConnection connection = event.getConnection();
-        authManager.onPremiumLogin(connection.getName().toLowerCase(), (PremiumProvider<? super PendingConnection>) BungeeBeacmcAuth.getInstance().getBeacmcAuth().getPremiumProvider(), connection);
-        event.completeIntent(BungeeBeacmcAuth.getInstance());
+        final PendingConnection connection = event.getConnection();
+
+        String name = connection.getName();
+        UUID uuid = UUIDFetcher.byName(name);
+
+        connection.setUniqueId(uuid);
+
+        Message disconnectMessage = authManager.onPremiumLogin(name.toLowerCase(), (PremiumChangerProvider<? super PendingConnection>) BungeeBeacmcAuth.getInstance().getBeacmcAuth().getPremiumProvider(), connection);
+        if (disconnectMessage != null) {
+            event.setReason(disconnectMessage.toBaseComponent());
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onConnect(ServerConnectEvent event) {
+        ProxiedPlayer player = event.getPlayer();
+        if (event.getReason() == ServerConnectEvent.Reason.JOIN_PROXY) {
+            ServerInfo defaultServer = event.getTarget();
+
+            event.setCancelled(true);
+
+            authManager.onConnect(new BungeeServerPlayer(player)).thenAccept(server -> {
+                if (server != null) {
+                    player.connect(server.getOriginalServer(), (connResult, throwable) -> {
+                        if (throwable != null) {
+                            player.connect(defaultServer);
+                        }
+                    });
+                } else {
+                    player.connect(defaultServer);
+                }
+            }).exceptionally(e -> {
+                player.connect(defaultServer);
+                return null;
+            });
+        }
+    }
+
+    @EventHandler
+    public void onConnected(ServerConnectedEvent event) {
+        ProxiedPlayer player = event.getPlayer();
+        if (authManager.isAuthenticating(player.getName())) {
+            songManager.play(new BungeeServerPlayer(player), songManager.findRandomSong());
+        }
     }
 
     @EventHandler
@@ -60,7 +106,7 @@ public class AuthListener implements Listener {
 
         ServerPlayer player = new BungeeServerPlayer(proxiedPlayer);
         if (authManager.isAuthenticating(player)) {
-            String cmd = event.getMessage().split(" ")[0];
+            String cmd = event.getMessage().split("\\s+")[0];
             if(event.isCommand() && whitelistCommands.contains(cmd.toLowerCase())) {
                 return;
             }

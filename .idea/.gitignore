@@ -50,3 +50,6 @@ Thumbs.db
 # Secrets/configs (если есть)
 config.yml
 *.secret
+
+# Custom
+test-server/

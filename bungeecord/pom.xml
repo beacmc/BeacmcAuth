@@ -13,6 +13,143 @@
         <version>2.4-BETA</version>
     </parent>
 
+    <build>
+        <finalName>BeacmcAuth-Bungee-${project.version}</finalName>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.10.1</version>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.38</version>
+                        </path>
+                    </annotationProcessorPaths>
+                    <source>${auth.java.version}</source>
+                    <target>${auth.java.version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.3</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <minimizeJar>false</minimizeJar>
+                            <relocations>
+                                <relocation>
+                                    <pattern>com.zaxxer</pattern>
+                                    <shadedPattern>com.beacmc.beacmcauth.shaded.hikaricp</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.alessiodp.libby</pattern>
+                                    <shadedPattern>com.beacmc.beacmcauth.shaded.libby</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>redis.clients</pattern>
+                                    <shadedPattern>com.beacmc.beacmcauth.shaded.redis</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>jakarta</pattern>
+                                    <shadedPattern>com.beacmc.beacmcauth.shaded.jakarta</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.j256.ormlite</pattern>
+                                    <shadedPattern>com.beacmc.beacmcauth.shaded.ormlite</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.sun</pattern>
+                                    <shadedPattern>com.beacmc.beacmcauth.shaded.sun</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>cz.koca2000.nbs4j</pattern>
+                                    <shadedPattern>com.beacmc.beacmcauth.shaded.nbs4j</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.json</pattern>
+                                    <shadedPattern>com.beacmc.beacmcauth.shaded.json</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.jetbrains</pattern>
+                                    <shadedPattern>com.beacmc.beacmcauth.shaded.jetbrains</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.intellij</pattern>
+                                    <shadedPattern>com.beacmc.beacmcauth.shaded.intellij</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.bstats</pattern>
+                                    <shadedPattern>com.beacmc.beacmcauth.shaded.bstats</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.apache</pattern>
+                                    <shadedPattern>com.beacmc.beacmcauth.shaded.apache</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>de.exlll.configlib</pattern>
+                                    <shadedPattern>com.beacmc.beacmcauth.shaded.configlib</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.snakeyaml</pattern>
+                                    <shadedPattern>com.beacmc.beacmcauth.shaded.snakeyaml</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.google.gson</pattern>
+                                    <shadedPattern>com.beacmc.beacmcauth.shaded.google.gson</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.mindrot.jbcrypt</pattern>
+                                    <shadedPattern>com.beacmc.beacmcauth.shaded.jbcrypt</shadedPattern>
+                                </relocation>
+                            </relocations>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.9.1</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.doxia</groupId>
+                        <artifactId>doxia-module-markdown</artifactId>
+                        <version>1.9.1</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>3.0.0-M1</version>
+                <configuration>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <tagNameFormat>@{project.version}</tagNameFormat>
+                    <scmCommentPrefix xml:space="preserve">[RELEASE] </scmCommentPrefix>
+                    <goals>install deploy site-deploy
+                    </goals> <!-- install is here to fix javadoc generation in multi-module projects -->
+                    <releaseProfiles>release</releaseProfiles>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
     <name>bungeecord</name>
 
     <repositories>
@@ -39,22 +176,29 @@
             <groupId>com.velocitypowered</groupId>
             <artifactId>velocity-api</artifactId>
             <version>3.3.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-bungeecord</artifactId>
+            <version>3.1.0</version>
         </dependency>
         <dependency>
             <groupId>com.beacmc.beacmcauth</groupId>
             <artifactId>api</artifactId>
-            <version>2.4-BETA</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-api</artifactId>
             <version>1.21-R0.4</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.beacmc.beacmcauth</groupId>
             <artifactId>core</artifactId>
-            <version>2.4-BETA</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.alessiodp.libby</groupId>
@@ -70,12 +214,19 @@
             <groupId>com.github.U61vashka.VK-API-PluginAdapter</groupId>
             <artifactId>vk-api.bungee</artifactId>
             <version>0.4.2</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
             <version>2.20.0</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.koca2000</groupId>
+            <artifactId>NBS4j</artifactId>
+            <version>1.3.0</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

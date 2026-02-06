@@ -1,53 +1,57 @@
 package com.beacmc.beacmcauth.api.cache;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 public interface Cache<T extends CachedData<ID>, ID> extends Iterable<T> {
 
-    default T updateCache(T data) {
-        T oldData = getCacheData(data.getId());
-        if (oldData == null) return null;
+    Map<ID, T> getCaches();
 
-        getCaches().remove(oldData);
-        getCaches().add(data);
+    default T addOrUpdateCache(T data) {
+        if (data == null) return null;
+        getCaches().put(data.getId(), data);
         return data;
     }
 
     default void addCache(T data) {
-        if (data != null) getCaches().add(data);
+        if (data == null) return;
+        getCaches().put(data.getId(), data);
     }
 
-    default CachedData<ID> addOrUpdateCache(T data) {
-        if (data == null)
-            return null;
+    default T updateCache(T data) {
+        if (data == null) return null;
 
-        if (updateCache(data) == null) {
-            addCache(data);
-        }
+        ID id = data.getId();
+        if (!getCaches().containsKey(id)) return null;
+
+        getCaches().put(id, data);
         return data;
     }
 
-    default Stream<T> stream() {
-        return StreamSupport.stream(spliterator(), false);
+    default T getCacheData(ID id) {
+        if (id == null) return null;
+        return getCaches().get(id);
     }
 
-    default Iterator<T> iterator() {
-        return getCaches().iterator();
+    default void removeById(ID id) {
+        if (id == null) return;
+        getCaches().remove(id);
     }
 
     default void removeCache(T data) {
-        getCaches().remove(data);
+        if (data == null) return;
+        getCaches().remove(data.getId(), data);
     }
 
-    default T getCacheData(ID id) {
-        return getCaches().stream()
-                .filter(data -> data.getId().equals(id))
-                .findFirst()
-                .orElse(null);
+    default Stream<T> stream() {
+        return getCaches().values().stream();
     }
 
-    List<T> getCaches();
+    @Override
+    default @NotNull Iterator<T> iterator() {
+        return getCaches().values().iterator();
+    }
 }

@@ -1,15 +1,17 @@
 package com.beacmc.beacmcauth.core.cache;
 
-import com.beacmc.beacmcauth.api.ProtectedPlayer;
+import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.cache.Cache;
 import lombok.Getter;
+import lombok.ToString;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
+@ToString
 public class PlayerCache implements Cache<ProtectedPlayer, UUID> {
 
-    private final List<ProtectedPlayer> caches = new ArrayList<>();
+    private final Map<UUID, ProtectedPlayer> caches = new ConcurrentHashMap<>();
 }

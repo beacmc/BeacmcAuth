@@ -1,13 +1,17 @@
 package com.beacmc.beacmcauth.api;
 
 import com.beacmc.beacmcauth.api.auth.AuthManager;
-import com.beacmc.beacmcauth.api.auth.premium.PremiumProvider;
+import com.beacmc.beacmcauth.api.auth.premium.mojang.MojangAuthManager;
+import com.beacmc.beacmcauth.api.auth.premium.mojang.PremiumChangerProvider;
 import com.beacmc.beacmcauth.api.command.CommandManager;
 import com.beacmc.beacmcauth.api.config.Config;
+import com.beacmc.beacmcauth.api.config.EmailConfig;
+import com.beacmc.beacmcauth.api.config.MojangAuthConfig;
 import com.beacmc.beacmcauth.api.config.social.DiscordConfig;
 import com.beacmc.beacmcauth.api.config.social.TelegramConfig;
 import com.beacmc.beacmcauth.api.config.social.VkontakteConfig;
 import com.beacmc.beacmcauth.api.database.Database;
+import com.beacmc.beacmcauth.api.email.EmailManager;
 import com.beacmc.beacmcauth.api.library.LibraryProvider;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
 import com.beacmc.beacmcauth.api.message.MessageProvider;
@@ -28,7 +32,13 @@ public interface BeacmcAuth {
 
     Config getConfig();
 
+    EmailConfig getEmailConfig();
+
+    MojangAuthConfig getMojangAuthConfig();
+
     Database getDatabase();
+
+    EmailManager getEmailManager();
 
     AuthManager getAuthManager();
 
@@ -46,6 +56,8 @@ public interface BeacmcAuth {
 
     File getDataFolder();
 
+    MojangAuthManager getMojangAuthManager();
+
     DiscordConfig getDiscordConfig();
 
     void saveResource(String file);
@@ -60,9 +72,9 @@ public interface BeacmcAuth {
 
     CommandManager getCommandManager();
 
-    PremiumProvider<?> getPremiumProvider();
+    PremiumChangerProvider<?> getPremiumProvider();
 
-    <T> BeacmcAuth setPremiumProvider(PremiumProvider<T> premiumProvider);
+    <T> BeacmcAuth setPremiumProvider(PremiumChangerProvider<T> premiumChangerProvider);
 
     BeacmcAuth setProxy(Proxy proxy);
 

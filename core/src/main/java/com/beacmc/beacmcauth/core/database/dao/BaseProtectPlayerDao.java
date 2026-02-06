@@ -1,7 +1,7 @@
 package com.beacmc.beacmcauth.core.database.dao;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
-import com.beacmc.beacmcauth.api.ProtectedPlayer;
+import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.cache.Cache;
 import com.beacmc.beacmcauth.api.database.dao.ProtectedPlayerDao;
 import com.j256.ormlite.dao.BaseDaoImpl;
@@ -21,7 +21,7 @@ public class BaseProtectPlayerDao extends BaseDaoImpl<ProtectedPlayer, UUID> imp
     }
 
     @Override
-    public synchronized CreateOrUpdateStatus createOrUpdate(ProtectedPlayer data) throws SQLException {
+    public CreateOrUpdateStatus createOrUpdate(ProtectedPlayer data) throws SQLException {
         if (data == null) return null;
 
         players.addOrUpdateCache(data);

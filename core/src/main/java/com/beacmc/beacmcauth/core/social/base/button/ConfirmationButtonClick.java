@@ -1,11 +1,11 @@
 package com.beacmc.beacmcauth.core.social.base.button;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
-import com.beacmc.beacmcauth.api.ProtectedPlayer;
+import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.config.ConfigMessages;
 import com.beacmc.beacmcauth.api.config.social.SocialConfig;
-import com.beacmc.beacmcauth.api.player.ServerPlayer;
+import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.social.Social;
 import com.beacmc.beacmcauth.api.social.SocialManager;
 import com.beacmc.beacmcauth.api.social.SocialPlayer;
@@ -66,6 +66,7 @@ public class ConfirmationButtonClick implements ButtonClickListener {
                     case DISCORD ->  messages.getDiscordConfirmationDeniedDisconnect();
                     case TELEGRAM -> messages.getTelegramConfirmationDeniedDisconnect();
                     case VKONTAKTE -> messages.getVkontakteConfirmationDeniedDisconnect();
+                    case CUSTOM -> null;
                 };
                 player.disconnect(disconnectMessage);
             }

@@ -1,6 +1,6 @@
 package com.beacmc.beacmcauth.core.social.types.discord;
 
-import com.beacmc.beacmcauth.api.ProtectedPlayer;
+import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.social.SocialPlayer;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.interactions.components.ItemComponent;

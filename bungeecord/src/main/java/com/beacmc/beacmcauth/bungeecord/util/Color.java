@@ -11,7 +11,7 @@ public class Color {
 
     private static final Pattern HEX_PATTERN = Pattern.compile("#[a-fA-F0-9]{6}");
 
-    public static BaseComponent[] of(String text) {
+    public static BaseComponent of(String text) {
         Matcher matcher = HEX_PATTERN.matcher(text);
         StringBuilder buffer = new StringBuilder();
 
@@ -26,7 +26,7 @@ public class Color {
         }
         matcher.appendTail(buffer);
 
-        return TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', buffer.toString())
+        return TextComponent.fromLegacy(ChatColor.translateAlternateColorCodes('&', buffer.toString())
                 .replace("&", ""));
     }
 }

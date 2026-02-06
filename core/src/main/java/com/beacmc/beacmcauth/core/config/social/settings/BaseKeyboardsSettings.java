@@ -1,6 +1,6 @@
 package com.beacmc.beacmcauth.core.config.social.settings;
 
-import com.beacmc.beacmcauth.api.ProtectedPlayer;
+import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.config.social.settings.KeyboardsSettings;
 import com.beacmc.beacmcauth.api.social.keyboard.Keyboard;
 import com.beacmc.beacmcauth.api.social.keyboard.button.Button;
@@ -25,12 +25,12 @@ public class BaseKeyboardsSettings implements KeyboardsSettings {
                     Button.builder()
                             .type(ButtonType.SUCCESS)
                             .label("Accept")
-                            .callbackData("confirm-accept:")
+                            .callbackData("confirm-accept:{name}")
                             .build(),
                     Button.builder()
                             .type(ButtonType.DANGER)
                             .label("Reject")
-                            .callbackData("confirm-decline:")
+                            .callbackData("confirm-decline:{name}")
                             .build()
             )))
             .build();
@@ -86,7 +86,7 @@ public class BaseKeyboardsSettings implements KeyboardsSettings {
         Keyboard keyboard = new Keyboard();
         List<List<Button>> buttons = new ArrayList<>();
         buttons.add(accountListKeyboardSettings.getHeaderButtons().stream()
-                .map(button -> button.parsePlaceholders(Map.of("{page}", page)))
+                .map(button -> button.parseButtonPlaceholders(Map.of("{page}", page)))
                 .toList());
 
         final int start = page * 4;
@@ -98,14 +98,14 @@ public class BaseKeyboardsSettings implements KeyboardsSettings {
         }
 
         pageContent.forEach(account -> buttons.add(List.of(
-                accountListKeyboardSettings.getAccountButton().parsePlaceholders(Map.of(
+                accountListKeyboardSettings.getAccountButton().parseButtonPlaceholders(Map.of(
                         "{name}", account.getRealName(),
                         "{lowercase_name}", account.getLowercaseName()
                 ))
         )));
 
         buttons.add(accountListKeyboardSettings.getFooterButtons().stream()
-                .map(button -> button.parsePlaceholders(Map.of("{page}", page)))
+                .map(button -> button.parseButtonPlaceholders(Map.of("{page}", page)))
                 .toList());
         return keyboard.setButtons(buttons);
     }

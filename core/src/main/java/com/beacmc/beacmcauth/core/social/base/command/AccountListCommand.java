@@ -1,7 +1,7 @@
 package com.beacmc.beacmcauth.core.social.base.command;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
-import com.beacmc.beacmcauth.api.ProtectedPlayer;
+import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.config.social.SocialConfig;
 import com.beacmc.beacmcauth.api.social.Social;
 import com.beacmc.beacmcauth.api.social.SocialPlayer;
@@ -29,7 +29,7 @@ public class AccountListCommand implements SocialCommand {
             socialPlayer.sendPrivateMessage(socialConfig.getMessages().getCooldown());
             return;
         }
-        social.createCooldown(socialPlayer.getID(), 6000L);
+        social.createCooldown(socialPlayer.getID(), 500L);
 
         List<ProtectedPlayer> accountLinked = social.getLinkedPlayersById(socialPlayer.getID());
         if (accountLinked.isEmpty()) {

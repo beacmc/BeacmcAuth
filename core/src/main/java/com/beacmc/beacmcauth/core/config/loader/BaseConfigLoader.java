@@ -14,11 +14,7 @@ public class BaseConfigLoader implements ConfigLoader {
     @Override
     public <T> T load(File file, Class<T> clazz, T obj) {
         Path filePath = file.toPath();
-        if (!file.exists()) {
-            YamlConfigurations.save(filePath, clazz, obj, getDefaultConfigProperties());
-        }
-
-        return YamlConfigurations.load(filePath, clazz, getDefaultConfigProperties());
+        return YamlConfigurations.update(filePath, clazz, getDefaultConfigProperties());
     }
 
     @Override

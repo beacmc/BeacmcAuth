@@ -7,7 +7,7 @@ public interface Message {
 
     String getContentRaw();
 
-    BaseComponent[] toBaseComponent();
+    BaseComponent toBaseComponent();
 
     Component toComponent();
 }

@@ -1,12 +1,13 @@
 package com.beacmc.beacmcauth.core.command.executor;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
-import com.beacmc.beacmcauth.api.ProtectedPlayer;
+import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.auth.AuthManager;
 import com.beacmc.beacmcauth.api.command.CommandSender;
 import com.beacmc.beacmcauth.api.command.executor.CommandExecutor;
 import com.beacmc.beacmcauth.api.config.Config;
-import com.beacmc.beacmcauth.api.player.ServerPlayer;
+import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
+import com.beacmc.beacmcauth.core.cache.cooldown.GameCooldown;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -14,10 +15,12 @@ public class LoginCommandExecutor implements CommandExecutor {
 
     private final BeacmcAuth plugin;
     private final AuthManager authManager;
+    private final GameCooldown cooldown;
 
     public LoginCommandExecutor(BeacmcAuth plugin) {
         this.plugin = plugin;
         this.authManager = plugin.getAuthManager();
+        this.cooldown = GameCooldown.getInstance();
     }
 
     @Override
@@ -33,6 +36,12 @@ public class LoginCommandExecutor implements CommandExecutor {
             player.sendMessage(config.getMessages().getAlreadyAuthed());
             return;
         }
+
+        if (cooldown.isCooldown(player.getLowercaseName())) {
+            player.sendMessage(config.getMessages().getCooldown());
+            return;
+        }
+        cooldown.createCooldown(player.getLowercaseName(), 1_000);
 
         final CompletableFuture<ProtectedPlayer> future = authManager.getProtectedPlayer(player.getLowercaseName());
 

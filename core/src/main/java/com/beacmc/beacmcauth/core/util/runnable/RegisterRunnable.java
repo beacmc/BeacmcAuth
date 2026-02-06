@@ -4,7 +4,7 @@ import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.auth.AuthManager;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
-import com.beacmc.beacmcauth.api.player.ServerPlayer;
+import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.scheduler.TaskScheduler;
 
 import java.util.concurrent.TimeUnit;
@@ -38,7 +38,7 @@ public class RegisterRunnable implements Runnable {
         message = config.getMessages().getRegisterChat();
         messageSendDelay = config.getRegisterMessageSendDelaySeconds();
         in = 0;
-        stay = 25;
+        stay = messageSendDelay * 20 + 5;
         out = 0;
 
         logger = plugin.getServerLogger();

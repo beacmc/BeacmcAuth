@@ -13,7 +13,7 @@ public class PremiumCommand extends Command {
     private final CommandManager commandManager;
 
     public PremiumCommand(BeacmcAuth plugin) {
-        super("premium", null);
+        super("premium", "beacmcauth.premium");
         commandManager = plugin.getCommandManager();
     }
 

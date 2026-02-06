@@ -3,7 +3,7 @@ package com.beacmc.beacmcauth.core.util.runnable;
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.auth.AuthManager;
 import com.beacmc.beacmcauth.api.config.Config;
-import com.beacmc.beacmcauth.api.player.ServerPlayer;
+import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.scheduler.TaskScheduler;
 
 import java.util.concurrent.TimeUnit;
@@ -36,7 +36,7 @@ public class LoginRunnable implements Runnable {
         message = config.getMessages().getLoginChat();
         messageSendDelay = config.getLoginMessageSendDelaySeconds();
         in = 0;
-        stay = 25;
+        stay = messageSendDelay * 20 + 5;
         out = 0;
 
         task = plugin.getProxy().runTaskDelay(this, 1, TimeUnit.SECONDS);

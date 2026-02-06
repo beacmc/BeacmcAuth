@@ -1,6 +1,6 @@
 package com.beacmc.beacmcauth.api.config.social.settings;
 
-import com.beacmc.beacmcauth.api.ProtectedPlayer;
+import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.social.keyboard.Keyboard;
 import com.beacmc.beacmcauth.api.social.keyboard.button.Button;
 import org.jetbrains.annotations.Nullable;

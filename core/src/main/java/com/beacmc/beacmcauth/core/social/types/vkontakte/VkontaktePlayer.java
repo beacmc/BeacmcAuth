@@ -1,7 +1,7 @@
 package com.beacmc.beacmcauth.core.social.types.vkontakte;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
-import com.beacmc.beacmcauth.api.ProtectedPlayer;
+import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.social.SocialPlayer;
 import com.beacmc.beacmcauth.api.social.SocialType;
 import com.vk.api.sdk.client.VkApiClient;
@@ -36,8 +36,7 @@ public class VkontaktePlayer implements SocialPlayer<Integer, Integer> {
         try {
             VkApiClient client = vkontakteSocial.getVkApiPlugin().getVkApiProvider().getVkApiClient();
             MessagesSendQuery query = client.messages().send(groupActor).message(message);
-
-
+            
             if (keyboard instanceof Keyboard vkKeyboard) {
                 query.keyboard(vkKeyboard);
             }

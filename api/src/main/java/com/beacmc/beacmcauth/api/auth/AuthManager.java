@@ -1,17 +1,20 @@
 package com.beacmc.beacmcauth.api.auth;
 
-import com.beacmc.beacmcauth.api.ProtectedPlayer;
+import com.beacmc.beacmcauth.api.message.Message;
+import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.auth.premium.PremiumPlayer;
-import com.beacmc.beacmcauth.api.auth.premium.PremiumProvider;
-import com.beacmc.beacmcauth.api.auth.premium.PremiumUser;
+import com.beacmc.beacmcauth.api.auth.premium.mojang.PremiumChangerProvider;
 import com.beacmc.beacmcauth.api.cache.Cache;
-import com.beacmc.beacmcauth.api.player.ServerPlayer;
+import com.beacmc.beacmcauth.api.model.AltAccounts;
+import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.server.Server;
+import org.jetbrains.annotations.Nullable;
 
 import java.net.InetAddress;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 
 /**
  * Interaction manager of all authorization functions
@@ -23,9 +26,9 @@ public interface AuthManager {
      *
      * @param player - Proxy ServerPlayer
      */
-    void onLogin(ServerPlayer player);
+    CompletableFuture<Server> onConnect(ServerPlayer player);
 
-    <T> void onPremiumLogin(String playerName, PremiumProvider<T> premiumProvider, T obj);
+    <T> @Nullable Message onPremiumLogin(String playerName, PremiumChangerProvider<T> premiumChangerProvider, T obj);
 
     void onDisconnect(ServerPlayer player);
 
@@ -39,7 +42,13 @@ public interface AuthManager {
 
     void connectGameServer(ServerPlayer player);
 
-    boolean isAuthenticating(ServerPlayer player);
+    default boolean isAuthenticating(ServerPlayer player) {
+        return isAuthenticating(player.getLowercaseName());
+    }
+
+    boolean isAuthenticating(String playerName);
+
+    CompletableFuture<Void> saveSecretQuestion(ProtectedPlayer player, String question, String answer);
 
     CompletableFuture<ProtectedPlayer> createProtectedPlayer(String lowercaseName, String realName, String password, long session, long lastJoin, String registerIp, String lastIp, UUID uuid);
 
@@ -53,13 +62,15 @@ public interface AuthManager {
 
     CompletableFuture<ProtectedPlayer> register(ProtectedPlayer protectedPlayer, String password);
 
+    CompletableFuture<AltAccounts> getAltAccounts(String hostAddress);
+
+    void addAltAccount(ProtectedPlayer player, String ip);
+
     Map<String, Integer> getAuthPlayers();
 
-    boolean isPremium(String playerName);
-
-    UUID getPremiumUuid(String playerName);
-
-    Cache<PremiumUser, String> getPremiumCache();
+    Cache<ProtectedPlayer, UUID> getPlayerCache();
 
     Cache<PremiumPlayer, String> getPremiumPlayerCache();
+
+    ExecutorService getExecutorService();
 }

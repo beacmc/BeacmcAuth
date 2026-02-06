@@ -1,6 +1,6 @@
 package com.beacmc.beacmcauth.api.social.link;
 
-import com.beacmc.beacmcauth.api.ProtectedPlayer;
+import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.social.SocialType;
 import org.jetbrains.annotations.NotNull;
 

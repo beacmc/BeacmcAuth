@@ -3,13 +3,11 @@ package com.beacmc.beacmcauth.core.song;
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.packet.position.PlayerPosition;
 import com.beacmc.beacmcauth.api.packet.position.PlayerPositionTracker;
-import com.beacmc.beacmcauth.api.player.ServerPlayer;
+import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.song.SongPlayer;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.protocol.sound.Sounds;
-import com.github.retrooper.packetevents.util.Vector3d;
-import com.github.retrooper.packetevents.util.Vector3i;
 import cz.koca2000.nbs4j.CustomInstrument;
 import cz.koca2000.nbs4j.Layer;
 import cz.koca2000.nbs4j.Note;
@@ -19,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public final class BaseSongPlayer extends SongPlayer {
 
@@ -34,21 +33,20 @@ public final class BaseSongPlayer extends SongPlayer {
 
     @Override
     public void play(Song song) {
-        final int[] tick = {0};
-        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        final AtomicInteger atomicTick = new AtomicInteger(0);
 
+        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
         Runnable[] task = new Runnable[1];
         task[0] = () -> {
-            if (tick[0] > song.getSongLength() || !getPlayer().isConnected() || stopped) {
+            int tick = atomicTick.getAndAdd(1);
+            if (tick > song.getSongLength() || !getPlayer().isConnected() || stopped) {
                 return;
             }
 
-            playTick(getPlayer(), song, tick[0]);
+            playTick(getPlayer(), song, tick);
 
-            double tempo = song.getTempo(tick[0]);
+            double tempo = song.getTempo(tick);
             long delay = (long) (1000 / tempo);
-
-            tick[0]++;
 
             setScheduledFuture(scheduler.schedule(task[0], delay, TimeUnit.MILLISECONDS));
         };

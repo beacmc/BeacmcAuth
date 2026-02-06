@@ -1,4 +1,4 @@
-package com.beacmc.beacmcauth.api.player;
+package com.beacmc.beacmcauth.api.server.player;
 
 import com.beacmc.beacmcauth.api.command.CommandSender;
 import com.beacmc.beacmcauth.api.server.Server;

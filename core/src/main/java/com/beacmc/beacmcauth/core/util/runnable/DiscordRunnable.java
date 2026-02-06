@@ -1,10 +1,10 @@
 package com.beacmc.beacmcauth.core.util.runnable;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
-import com.beacmc.beacmcauth.api.ProtectedPlayer;
+import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.config.social.DiscordConfig;
-import com.beacmc.beacmcauth.api.player.ServerPlayer;
+import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.scheduler.TaskScheduler;
 import com.beacmc.beacmcauth.api.social.SocialManager;
 import com.beacmc.beacmcauth.api.social.SocialType;
@@ -44,7 +44,7 @@ public class DiscordRunnable implements Runnable {
         messageSendDelay = discordConfig.getMessageSendDelaySeconds();
 
         in = 0;
-        stay = 25;
+        stay = messageSendDelay * 20 + 5;
         out = 0;
 
         task = plugin.getProxy().runTaskDelay(this, 1, TimeUnit.SECONDS);
@@ -67,6 +67,7 @@ public class DiscordRunnable implements Runnable {
                 || !player.isConnected()) {
             task.cancel();
             plugin.getSongManager().stop(player.getUUID());
+            player.sendTitle("", "", 0, 10, 0);
             return;
         }
 

@@ -10,7 +10,6 @@ public interface CommandManager {
         return getCommandExecutors().get(name);
     }
 
-
     default void register(String name, CommandExecutor commandExecutor) {
         if (!getCommandExecutors().containsKey(name)) {
             getCommandExecutors().put(name, commandExecutor);

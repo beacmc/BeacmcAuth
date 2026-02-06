@@ -20,15 +20,17 @@ public interface Config {
 
     Pattern getNicknameRegex();
 
+    Pattern getPasswordRegex();
+
     String getLinkCommand();
 
     boolean isNbsSongSupport();
 
+    String getRecoveryPasswordChars();
+
     List<String> getWhitelistCommands();
 
     Integer getPasswordAttempts();
-
-    Integer getPasswordMaxLength();
 
     DatabaseSettings getDatabaseSettings();
 
@@ -36,13 +38,13 @@ public interface Config {
 
     int getLoginMessageSendDelaySeconds();
 
-    Integer getPasswordMinLength();
-
     Integer getSessionTime();
 
     Integer getTimePerLogin();
 
     Integer getTimePerRegister();
+
+    boolean isRegisterRepeatPassword();
 
     List<String> getAuthServers();
 
@@ -57,6 +59,8 @@ public interface Config {
     long getLifetimeOfTemporaryPremiumVerificationTimeUnitValue();
 
     TimeUnit getLifetimeOfTemporaryPremiumVerificationTimeUnit();
+
+    AccountLimiterSettings getAccountLimiterSettings();
 
     ConfigMessages getMessages();
 }

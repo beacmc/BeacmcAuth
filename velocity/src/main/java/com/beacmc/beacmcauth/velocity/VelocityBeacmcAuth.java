@@ -1,10 +1,11 @@
 package com.beacmc.beacmcauth.velocity;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
+import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.social.SocialType;
 import com.beacmc.beacmcauth.core.BaseBeacmcAuth;
 import com.beacmc.beacmcauth.core.social.types.vkontakte.VkontakteSocial;
-import com.beacmc.beacmcauth.velocity.auth.VelocityPremiumProvider;
+import com.beacmc.beacmcauth.velocity.auth.VelocityPremiumChangerProvider;
 import com.beacmc.beacmcauth.velocity.library.VelocityLibraryProvider;
 import com.beacmc.beacmcauth.velocity.logger.VelocityServerLogger;
 import com.beacmc.beacmcauth.velocity.message.VelocityMessageProvider;
@@ -17,40 +18,36 @@ import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
-import com.velocitypowered.api.plugin.Dependency;
-import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
+import lombok.Getter;
+import org.bstats.charts.SimplePie;
+import org.bstats.charts.SingleLineChart;
+import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;
 
-@Plugin(
-        id = "beacmcauth",
-        name = "BeacmcAuth",
-        version = "v2.4-BETA",
-        authors = {"beacmc"},
-        dependencies = {
-                @Dependency(id = "luckperms", optional = true),
-                @Dependency(id = "vk-api", optional = true),
-                @Dependency(id = "packetevents", optional = true),
-                @Dependency(id = "azlink", optional = true)
-        }
-)
+
+@Getter
 public final class VelocityBeacmcAuth {
 
     private BeacmcAuth beacmcAuth;
+
+    @Getter
     private static VelocityBeacmcAuth instance;
-    private final ProxyServer proxyServer;
+    private final ProxyServer velocityProxyServer;
     private final Path dataDirectory;
-    private final Logger logger;
+    private final Logger velocityLogger;
+    private final Metrics.Factory metricsFactory;
 
     @Inject
-    public VelocityBeacmcAuth(ProxyServer proxyServer, Logger logger, @DataDirectory Path dataDirectory) {
-        this.proxyServer = proxyServer;
+    public VelocityBeacmcAuth(ProxyServer proxyServer, Logger logger, Metrics.Factory metricsFactory, @DataDirectory Path dataDirectory) {
+        this.velocityProxyServer = proxyServer;
         this.dataDirectory = dataDirectory;
-        this.logger = logger;
+        this.velocityLogger = logger;
+        this.metricsFactory = metricsFactory;
     }
 
     @Subscribe
@@ -58,26 +55,34 @@ public final class VelocityBeacmcAuth {
         instance = this;
         beacmcAuth = new BaseBeacmcAuth();
         beacmcAuth.setDataFolder(dataDirectory.toFile())
-                .setProxy(new VelocityProxy(proxyServer))
+                .setProxy(new VelocityProxy(velocityProxyServer))
                 .setLibraryProvider(new VelocityLibraryProvider(this))
                 .setMessageProvider(new VelocityMessageProvider())
                 .setServerLogger(new VelocityServerLogger(beacmcAuth))
-                .setPremiumProvider(new VelocityPremiumProvider());
-
+                .setPremiumProvider(new VelocityPremiumChangerProvider());
         beacmcAuth.onEnable();
+
+        Config config = beacmcAuth.getConfig();
+        Metrics metrics = getMetricsFactory().make(this, 23880);
+        metrics.addCustomChart(new SimplePie("Database type",
+                () -> config.getDatabaseSettings().getType().name()));
+        metrics.addCustomChart(new SimplePie("Auth servers count",
+                () -> String.valueOf(config.getAuthServers().size())));
+        metrics.addCustomChart(new SingleLineChart("Registered players",
+                () -> Math.toIntExact(beacmcAuth.getDatabase().getProtectedPlayerDao().countOf())));
 
         VkontakteSocial vkSocial = (VkontakteSocial) beacmcAuth.getSocialManager().getSocialByType(SocialType.VKONTAKTE);
         if (this.getVelocityProxyServer().getPluginManager().getPlugin("vk-api").isPresent() && vkSocial != null) {
             try {
                 Class.forName("com.ubivashka.vk.api.VkApiPlugin");
-                Object instance = proxyServer.getPluginManager().getPlugin("vk-api").flatMap(PluginContainer::getInstance).orElse(null);
+                Object instance = velocityProxyServer.getPluginManager().getPlugin("vk-api").flatMap(PluginContainer::getInstance).orElse(null);
                 vkSocial.setup(instance);
             } catch (Exception ignored) {
             }
-            proxyServer.getEventManager().register(this, new VkontakteListener(beacmcAuth));
+            velocityProxyServer.getEventManager().register(this, new VkontakteListener(beacmcAuth));
         }
 
-        proxyServer.getEventManager().register(this, new AuthListener(beacmcAuth));
+        velocityProxyServer.getEventManager().register(this, new AuthListener(beacmcAuth));
         initCommands();
     }
 
@@ -87,7 +92,7 @@ public final class VelocityBeacmcAuth {
     }
 
     private void initCommands() {
-        final CommandManager commandManager = proxyServer.getCommandManager();
+        final CommandManager commandManager = velocityProxyServer.getCommandManager();
 
         commandManager.register(
                 commandManager.metaBuilder("premium")
@@ -96,12 +101,32 @@ public final class VelocityBeacmcAuth {
                 new PremiumCommand(beacmcAuth)
         );
 
-
         commandManager.register(
                 commandManager.metaBuilder("crack")
                         .plugin(this)
                         .build(),
                 new CrackCommand(beacmcAuth)
+        );
+
+        commandManager.register(
+                commandManager.metaBuilder("email")
+                        .plugin(this)
+                        .build(),
+                new EmailCommand(beacmcAuth)
+        );
+
+        commandManager.register(
+                commandManager.metaBuilder("logout")
+                        .plugin(this)
+                        .build(),
+                new LogoutCommand(beacmcAuth)
+        );
+
+        commandManager.register(
+                commandManager.metaBuilder("secret")
+                        .plugin(this)
+                        .build(),
+                new SecretCommand(beacmcAuth)
         );
 
         commandManager.register(
@@ -118,6 +143,13 @@ public final class VelocityBeacmcAuth {
                         .aliases("l", "log")
                         .build(),
                 new LoginCommand(beacmcAuth)
+        );
+
+        commandManager.register(
+                commandManager.metaBuilder("alts")
+                        .plugin(this)
+                        .build(),
+                new AltsCommand(beacmcAuth)
         );
 
         commandManager.register(
@@ -142,25 +174,5 @@ public final class VelocityBeacmcAuth {
                         .build(),
                 new AuthCommand(beacmcAuth)
         );
-    }
-
-    public Logger getVelocityLogger() {
-        return logger;
-    }
-
-    public Path getDataDirectory() {
-        return dataDirectory;
-    }
-
-    public ProxyServer getVelocityProxyServer() {
-        return proxyServer;
-    }
-
-    public BeacmcAuth getBeacmcAuth() {
-        return beacmcAuth;
-    }
-
-    public static VelocityBeacmcAuth getInstance() {
-        return instance;
     }
 }

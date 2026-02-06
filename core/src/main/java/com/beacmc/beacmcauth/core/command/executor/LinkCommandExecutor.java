@@ -4,7 +4,7 @@ import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.command.CommandSender;
 import com.beacmc.beacmcauth.api.command.executor.CommandExecutor;
 import com.beacmc.beacmcauth.api.config.Config;
-import com.beacmc.beacmcauth.api.player.ServerPlayer;
+import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.social.Social;
 import com.beacmc.beacmcauth.api.social.SocialManager;
 import com.beacmc.beacmcauth.api.social.link.LinkManager;
@@ -41,7 +41,7 @@ public class LinkCommandExecutor implements CommandExecutor {
             player.sendMessage(config.getMessages().getCooldown());
             return;
         }
-        cooldown.createCooldown(player.getLowercaseName(), 10000L);
+        cooldown.createCooldown(player.getLowercaseName(), 10_000);
 
         final List<LinkPlayer<?>> linkPlayers = linkManager.getPlayersByName(player.getName());
 

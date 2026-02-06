@@ -28,8 +28,6 @@ public class BaseConfig implements Config {
     private int loginMessageSendDelaySeconds = 3;
     @Comment({"", "A parameter of the bcrypt password hashing algorithm that determines", "the computational cost and, consequently, the time required to compute the hash."})
     private Integer bCryptRounds = 12;
-    private Integer passwordMinLength = 8;
-    private Integer passwordMaxLength = 72;
     private Integer passwordAttempts = 3;
 
     @Comment({"", "Time unit types: DAYS, HOURS, MINUTES, SECONDS, MILLISECONDS, MICROSECONDS, NANOSECONDS"})
@@ -46,12 +44,16 @@ public class BaseConfig implements Config {
     @Comment({"", "Servers that cannot be accessed during authorization.", "Please observe the case sensitivity of server names!"})
     private List<String> disabledServers = List.of("anarchy-1", "anarchy-2");
     @Comment({"", "Commands available upon authorization and registration"})
-    private List<String> whitelistCommands = List.of("/l", "/log", "/login", "/reg", "/register");
+    private List<String> whitelistCommands = List.of("/l", "/log", "/login", "/reg", "/register", "/recovery");
     private boolean nameCaseControl = true;
     private Pattern nicknameRegex = Pattern.compile("[a-zA-Z0-9_]*");
+    private boolean registerRepeatPassword = true;
+    private Pattern passwordRegex = Pattern.compile("^[A-Za-z0-9!@#$%&*()\\-_=+\\[\\]{};:'\",.<>/?`~\\\\|]{8,64}$");
     @Comment({"", "PacketEvents required"})
     private boolean nbsSongSupport = true;
+    private String recoveryPasswordChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private BaseDatabaseSettings databaseSettings = new BaseDatabaseSettings();
+    private BaseAccountLimiterSettings accountLimiterSettings = new BaseAccountLimiterSettings();
     private Messages messages = new Messages();
 
     @Ignore
@@ -90,8 +92,7 @@ public class BaseConfig implements Config {
         String registerTitle = "&7";
         String registerSubtitle = "&7Register an account";
         String passwordsDontMatch = "&7The passwords don't match";
-        String lowCharacterPassword = "&7There are not enough characters in the password";
-        String highCharacterPassword = "&7There are too many characters in the password";
+        String invalidPassword = "&7The password does not meet the criteria. Between 8 and 64 characters";
         String notRegistered = "&7You're not registered";
         String registerSuccess = "&7Registration successful";
         String confirmPassword = "&7Repeat your password in the second argument";
@@ -115,12 +116,13 @@ public class BaseConfig implements Config {
         String authHelp = """
                 #ffbb00&lBeacmcAuth commands
                 #ffbb00&m       &r
-                &7auth 
+                &7auth
                 &7 - #ffbb00reload &8:&7 reload config
                 &7 - #ffbb00delete <account> &8:&7 delete account
                 &7 - #ffbb00changepass <account> <pass> &8:&7 change account password
                 """;
         String alreadyAuthed = "&7You are already logged in";
+        String notAuthed = "&7You're not logged in";
         String enterPassword = "&7You have not entered your password";
         String sessionActive = "&7Server recognized you, authorization is not required";
         String invalidCharacterInName = "7Invalid characters are detected in the name";
@@ -134,7 +136,7 @@ public class BaseConfig implements Config {
                 """;
 
         String nameCaseFailed = """
-                &7Your nickname does not match the nickname you registered under. 
+                &7Your nickname does not match the nickname you registered under.
                 &7Current name: &#ffbb00%current_name%
                 &7Required name: &#ffbb00%need_name%
                 """;
@@ -177,5 +179,40 @@ public class BaseConfig implements Config {
         String vkontakteConfirmationSuccess = "&7Login confirmed, you will be redirected to the server";
         String vkontakteKick = "&cYou were kicked at the vkontakte request";
 
+        String logoutDisconnect = """
+                &6Your session was successfully reset
+                """;
+        String altsCommandUsage = "&7Usage: /alts <player>";
+        String altsAccountsEmpty = "&7No alternative accounts found";
+        String alternativeAccountsLimitReached = "&7the limit of alternative accounts has been reached";
+        String secretAnswerAlreadyCreated = "&7You have already created a secret answer.";
+        String secretAnswerCreated = "&7Your secret answer has been successfully created!";
+        String secretAnswerNotCreated = "&7You have not created a secret answer yet.";
+        String invalidSecretAnswerDisconnect = "&cInvalid secret answer. You have been disconnected.";
+        String secretAnswerSuccessUsedDisconnect = "&7Secret answer accepted. New password: &6%password%";
+        String secretAnswerRemoved = "&7A secret question has been successfully removed";
+        String secretSetCommandUsage = "&7Usage: /secret set <question>? <answer>";
+        String secretInvalidSyntax = "&7Invalid syntax, usage: <question>? <answer>";
+        String secretCommandUsage = "&7Usage: /secret <set/remove/recovery>";
+        String answerTooLong = "&7The answer is too long.";
+        String secretRecovery = """
+                &7Your question: &6%question%?
+                &7Enter the command &6/secret recovery <response>
+                """;
+        String emailCommandUsage = "&7Usage: /email <add/remove/recovery>";
+        String emailAddCommandUsage = "&7Usage: /email add <username@gmail.com>";
+        String emailRecoveryCommandUsage = "&7Usage: /email recovery <your-email>";
+        String emailRecoveryInvalidDisconnect = "&cThe email address is incorrect!";
+        String emailAdded = "&7Mail successfully added";
+        String emailRemoved = "&7Mail successfully removed";
+        String emailInvalid = "&7Invalid syntax. Example: username@gmail.com";
+        String emailNotAdded = "&7Email not added yet.";
+        String emailAlreadyAdded = "&7Email already added.";
+        String couldNotSendEmailMessages = "&7An error occurred while sending an email";
+        String emailAlreadyTaken = "&7This email is already taken";
+        String emailRecoveryDisconnect = """
+                &7You have been disconnected from the server due to a password change
+                &6Your new password is waiting for you in your Email
+                """;
     }
 }

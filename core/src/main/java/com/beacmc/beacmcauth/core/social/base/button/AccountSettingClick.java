@@ -5,7 +5,7 @@ import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.config.ConfigMessages;
 import com.beacmc.beacmcauth.api.config.social.SocialConfig;
 import com.beacmc.beacmcauth.api.database.dao.ProtectedPlayerDao;
-import com.beacmc.beacmcauth.api.player.ServerPlayer;
+import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.social.Social;
 import com.beacmc.beacmcauth.api.social.SocialPlayer;
 import com.beacmc.beacmcauth.api.social.keyboard.button.Button;
@@ -67,6 +67,7 @@ public class AccountSettingClick implements ButtonClickListener {
                 case DISCORD -> messages.getDiscordKick();
                 case TELEGRAM -> messages.getTelegramKick();
                 case VKONTAKTE -> messages.getVkontakteKick();
+                case CUSTOM -> null;
             };
             player.disconnect(disconnectMessage);
         });
@@ -79,7 +80,7 @@ public class AccountSettingClick implements ButtonClickListener {
             socialPlayer.sendPrivateMessage(socialConfig.getMessages().getCooldown());
             return;
         }
-        social.createCooldown(socialPlayer.getID(), 6000L);
+        social.createCooldown(socialPlayer.getID(), 500);
 
         plugin.getAuthManager().getProtectedPlayer(id).thenAccept(protectedPlayer -> {
             if (protectedPlayer == null || !socialPlayer.checkAccountLink(protectedPlayer)) {
@@ -110,7 +111,7 @@ public class AccountSettingClick implements ButtonClickListener {
             socialPlayer.sendPrivateMessage(socialConfig.getMessages().getCooldown());
             return;
         }
-        social.createCooldown(socialPlayer.getID(), 6000L);
+        social.createCooldown(socialPlayer.getID(), 500);
 
         plugin.getAuthManager().getProtectedPlayer(id).thenAccept(protectedPlayer -> {
             if (protectedPlayer == null || !socialPlayer.checkAccountLink(protectedPlayer)) {
@@ -151,7 +152,7 @@ public class AccountSettingClick implements ButtonClickListener {
             socialPlayer.sendPrivateMessage(socialConfig.getMessages().getCooldown());
             return;
         }
-        social.createCooldown(socialPlayer.getID(), 6000L);
+        social.createCooldown(socialPlayer.getID(), 500);
 
         plugin.getAuthManager().getProtectedPlayer(id).thenAccept(protectedPlayer -> {
             if (protectedPlayer == null || !socialPlayer.checkAccountLink(protectedPlayer)) {

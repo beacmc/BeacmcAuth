@@ -2,7 +2,7 @@ package com.beacmc.beacmcauth.core.social.base.command;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.config.social.SocialConfig;
-import com.beacmc.beacmcauth.api.player.ServerPlayer;
+import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.social.Social;
 import com.beacmc.beacmcauth.api.social.SocialPlayer;
 import com.beacmc.beacmcauth.api.social.command.SocialCommand;
@@ -30,7 +30,7 @@ public class LinkCommand implements SocialCommand {
             socialPlayer.sendPrivateMessage(socialConfig.getMessages().getCooldown());
             return;
         }
-        social.createCooldown(socialPlayer.getID(), 6000L);
+        social.createCooldown(socialPlayer.getID(), 3000L);
 
         String playerName = args[0].toLowerCase();
         plugin.getAuthManager().getProtectedPlayer(playerName).thenAccept(protectedPlayer -> {

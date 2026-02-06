@@ -1,7 +1,7 @@
 package com.beacmc.beacmcauth.core.social.base.button;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
-import com.beacmc.beacmcauth.api.ProtectedPlayer;
+import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.config.social.SocialConfig;
 import com.beacmc.beacmcauth.api.social.Social;
 import com.beacmc.beacmcauth.api.social.SocialPlayer;
@@ -29,7 +29,7 @@ public class AccountPageClick implements ButtonClickListener {
                 socialPlayer.sendPrivateMessage(socialConfig.getMessages().getCooldown());
                 return;
             }
-            social.createCooldown(socialPlayer.getID(), 6000L);
+            social.createCooldown(socialPlayer.getID(), 500);
 
             final List<ProtectedPlayer> accountLinked = social.getLinkedPlayersById(socialPlayer.getID());
             final int currentPage = Integer.parseInt(args[1]);
@@ -49,7 +49,7 @@ public class AccountPageClick implements ButtonClickListener {
                 socialPlayer.sendPrivateMessage(socialConfig.getMessages().getCooldown());
                 return;
             }
-            social.createCooldown(socialPlayer.getID(), 6000L);
+            social.createCooldown(socialPlayer.getID(), 500);
 
             plugin.getAuthManager().getProtectedPlayer(args[1]).thenAccept(player -> {
                 if (!socialPlayer.checkAccountLink(player)) {
@@ -58,13 +58,13 @@ public class AccountPageClick implements ButtonClickListener {
                 }
 
                 String playerOnline = socialConfig.getMessages().getPlayerInfoOnline();
-                String playerOffline = socialConfig.getMessages().getPlayerOffline();
+                String playerOffline = socialConfig.getMessages().getPlayerInfoOffline();
                 String message = socialConfig.getMessages().getAccountInfo()
                         .replace("%name%", player.getRealName())
                         .replace("%lowercase_name%", player.getLowercaseName())
                         .replace("%last_ip%", player.getLastIp())
                         .replace("%reg_ip%", player.getRegisterIp())
-                        .replace("%is_online%", plugin.getProxy().getPlayer(player.getUuid()) == null ? playerOffline : playerOnline);
+                        .replace("%is_online%", plugin.getProxy().getPlayer(player.getLowercaseName()) == null ? playerOffline : playerOnline);
 
                 socialPlayer.sendPrivateMessage(message, social.createKeyboard(socialConfig.getKeyboards().createAccountManageKeyboard(player)));
             });

@@ -1,5 +1,6 @@
 package com.beacmc.beacmcauth.api.social.keyboard.button;
 
+import com.beacmc.beacmcauth.api.PlaceholderSupport;
 import de.exlll.configlib.Configuration;
 import lombok.*;
 
@@ -12,19 +13,17 @@ import java.util.Map;
 @ToString
 @Builder
 @Configuration
-public class Button {
+public class Button implements PlaceholderSupport {
 
-    String label;
-    String callbackData;
-    ButtonType type;
+    private String label;
+    private String callbackData;
+    private ButtonType type;
 
-    public Button parsePlaceholders(Map<String, ?> placeholders) {
+    public Button parseButtonPlaceholders(Map<String, ?> placeholders) {
         Button button = new Button(label, callbackData, type);
         if (placeholders != null) {
-            for (Map.Entry<String, ?> entry : placeholders.entrySet()) {
-                button.setLabel(button.getLabel().replace(entry.getKey(), String.valueOf(entry.getValue())));
-                button.setCallbackData(button.getCallbackData().replace(entry.getKey(), String.valueOf(entry.getValue())));
-            }
+            button.setLabel(parsePlaceholders(label, placeholders));
+            button.setCallbackData(parsePlaceholders(callbackData, placeholders));
         }
         return button;
     }

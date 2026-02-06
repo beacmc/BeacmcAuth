@@ -1,12 +1,12 @@
 package com.beacmc.beacmcauth.core.social.types.discord;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
-import com.beacmc.beacmcauth.api.ProtectedPlayer;
+import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.cache.cooldown.AbstractCooldown;
 import com.beacmc.beacmcauth.api.config.social.DiscordConfig;
 import com.beacmc.beacmcauth.api.database.dao.ProtectedPlayerDao;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
-import com.beacmc.beacmcauth.api.player.ServerPlayer;
+import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.social.Social;
 import com.beacmc.beacmcauth.api.social.SocialManager;
 import com.beacmc.beacmcauth.api.social.SocialType;
@@ -126,6 +126,18 @@ public class DiscordSocial implements Social<JDA, Long> {
             ProtectedPlayerDao dao = plugin.getDatabase().getProtectedPlayerDao();
             player.setDiscord(longId);
             dao.createOrUpdate(player);
+
+            String playerOnline = getSocialConfig().getMessages().getPlayerInfoOnline();
+            String playerOffline = getSocialConfig().getMessages().getPlayerOffline();
+            String message = getSocialConfig().getMessages().getAccountInfo()
+                    .replace("%name%", player.getRealName())
+                    .replace("%lowercase_name%", player.getLowercaseName())
+                    .replace("%last_ip%", player.getLastIp())
+                    .replace("%reg_ip%", player.getRegisterIp())
+                    .replace("%is_online%", plugin.getProxy().getPlayer(player.getUuid()) == null ? playerOffline : playerOnline);
+
+            new DiscordPlayer(guild.retrieveMemberById(longId).complete().getUser())
+                    .sendPrivateMessage(message, createKeyboard(getSocialConfig().getKeyboards().createAccountManageKeyboard(player)));
         } catch (SQLException e) {
             logger.error("DiscordSocial#linkPlayer have SQLException: " + e.getMessage());
         }

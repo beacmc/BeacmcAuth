@@ -7,19 +7,18 @@ import com.beacmc.beacmcauth.api.command.CommandSender;
 import com.beacmc.beacmcauth.api.command.executor.CommandExecutor;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.config.ConfigMessages;
-import com.beacmc.beacmcauth.api.player.ServerPlayer;
+import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.core.cache.cooldown.GameCooldown;
 
 import java.sql.SQLException;
-import java.util.UUID;
 
-public class CrackExecutor implements CommandExecutor {
+public class CrackCommandExecutor implements CommandExecutor {
 
     private final AuthManager authManager;
     private final BeacmcAuth plugin;
     private final GameCooldown cooldown;
 
-    public CrackExecutor(BeacmcAuth plugin) {
+    public CrackCommandExecutor(BeacmcAuth plugin) {
         this.plugin = plugin;
 
         authManager = plugin.getAuthManager();
@@ -29,9 +28,16 @@ public class CrackExecutor implements CommandExecutor {
     @Override
     public void execute(CommandSender sender, String[] args) {
         if (!(sender instanceof ServerPlayer player)) return;
+        if (!player.hasPermission("beacmcauth.crack")) return;
 
         final Config config = plugin.getConfig();
         final ConfigMessages messages = config.getMessages();
+
+        if (cooldown.isCooldown(player.getLowercaseName())) {
+            player.sendMessage(config.getMessages().getCooldown());
+            return;
+        }
+        cooldown.createCooldown(player.getLowercaseName(), 5_000);
 
         authManager.getProtectedPlayer(player.getUUID()).thenAccept(protectedPlayer -> {
             try {

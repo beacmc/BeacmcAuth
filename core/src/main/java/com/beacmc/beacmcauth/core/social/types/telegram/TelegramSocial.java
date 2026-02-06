@@ -1,12 +1,12 @@
 package com.beacmc.beacmcauth.core.social.types.telegram;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
-import com.beacmc.beacmcauth.api.ProtectedPlayer;
+import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.cache.cooldown.AbstractCooldown;
 import com.beacmc.beacmcauth.api.config.social.TelegramConfig;
 import com.beacmc.beacmcauth.api.database.dao.ProtectedPlayerDao;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
-import com.beacmc.beacmcauth.api.player.ServerPlayer;
+import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.social.Social;
 import com.beacmc.beacmcauth.api.social.SocialManager;
 import com.beacmc.beacmcauth.api.social.SocialType;
@@ -16,11 +16,13 @@ import com.beacmc.beacmcauth.core.cache.cooldown.TelegramCooldown;
 import com.beacmc.beacmcauth.core.social.types.telegram.listener.TelegramUpdatesListener;
 import com.beacmc.beacmcauth.core.util.runnable.TelegramRunnable;
 import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.BaseResponse;
+import lombok.Getter;
 import lombok.ToString;
 
 import java.sql.SQLException;
@@ -32,6 +34,7 @@ import java.util.List;
 public class TelegramSocial implements Social<TelegramBot, Long> {
 
     private final BeacmcAuth plugin;
+    @Getter
     private final TelegramBot telegramBot;
     private final ServerLogger logger;
 
@@ -125,6 +128,18 @@ public class TelegramSocial implements Social<TelegramBot, Long> {
             ProtectedPlayerDao dao = plugin.getDatabase().getProtectedPlayerDao();
             player.setTelegram(longId);
             dao.createOrUpdate(player);
+
+            String playerOnline = getSocialConfig().getMessages().getPlayerInfoOnline();
+            String playerOffline = getSocialConfig().getMessages().getPlayerOffline();
+            String message = getSocialConfig().getMessages().getAccountInfo()
+                    .replace("%name%", player.getRealName())
+                    .replace("%lowercase_name%", player.getLowercaseName())
+                    .replace("%last_ip%", player.getLastIp())
+                    .replace("%reg_ip%", player.getRegisterIp())
+                    .replace("%is_online%", plugin.getProxy().getPlayer(player.getUuid()) == null ? playerOffline : playerOnline);
+
+            new TelegramPlayer(this, new User(longId))
+                    .sendPrivateMessage(message, createKeyboard(getSocialConfig().getKeyboards().createAccountManageKeyboard(player)));
         } catch (SQLException e) {
             logger.error("TelegramSocial#linkPlayer have SQLException: " + e.getMessage());
         }

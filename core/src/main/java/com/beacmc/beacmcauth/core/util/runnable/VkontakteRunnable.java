@@ -1,10 +1,10 @@
 package com.beacmc.beacmcauth.core.util.runnable;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
-import com.beacmc.beacmcauth.api.ProtectedPlayer;
+import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.config.social.VkontakteConfig;
-import com.beacmc.beacmcauth.api.player.ServerPlayer;
+import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.scheduler.TaskScheduler;
 import com.beacmc.beacmcauth.api.social.SocialManager;
 import com.beacmc.beacmcauth.api.social.SocialType;
@@ -44,7 +44,7 @@ public class VkontakteRunnable implements Runnable {
         messageSendDelay = vkontakteConfig.getMessageSendDelaySeconds();
 
         in = 0;
-        stay = 25;
+        stay = messageSendDelay * 20 + 5;
         out = 0;
 
         task = plugin.getProxy().runTaskDelay(this, 1, TimeUnit.SECONDS);
@@ -66,6 +66,7 @@ public class VkontakteRunnable implements Runnable {
                 || confirmationPlayer.getCurrentConfirmation().getType() != SocialType.VKONTAKTE
                 || !player.isConnected()) {
             task.cancel();
+            player.sendTitle("", "", 0, 10, 0);
             plugin.getSongManager().stop(player.getUUID());
             return;
         }

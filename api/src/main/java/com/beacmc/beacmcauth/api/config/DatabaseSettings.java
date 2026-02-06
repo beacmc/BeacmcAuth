@@ -18,4 +18,6 @@ public interface DatabaseSettings {
     String getUsername();
 
     String getPassword();
+
+    HikariSettings getHikariSettings();
 }

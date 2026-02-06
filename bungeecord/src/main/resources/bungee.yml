@@ -2,6 +2,8 @@ name: BeacmcAuth
 version: '${project.version}'
 main: com.beacmc.beacmcauth.bungeecord.BungeeBeacmcAuth
 author: beacmc
+depends:
+  - packetevents
 softDepends:
   - LuckPerms
   - VK-API

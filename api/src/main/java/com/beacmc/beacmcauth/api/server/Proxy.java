@@ -1,6 +1,6 @@
 package com.beacmc.beacmcauth.api.server;
 
-import com.beacmc.beacmcauth.api.player.ServerPlayer;
+import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.scheduler.TaskScheduler;
 import org.jetbrains.annotations.NotNull;
 

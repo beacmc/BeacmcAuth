@@ -1,6 +1,6 @@
 package com.beacmc.beacmcauth.bungeecord.server;
 
-import com.beacmc.beacmcauth.api.player.ServerPlayer;
+import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.server.Server;
 import com.beacmc.beacmcauth.bungeecord.player.BungeeServerPlayer;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -52,6 +52,6 @@ public class BungeeServer implements Server {
 
     @Override
     public String toString() {
-        return getName();
+        return server.toString();
     }
 }

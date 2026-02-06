@@ -7,10 +7,11 @@ import com.beacmc.beacmcauth.api.command.executor.CommandExecutor;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.database.Database;
 import com.beacmc.beacmcauth.api.database.dao.ProtectedPlayerDao;
-import com.beacmc.beacmcauth.api.player.ServerPlayer;
+import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import org.mindrot.jbcrypt.BCrypt;
 
 import org.jetbrains.annotations.Nullable;
+
 import java.sql.SQLException;
 
 public class AuthCommandExecutor implements CommandExecutor {

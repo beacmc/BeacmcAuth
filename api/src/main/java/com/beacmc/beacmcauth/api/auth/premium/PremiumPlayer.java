@@ -1,10 +1,9 @@
 package com.beacmc.beacmcauth.api.auth.premium;
 
 import com.beacmc.beacmcauth.api.cache.CachedData;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+
+import java.util.UUID;
 
 /**
  * Temporary or permanent premium player
@@ -13,9 +12,11 @@ import lombok.ToString;
 @Setter
 @ToString
 @AllArgsConstructor
+@EqualsAndHashCode
 public class PremiumPlayer implements CachedData<String> {
 
     private final String lowercaseName;
+    private UUID uniqueId;
     private boolean template;
     private long templateLifetimeMillis;
 

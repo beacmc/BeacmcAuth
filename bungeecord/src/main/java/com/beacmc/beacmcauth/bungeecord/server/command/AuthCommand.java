@@ -13,7 +13,7 @@ public class AuthCommand extends Command {
     private final CommandManager commandManager;
 
     public AuthCommand(BeacmcAuth plugin) {
-        super("beacmcauth", "beacmcauth.admin", "bauth", "auth");
+        super("awauth", "beacmcauth.admin", "auth");
         commandManager = plugin.getCommandManager();
     }
 
