@@ -21,7 +21,7 @@ jobs:
           cache: 'maven'
 
       - name: Build with Maven
-        run: mvn -B clean package -pl api,core,velocity,bungeecord -am
+        run: mvn -U -B clean package -pl api,core,velocity,bungeecord -am
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
