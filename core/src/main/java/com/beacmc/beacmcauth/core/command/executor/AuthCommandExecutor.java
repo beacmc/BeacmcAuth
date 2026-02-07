@@ -8,9 +8,8 @@ import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.database.Database;
 import com.beacmc.beacmcauth.api.database.dao.ProtectedPlayerDao;
 import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
-import org.mindrot.jbcrypt.BCrypt;
-
 import org.jetbrains.annotations.Nullable;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.SQLException;
 

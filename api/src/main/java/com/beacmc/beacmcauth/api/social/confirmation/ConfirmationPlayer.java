@@ -1,8 +1,8 @@
 package com.beacmc.beacmcauth.api.social.confirmation;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
-import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
+import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.social.Social;
 import lombok.*;
 

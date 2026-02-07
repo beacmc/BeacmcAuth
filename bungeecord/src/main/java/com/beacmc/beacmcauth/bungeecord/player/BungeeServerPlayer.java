@@ -2,8 +2,8 @@ package com.beacmc.beacmcauth.bungeecord.player;
 
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
 import com.beacmc.beacmcauth.api.message.MessageProvider;
-import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.server.Server;
+import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.bungeecord.BungeeBeacmcAuth;
 import com.beacmc.beacmcauth.bungeecord.server.BungeeServer;
 import lombok.EqualsAndHashCode;

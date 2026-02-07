@@ -2,8 +2,8 @@ package com.beacmc.beacmcauth.velocity.player;
 
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
 import com.beacmc.beacmcauth.api.message.MessageProvider;
-import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.server.Server;
+import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.velocity.VelocityBeacmcAuth;
 import com.beacmc.beacmcauth.velocity.server.VelocityServer;
 import com.velocitypowered.api.proxy.Player;

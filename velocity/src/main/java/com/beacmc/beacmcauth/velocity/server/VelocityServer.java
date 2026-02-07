@@ -1,7 +1,7 @@
 package com.beacmc.beacmcauth.velocity.server;
 
-import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.server.Server;
+import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.velocity.player.VelocityServerPlayer;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 

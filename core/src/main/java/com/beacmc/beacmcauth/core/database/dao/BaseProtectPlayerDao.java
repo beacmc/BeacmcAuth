@@ -1,9 +1,9 @@
 package com.beacmc.beacmcauth.core.database.dao;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
-import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.cache.Cache;
 import com.beacmc.beacmcauth.api.database.dao.ProtectedPlayerDao;
+import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.support.ConnectionSource;
 

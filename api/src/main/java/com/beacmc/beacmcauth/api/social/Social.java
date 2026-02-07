@@ -1,8 +1,8 @@
 package com.beacmc.beacmcauth.api.social;
 
-import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.cache.cooldown.AbstractCooldown;
 import com.beacmc.beacmcauth.api.config.social.SocialConfig;
+import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.social.keyboard.Keyboard;
 
 import java.util.List;

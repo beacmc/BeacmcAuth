@@ -5,7 +5,8 @@ import com.beacmc.beacmcauth.api.cache.Cache;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @Getter
 @ToString

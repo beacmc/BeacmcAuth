@@ -1,8 +1,8 @@
 package com.beacmc.beacmcauth.core.social.base.command;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
-import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.config.social.SocialConfig;
+import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.social.Social;
 import com.beacmc.beacmcauth.api.social.SocialPlayer;
 import com.beacmc.beacmcauth.api.social.command.SocialCommand;

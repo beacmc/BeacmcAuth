@@ -1,7 +1,7 @@
 package com.beacmc.beacmcauth.core.cache;
 
-import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.cache.Cache;
+import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import lombok.Getter;
 import lombok.ToString;
 

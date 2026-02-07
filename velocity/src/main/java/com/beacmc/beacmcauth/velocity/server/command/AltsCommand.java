@@ -8,8 +8,6 @@ import com.beacmc.beacmcauth.velocity.server.command.sender.VelocityCommandSende
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.Player;
 
-import java.util.List;
-
 public class AltsCommand implements SimpleCommand {
 
     private final CommandManager commandManager;

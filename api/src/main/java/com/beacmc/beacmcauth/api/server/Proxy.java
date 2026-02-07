@@ -1,7 +1,7 @@
 package com.beacmc.beacmcauth.api.server;
 
-import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.scheduler.TaskScheduler;
+import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

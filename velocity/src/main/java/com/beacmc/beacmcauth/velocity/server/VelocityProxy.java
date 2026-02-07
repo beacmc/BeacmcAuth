@@ -1,10 +1,10 @@
 package com.beacmc.beacmcauth.velocity.server;
 
-import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.scheduler.TaskScheduler;
 import com.beacmc.beacmcauth.api.server.Proxy;
 import com.beacmc.beacmcauth.api.server.ProxyType;
 import com.beacmc.beacmcauth.api.server.Server;
+import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.velocity.VelocityBeacmcAuth;
 import com.beacmc.beacmcauth.velocity.player.VelocityServerPlayer;
 import com.beacmc.beacmcauth.velocity.scheduler.VelocityScheduler;

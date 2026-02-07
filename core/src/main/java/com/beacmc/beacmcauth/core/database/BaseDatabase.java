@@ -1,20 +1,18 @@
 package com.beacmc.beacmcauth.core.database;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
-import com.beacmc.beacmcauth.api.config.HikariSettings;
-import com.beacmc.beacmcauth.api.database.DatabaseType;
-import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.cache.Cache;
 import com.beacmc.beacmcauth.api.config.DatabaseSettings;
 import com.beacmc.beacmcauth.api.database.Database;
+import com.beacmc.beacmcauth.api.database.DatabaseType;
 import com.beacmc.beacmcauth.api.database.dao.ProtectedPlayerDao;
 import com.beacmc.beacmcauth.api.library.LibraryProvider;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
+import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.core.cache.PlayerCache;
 import com.beacmc.beacmcauth.core.database.dao.BaseProtectPlayerDao;
 import com.beacmc.beacmcauth.core.library.Libraries;
 import com.j256.ormlite.jdbc.DataSourceConnectionSource;
-import com.j256.ormlite.jdbc.JdbcCompiledStatement;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.logger.Level;
 import com.j256.ormlite.logger.Logger;

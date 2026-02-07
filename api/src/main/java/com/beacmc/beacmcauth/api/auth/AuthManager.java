@@ -1,16 +1,15 @@
 package com.beacmc.beacmcauth.api.auth;
 
-import com.beacmc.beacmcauth.api.message.Message;
-import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.auth.premium.PremiumPlayer;
 import com.beacmc.beacmcauth.api.auth.premium.mojang.PremiumChangerProvider;
 import com.beacmc.beacmcauth.api.cache.Cache;
+import com.beacmc.beacmcauth.api.message.Message;
 import com.beacmc.beacmcauth.api.model.AltAccounts;
-import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
+import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.server.Server;
+import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
 
-import java.net.InetAddress;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;

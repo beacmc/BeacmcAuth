@@ -1,10 +1,10 @@
 package com.beacmc.beacmcauth.bungeecord.server;
 
-import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.scheduler.TaskScheduler;
 import com.beacmc.beacmcauth.api.server.Proxy;
 import com.beacmc.beacmcauth.api.server.ProxyType;
 import com.beacmc.beacmcauth.api.server.Server;
+import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.bungeecord.BungeeBeacmcAuth;
 import com.beacmc.beacmcauth.bungeecord.player.BungeeServerPlayer;
 import com.beacmc.beacmcauth.bungeecord.scheduler.BungeeScheduler;
