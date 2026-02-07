@@ -106,7 +106,7 @@ public class ProtectedPlayer implements CachedData<UUID> {
     }
 
     public boolean isValidIp(String ip) {
-        return getLastIp().equals(ip);
+        return lastIp != null && lastIp.equals(ip);
     }
 
     public boolean checkPassword(String pass) {
