@@ -4,6 +4,8 @@ import net.dv8tion.jda.api.entities.Activity;
 
 public interface DiscordConfig extends SocialConfig {
 
+    String getToken();
+
     Long getGuildID();
 
     Activity.ActivityType getActivityType();

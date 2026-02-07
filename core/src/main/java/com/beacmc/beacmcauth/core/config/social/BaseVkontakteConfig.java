@@ -12,7 +12,6 @@ import lombok.Getter;
 @SuppressWarnings("FieldMayBeFinal")
 public class BaseVkontakteConfig implements VkontakteConfig {
 
-    private String token = "TOKEN";
     private boolean enabled = false;
     private boolean disableUnlink = false;
     private Long guildID = 0L;

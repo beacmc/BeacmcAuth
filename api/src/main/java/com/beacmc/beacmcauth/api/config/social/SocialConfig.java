@@ -12,8 +12,6 @@ public interface SocialConfig {
 
     Integer getTimePerConfirm();
 
-    String getToken();
-
     String getCodeChars();
 
     boolean isEnabled();
