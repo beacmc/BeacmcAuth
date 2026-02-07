@@ -42,6 +42,10 @@
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
         <repository>
+            <id>maven-snapshots</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
+        </repository>
+        <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
@@ -109,12 +113,6 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.38</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.U61vashka.VK-API-PluginAdapter</groupId>
-            <artifactId>vk-api.core</artifactId>
-            <version>0.4.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

@@ -34,6 +34,10 @@
             <id>jitpack</id>
             <url>https://jitpack.io</url>
         </repository>
+        <repository>
+            <id>maven-snapshots</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -56,16 +60,6 @@
         <dependency>
             <groupId>com.alessiodp.libby</groupId>
             <artifactId>libby-velocity</artifactId>
-            <version>2.0.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.alessiodp.libby</groupId>
-            <artifactId>libby-bungee</artifactId>
-            <version>2.0.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.alessiodp.libby</groupId>
-            <artifactId>libby-core</artifactId>
             <version>2.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
@@ -123,19 +117,13 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.github.U61vashka.VK-API-PluginAdapter</groupId>
-                <artifactId>vk-api.core</artifactId>
-                <version>0.4.2</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
                 <groupId>com.github.pengrad</groupId>
                 <artifactId>java-telegram-bot-api</artifactId>
                 <version>8.1.0</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.beacmc.awauth</groupId>
+                <groupId>com.beacmc.beacmcauth</groupId>
                 <artifactId>core</artifactId>
                 <version>${project.version}</version>
                 <scope>compile</scope>
@@ -160,7 +148,7 @@
             </dependency>
 
             <dependency>
-                <groupId>com.beacmc.awauth</groupId>
+                <groupId>com.beacmc.beacmcauth</groupId>
                 <artifactId>api</artifactId>
                 <version>${project.version}</version>
                 <scope>compile</scope>
@@ -172,7 +160,7 @@
             </dependency>
             <dependency>
                 <groupId>com.github.retrooper</groupId>
-                <artifactId>packetevents-bungeecord</artifactId>
+                <artifactId>packetevents-velocity</artifactId>
                 <version>2.7.0</version>
                 <scope>provided</scope>
             </dependency>
@@ -198,6 +186,7 @@
                 <groupId>com.alessiodp.libby</groupId>
                 <artifactId>libby-bungee</artifactId>
                 <version>2.0.0-SNAPSHOT</version>
+                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>dev.simplix</groupId>
@@ -220,6 +209,7 @@
                 <groupId>com.alessiodp.libby</groupId>
                 <artifactId>libby-bungee</artifactId>
                 <version>2.0.0-SNAPSHOT</version>
+                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
@@ -231,6 +221,7 @@
                 <groupId>com.alessiodp.libby</groupId>
                 <artifactId>libby-core</artifactId>
                 <version>2.0.0-SNAPSHOT</version>
+                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.projectlombok</groupId>
