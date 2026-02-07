@@ -73,7 +73,6 @@ public class ChangepasswordCommandExecutor implements CommandExecutor {
                 try {
                     dao.createOrUpdate(protectedPlayer.setPassword(BCrypt.hashpw(args[1], BCrypt.gensalt(config.getBCryptRounds()))));
                     player.sendMessage(config.getMessages().getChangePasswordSuccess());
-                    authManager.onAzLinkChangePassword(player.getName(), player.getUUID(), args[1]);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

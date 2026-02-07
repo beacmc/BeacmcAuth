@@ -17,10 +17,6 @@
     {
       "id": "packetevents",
       "optional": false
-    },
-    {
-      "id": "azlink",
-      "optional": true
     }
   ],
   "main": "com.beacmc.beacmcauth.velocity.VelocityBeacmcAuth"

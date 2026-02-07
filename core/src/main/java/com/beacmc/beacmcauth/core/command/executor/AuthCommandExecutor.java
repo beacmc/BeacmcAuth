@@ -100,7 +100,6 @@ public class AuthCommandExecutor implements CommandExecutor {
             try {
                 dao.createOrUpdate(protectedPlayer.setSession(0).setPassword(BCrypt.hashpw(args[2], BCrypt.gensalt(config.getBCryptRounds()))));
                 database.getPlayersCache().addOrUpdateCache(protectedPlayer);
-                authManager.onAzLinkChangePassword(protectedPlayer.getRealName(), protectedPlayer.getUuid(), args[2]);
                 sender.sendMessage(config.getMessages().getAccountPasswordChanged());
             } catch (SQLException e) {
                 e.printStackTrace();

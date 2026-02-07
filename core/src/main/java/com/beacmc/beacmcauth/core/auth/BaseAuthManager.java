@@ -1,6 +1,5 @@
 package com.beacmc.beacmcauth.core.auth;
 
-import com.azuriom.azlink.common.AzLinkPlatform;
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.auth.AuthManager;
 import com.beacmc.beacmcauth.api.auth.premium.PremiumPlayer;
@@ -52,7 +51,6 @@ public class BaseAuthManager implements AuthManager {
     private final Cache<ProtectedPlayer, UUID> playerCache;
     private final Cache<AltAccounts, String> altAccountsCache;
     private final ServerLogger logger;
-    private final AzLinkPlatform azLinkPlatform;
     @Getter
     private final ExecutorService executorService;
 
@@ -63,7 +61,6 @@ public class BaseAuthManager implements AuthManager {
         this.authorizationPlayers = new HashMap<>();
         this.logger = plugin.getServerLogger();
         this.playerCache = plugin.getDatabase().getPlayersCache();
-        this.azLinkPlatform = plugin.getProxy().getPlugin("AzLink");
         this.dao = plugin.getDatabase().getProtectedPlayerDao();
         this.premiumPlayers = new PremiumPlayerCache();
     }
@@ -255,22 +252,6 @@ public class BaseAuthManager implements AuthManager {
         plugin.getSocialManager().getConfirmationPlayers().remove(confirmationPlayer);
     }
 
-    @Override
-    public void onAzLinkRegister(String name, UUID uuid, String password, InetAddress address) {
-        try {
-            final Config config = plugin.getConfig();
-
-            if (config.isAzLinkIntegration() && azLinkPlatform != null) {
-                azLinkPlatform.getPlugin().getHttpClient().registerUser(name, null, uuid, password, address).exceptionally(e -> {
-                    plugin.getServerLogger().debug("Unable to register " + name + " - " + e.getMessage());
-                    return null;
-                });
-            }
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-    }
-
     public CompletableFuture<Void> saveSecretQuestion(ProtectedPlayer player, String question, String answer) {
         return CompletableFuture.supplyAsync(() -> {
             try {
@@ -281,22 +262,6 @@ public class BaseAuthManager implements AuthManager {
             }
             return null;
         }, executorService);
-    }
-
-    @Override
-    public void onAzLinkChangePassword(String name, UUID uuid, String password) {
-        try {
-            final Config config = plugin.getConfig();
-
-            if (config.isAzLinkIntegration() && azLinkPlatform != null) {
-                azLinkPlatform.getPlugin().getHttpClient().updatePassword(uuid, password).exceptionally(e -> {
-                    plugin.getServerLogger().debug("Unable to change password " + name + " - " + e.getMessage());
-                    return null;
-                });
-            }
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
     }
 
     @Override

@@ -73,10 +73,6 @@ public class LoginCommandExecutor implements CommandExecutor {
             player.sendTitle("&7", "&7", 0, 25, 0);
             authManager.getAuthPlayers().remove(protectedPlayer.getLowercaseName());
 
-            if (config.isAzLinkIntegration()) {
-                authManager.onAzLinkRegister(player.getName(), player.getUUID(), args[0], player.getInetAddress());
-            }
-
             if (!plugin.getSocialManager().startPlayerConfirmations(protectedPlayer)) {
                 authManager.performLogin(protectedPlayer);
                 plugin.getSongManager().stop(player.getUUID());

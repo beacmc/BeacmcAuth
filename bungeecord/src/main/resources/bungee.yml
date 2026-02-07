@@ -7,4 +7,3 @@ depends:
 softDepends:
   - LuckPerms
   - VK-API
-  - AzLink

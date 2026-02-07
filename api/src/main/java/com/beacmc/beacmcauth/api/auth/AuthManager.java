@@ -32,10 +32,6 @@ public interface AuthManager {
 
     void onDisconnect(ServerPlayer player);
 
-    void onAzLinkRegister(String name, UUID uuid, String password, InetAddress address);
-
-    void onAzLinkChangePassword(String name, UUID uuid, String password);
-
     void connectPlayer(ServerPlayer player, Server server);
 
     void connectAuthServer(ServerPlayer player);

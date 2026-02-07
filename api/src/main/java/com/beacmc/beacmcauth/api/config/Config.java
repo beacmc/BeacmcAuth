@@ -8,8 +8,6 @@ import java.util.regex.Pattern;
 
 public interface Config {
 
-    boolean isAzLinkIntegration();
-
     Server findServer(List<String> configServers);
 
     List<String> getDisabledServers();

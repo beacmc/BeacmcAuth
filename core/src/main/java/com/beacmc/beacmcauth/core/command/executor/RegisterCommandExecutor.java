@@ -77,7 +77,6 @@ public class RegisterCommandExecutor implements CommandExecutor {
             authManager.getAuthPlayers().remove(protectedPlayer.getLowercaseName());
             authManager.register(protectedPlayer, password);
             authManager.connectPlayer(player, config.findServer(config.getLobbyServers()));
-            authManager.onAzLinkRegister(player.getName(), player.getUUID(), password, player.getInetAddress());
         });
     }
 }

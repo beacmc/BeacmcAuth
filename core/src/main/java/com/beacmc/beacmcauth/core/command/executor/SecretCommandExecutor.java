@@ -125,10 +125,8 @@ public class SecretCommandExecutor implements CommandExecutor {
 
                         String newPassword = CodeGenerator.generate(config.getRecoveryPasswordChars(), 8);
                         dao.createOrUpdate(protectedPlayer.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt(config.getBCryptRounds()))));
-
                         player.disconnect(messages.getSecretAnswerSuccessUsedDisconnect()
                                 .replace("%password%", newPassword));
-                        authManager.onAzLinkChangePassword(player.getName(), player.getUUID(), newPassword);
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }

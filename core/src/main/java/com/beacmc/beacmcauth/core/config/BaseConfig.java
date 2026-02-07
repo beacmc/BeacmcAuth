@@ -21,7 +21,6 @@ public class BaseConfig implements Config {
     private Integer sessionTime = 60;
     private boolean debugEnabled = false;
     @Comment({"", "Read more on the website: https://azuriom.com"})
-    private boolean azLinkIntegration = false;
     private Integer timePerLogin = 60;
     private Integer timePerRegister = 60;
     private int registerMessageSendDelaySeconds = 3;
