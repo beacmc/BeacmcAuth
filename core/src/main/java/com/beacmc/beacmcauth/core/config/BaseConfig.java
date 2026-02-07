@@ -209,6 +209,7 @@ public class BaseConfig implements Config {
         String emailAlreadyAdded = "&7Email already added.";
         String couldNotSendEmailMessages = "&7An error occurred while sending an email";
         String emailAlreadyTaken = "&7This email is already taken";
+        String emailModuleDisabled = "&7Email disabled";
         String emailRecoveryDisconnect = """
                 &7You have been disconnected from the server due to a password change
                 &6Your new password is waiting for you in your Email

@@ -53,11 +53,16 @@ public class EmailCommandExecutor implements CommandExecutor {
         final Config config = plugin.getConfig();
         final ConfigMessages messages = config.getMessages();
 
+        if (!emailConfig.isEnabled()) {
+            player.sendMessage(messages.getEmailModuleDisabled());
+            return;
+        }
+
         if (gameCooldown.isCooldown(player.getLowercaseName())) {
             player.sendMessage(config.getMessages().getCooldown());
             return;
         }
-        gameCooldown.createCooldown(player.getLowercaseName(), 1_000);
+        gameCooldown.createCooldown(player.getLowercaseName(), 3_000);
 
         if (args.length < 1) {
             player.sendMessage(messages.getEmailCommandUsage());
@@ -79,13 +84,18 @@ public class EmailCommandExecutor implements CommandExecutor {
                     }
 
                     if (protectedPlayer.getEmail() != null) {
-                        player.sendMessage(messages.getEmailNotAdded());
+                        player.sendMessage(messages.getEmailAlreadyAdded());
                         return;
                     }
 
                     String email = args[1];
                     if (!emailManager.isEmail(email)) {
                         player.sendMessage(messages.getEmailInvalid());
+                        return;
+                    }
+
+                    if (!emailManager.isEmailFree(email)) {
+                        player.sendMessage(messages.getEmailAlreadyTaken());
                         return;
                     }
 

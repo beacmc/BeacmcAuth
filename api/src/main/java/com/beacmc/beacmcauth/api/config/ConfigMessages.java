@@ -195,4 +195,6 @@ public interface ConfigMessages {
     String getCouldNotSendEmailMessages();
 
     String getEmailAlreadyTaken();
+
+    String getEmailModuleDisabled();
 }
