@@ -21,7 +21,6 @@ public class BasePlayerPositionTracker implements PlayerPositionTracker {
         enabled = false;
         if (plugin.getProxy().getPlugin("packetevents") != null) {
 
-            // TRASH
             try {
                 PacketEvents.getAPI()
                         .getEventManager()
@@ -29,7 +28,6 @@ public class BasePlayerPositionTracker implements PlayerPositionTracker {
                 enabled = true;
             } catch (Throwable ignored) {
             }
-            // TRASH END
         }
     }
 
