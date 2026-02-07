@@ -9,8 +9,8 @@
 
     <parent>
         <groupId>com.beacmc.beacmcauth</groupId>
-        <artifactId>BeacmcAuth</artifactId>
-        <version>2.4-BETA</version>
+        <artifactId>BeacmcAuth</ artifactId>
+        <version>3.0-BETA</version>
     </parent>
     <name>api</name>
 
