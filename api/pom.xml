@@ -9,7 +9,7 @@
 
     <parent>
         <groupId>com.beacmc.beacmcauth</groupId>
-        <artifactId>BeacmcAuth</ artifactId>
+        <artifactId>BeacmcAuth</artifactId>
         <version>3.0-BETA</version>
     </parent>
     <name>api</name>

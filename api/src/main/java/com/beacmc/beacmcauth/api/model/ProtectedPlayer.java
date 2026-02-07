@@ -5,6 +5,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import lombok.*;
 import lombok.experimental.Accessors;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -21,19 +22,19 @@ import java.util.UUID;
 public class ProtectedPlayer implements CachedData<UUID> {
 
     @DatabaseField(columnName = "lowercase_name", canBeNull = false)
-    private String lowercaseName;
+    private @NotNull String lowercaseName;
 
     @DatabaseField(columnName = "real_name", canBeNull = false)
-    private String realName;
+    private @NotNull String realName;
 
     @DatabaseField(columnName = "uuid", id = true, canBeNull = false)
-    private UUID uuid;
+    private @NotNull UUID uuid;
 
     @DatabaseField(columnName = "online_uuid")
-    private UUID onlineUuid;
+    private @Nullable UUID onlineUuid;
 
     @DatabaseField(columnName = "password")
-    private String password;
+    private @Nullable String password;
 
     @DatabaseField(columnName = "session", defaultValue = "0")
     private long session;
@@ -54,21 +55,21 @@ public class ProtectedPlayer implements CachedData<UUID> {
     private boolean vkontakteTwoFaEnabled;
 
     @DatabaseField(columnName = "reg_ip")
-    private String registerIp;
+    private @Nullable String registerIp;
 
     @DatabaseField(columnName = "last_ip")
-    private String lastIp;
+    private @Nullable String lastIp;
 
     @DatabaseField(columnName = "email")
-    private String email;
+    private @Nullable String email;
 
     @Setter(AccessLevel.NONE)
     @DatabaseField(columnName = "secret_question")
-    private String secretQuestion;
+    private @Nullable String secretQuestion;
 
     @Setter(AccessLevel.NONE)
     @DatabaseField(columnName = "hashed_secret_answer")
-    private String hashedSecretAnswer;
+    private @Nullable String hashedSecretAnswer;
 
     @DatabaseField(columnName = "discord", defaultValue = "0")
     private long discord;
@@ -94,7 +95,7 @@ public class ProtectedPlayer implements CachedData<UUID> {
         return this;
     }
 
-    public UUID getAdaptiveUuid() {
+    public @NotNull UUID getAdaptiveUuid() {
         return onlineUuid != null ? onlineUuid : uuid;
     }
 
