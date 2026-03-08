@@ -87,11 +87,6 @@ public class BaseAuthManager implements AuthManager {
             return CompletableFuture.failedFuture(new SecurityException("The name does not match the parameters."));
         }
 
-        AltAccounts altAccounts = FutureUtil.await(getAltAccounts(address.getHostAddress()));
-        if (accountLimiter.isEnabled() && altAccounts != null && altAccounts.getNames().size() >= accountLimiter.getLimit()) {
-            player.disconnect(config.getMessages().getAlternativeAccountsLimitReached());
-            return CompletableFuture.failedFuture(new SecurityException("the limit of alternative accounts has been reached."));
-        }
 
         return getProtectedPlayer(player.getUUID()).thenCompose(protectedPlayer -> {
             if (protectedPlayer == null) {
@@ -119,6 +114,12 @@ public class BaseAuthManager implements AuthManager {
                 }
 
                 if (!protectedPlayer.isRegister()) {
+                    AltAccounts altAccounts = FutureUtil.await(getAltAccounts(address.getHostAddress()));
+                    if (accountLimiter.isEnabled() && altAccounts != null && altAccounts.getNames().size() >= accountLimiter.getLimit()) {
+                        player.disconnect(config.getMessages().getAlternativeAccountsLimitReached());
+                        return CompletableFuture.failedFuture(new SecurityException("the limit of alternative accounts has been reached."));
+                    }
+
                     logger.debug("The player(" + player.getName() + ") has started registration");
 
                     authorizationPlayers.put(player.getLowercaseName(), config.getPasswordAttempts());
