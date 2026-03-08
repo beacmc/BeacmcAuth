@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.time.Duration;
 import java.util.UUID;
@@ -50,7 +51,8 @@ public class BaseMojangAuthManager implements MojangAuthManager {
                     return new GetPremiumUserResponse(authConfig, authConfig.getRateLimitedCode(), null, rateLimitTimeExpired);
                 }
 
-                URL url = new URL(authConfig.getAuthUrl().formatted(name.toLowerCase()));
+                String rawUrl = authConfig.getAuthUrl().formatted(name.toLowerCase());
+                URL url = URI.create(rawUrl).toURL();
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
                 connection.setRequestMethod("GET");
