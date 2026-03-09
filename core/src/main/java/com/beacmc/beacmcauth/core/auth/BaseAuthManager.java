@@ -130,7 +130,7 @@ public class BaseAuthManager implements AuthManager {
 
                 PremiumPlayer premiumPlayer = getOnlinePremiumPlayer(player.getLowercaseName());
                 if (premiumPlayer != null) {
-                    if (premiumPlayer.isValidTemplateTime()) {
+                    if (premiumPlayer.isTemplate()) {
                         UUID onlineUuid = premiumPlayer.getUniqueId();
                         if (onlineUuid != null) {
                             protectedPlayer.setOnlineUuid(onlineUuid);
@@ -180,6 +180,10 @@ public class BaseAuthManager implements AuthManager {
         final ConfigMessages messages = plugin.getConfig().getMessages();
 
         try {
+            ProtectedPlayer protectedPlayer = getProtectedPlayer(playerName).get();
+            if (protectedPlayer == null || !protectedPlayer.isRegister())
+                return null;
+
             Response<PremiumUser> response = plugin
                     .getMojangAuthManager()
                     .getPremiumUser(playerName)
@@ -193,12 +197,7 @@ public class BaseAuthManager implements AuthManager {
                 logger.debug("Premium user not found. Response: " + response);
             }
 
-            ProtectedPlayer protectedPlayer = getProtectedPlayer(playerName).get();
             UUID storedOnlineUuid = protectedPlayer.getOnlineUuid();
-
-            if (storedOnlineUuid == null) {
-                return null;
-            }
 
             PremiumPlayer cachedPremium =
                     getOnlinePremiumPlayer(protectedPlayer.getLowercaseName());
@@ -214,26 +213,24 @@ public class BaseAuthManager implements AuthManager {
                         .createMessage(messages.getInternalError());
             }
 
-            boolean validUuidMatch = storedOnlineUuid.equals(mojangUuid);
+            if (storedOnlineUuid != null) {
+                boolean validUuidMatch = storedOnlineUuid.equals(mojangUuid);
 
-            boolean validTemplate =
-                    cachedPremium != null && cachedPremium.isValidTemplateTime();
-
-            if (!validUuidMatch && !validTemplate) {
-                return null;
-            }
-
-            if (cachedPremium == null) {
+                if (!validUuidMatch) {
+                    return null;
+                }
                 premiumPlayers.addOrUpdateCache(
                         new PremiumPlayer(playerName, mojangUuid, false, 0)
                 );
-            } else {
+            } else if (cachedPremium != null && cachedPremium.isTemplate()) {
                 cachedPremium.setUniqueId(mojangUuid);
+            } else {
+                return null;
             }
-
             premiumChangerProvider.forceOnlineMode(obj);
 
         } catch (Exception e) {
+            e.printStackTrace();
             logger.error("Error during premium login for " + playerName);
         }
 

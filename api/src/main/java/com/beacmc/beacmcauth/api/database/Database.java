@@ -5,6 +5,7 @@ import com.beacmc.beacmcauth.api.database.dao.ProtectedPlayerDao;
 import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.j256.ormlite.support.ConnectionSource;
 
+import java.sql.SQLException;
 import java.util.UUID;
 
 public interface Database {
@@ -16,4 +17,8 @@ public interface Database {
     ProtectedPlayerDao getProtectedPlayerDao();
 
     Cache<ProtectedPlayer, UUID> getPlayersCache();
+
+    boolean isColumnExists(String columnName);
+
+    void updateDao() throws SQLException;
 }

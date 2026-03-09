@@ -13,7 +13,7 @@ public class CrackCommand extends Command {
     private final CommandManager commandManager;
 
     public CrackCommand(BeacmcAuth plugin) {
-        super("crack", "beacmcauth.crach");
+        super("crack", "beacmcauth.crack");
         commandManager = plugin.getCommandManager();
     }
 

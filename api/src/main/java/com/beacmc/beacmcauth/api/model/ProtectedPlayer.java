@@ -18,8 +18,10 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@DatabaseTable(tableName = "auth_players")
+@DatabaseTable(tableName = ProtectedPlayer.TABLE_NAME)
 public class ProtectedPlayer implements CachedData<UUID> {
+
+    public static final String TABLE_NAME = "auth_players";
 
     @DatabaseField(columnName = "lowercase_name", canBeNull = false)
     private @NotNull String lowercaseName;

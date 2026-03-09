@@ -12,16 +12,24 @@ import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.core.cache.PlayerCache;
 import com.beacmc.beacmcauth.core.database.dao.BaseProtectPlayerDao;
 import com.beacmc.beacmcauth.core.library.Libraries;
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.jdbc.DataSourceConnectionSource;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.logger.Level;
 import com.j256.ormlite.logger.Logger;
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.support.DatabaseConnection;
+import com.j256.ormlite.table.TableInfo;
 import com.j256.ormlite.table.TableUtils;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.UUID;
 
 public class BaseDatabase implements Database {
@@ -59,7 +67,7 @@ public class BaseDatabase implements Database {
                     : new JdbcConnectionSource(url);
             protectedPlayerDao = new BaseProtectPlayerDao(plugin, connectionSource);
             TableUtils.createTableIfNotExists(connectionSource, ProtectedPlayer.class);
-            migrate();
+            new DatabaseVersionMigrator(this);
         } catch (Throwable e) {
             if (databaseSettings.isStopServerOnFailedConnection()) {
                 logger.error("Database is not connected. Server stopping...");
@@ -75,23 +83,19 @@ public class BaseDatabase implements Database {
         }
     }
 
-    private void migrate() throws SQLException {
-        if (!isColumnExists("vkontakte")) {
-            protectedPlayerDao.executeRaw("ALTER TABLE `auth_players` ADD COLUMN vkontakte INTEGER DEFAULT 0;");
-            protectedPlayerDao = new BaseProtectPlayerDao(plugin, connectionSource);
+    public boolean isColumnExists(String columnName) {
+        try {
+            Connection connection = connectionSource
+                    .getReadOnlyConnection(ProtectedPlayer.TABLE_NAME)
+                    .getUnderlyingConnection();
+            DatabaseMetaData metaData = connection.getMetaData();
+            try (ResultSet rs = metaData.getColumns(null, null, ProtectedPlayer.TABLE_NAME, columnName)) {
+                return rs.next();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
-        if (!isColumnExists("vkontakte_2fa")) {
-            protectedPlayerDao.executeRaw("ALTER TABLE `auth_players` ADD COLUMN vkontakte_2fa BOOLEAN DEFAULT true;");
-            protectedPlayerDao = new BaseProtectPlayerDao(plugin, connectionSource);
-        }
-        if (!isColumnExists("online_uuid")) {
-            protectedPlayerDao.executeRaw("ALTER TABLE `auth_players` ADD COLUMN online_uuid CHAR(36) default NULL;");
-            protectedPlayerDao = new BaseProtectPlayerDao(plugin, connectionSource);
-        }
-    }
-
-    private boolean isColumnExists(String columnName) {
-        return protectedPlayerDao.getTableInfo().hasColumnName(columnName);
     }
 
     private void loadDatabaseLibrary(DatabaseType databaseType) {
@@ -102,6 +106,11 @@ public class BaseDatabase implements Database {
             case MARIADB -> libraryLoader.loadLibrary(Libraries.MARIADB);
             case POSTGRESQL -> libraryLoader.loadLibrary(Libraries.POSTGRESQL);
         }
+    }
+
+    @Override
+    public void updateDao() throws SQLException {
+        protectedPlayerDao = new BaseProtectPlayerDao(plugin, connectionSource);
     }
 
     @Override

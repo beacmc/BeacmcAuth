@@ -22,6 +22,7 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,27 +33,48 @@ public class AuthListener implements Listener {
     private final SongManager songManager;
     private final ServerLogger logger;
 
+    private Field rewriteIdField;
+    private Field uniqueIdField;
+
     public AuthListener(BeacmcAuth plugin) {
         this.plugin = plugin;
         this.logger = plugin.getServerLogger();
         this.authManager = plugin.getAuthManager();
         this.songManager = plugin.getSongManager();
+
+        try {
+            Class<?> clazz = Class.forName("net.md_5.bungee.connection.InitialHandler");
+            rewriteIdField = clazz.getDeclaredField("rewriteId");
+            rewriteIdField.setAccessible(true);
+            uniqueIdField = clazz.getDeclaredField("uniqueId");
+            uniqueIdField.setAccessible(true);
+        } catch (Exception ignored) {
+        }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     @SuppressWarnings("unchecked")
     public void onPreLogin(PreLoginEvent event) {
         final PendingConnection connection = event.getConnection();
-
         String name = connection.getName();
-        UUID uuid = UUIDFetcher.byName(name);
-
-        connection.setUniqueId(uuid);
 
         Message disconnectMessage = authManager.onPremiumLogin(name.toLowerCase(), (PremiumChangerProvider<? super PendingConnection>) BungeeBeacmcAuth.getInstance().getBeacmcAuth().getPremiumProvider(), connection);
         if (disconnectMessage != null) {
             event.setReason(disconnectMessage.toBaseComponent());
             event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onLogin(LoginEvent event) {
+        final PendingConnection connection = event.getConnection();
+
+        UUID playerUuid = UUIDFetcher.byName(connection.getName().toLowerCase());
+        try {
+            rewriteIdField.set(connection, playerUuid);
+            uniqueIdField.set(connection, playerUuid);
+        } catch (Throwable e) {
+            e.printStackTrace();
         }
     }
 

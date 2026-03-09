@@ -22,9 +22,11 @@ public class PositionListener implements PacketListener {
     public void onPacketReceive(PacketReceiveEvent event) {
         if (event.getPacketType() == PacketType.Play.Client.PLAYER_POSITION) {
             WrapperPlayClientPlayerPosition packet = new WrapperPlayClientPlayerPosition(event);
-            User user = PacketEvents.getAPI().getPlayerManager().getUser(event.getPlayer());
-            Vector3d pos = packet.getPosition();
-            this.locations.put(user.getUUID(), new PlayerPosition(pos.x, pos.y, pos.z));
+            User user = event.getUser();
+            if (user != null) {
+                Vector3d pos = packet.getPosition();
+                this.locations.put(user.getUUID(), new PlayerPosition(pos.x, pos.y, pos.z));
+            }
         }
     }
 }
