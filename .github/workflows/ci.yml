@@ -32,7 +32,7 @@ jobs:
           name: bungeecord-jar
           path: |
             bungeecord/target/*.jar
-            !bungeecord/target/*-original.jar
+            !bungeecord/target/original-*.jar
 
       - name: Upload Velocity JAR
         uses: actions/upload-artifact@v4
@@ -40,4 +40,4 @@ jobs:
           name: velocity-jar
           path: |
             velocity/target/*.jar
-            !velocity/target/*-original.jar
+            !velocity/target/original-*.jar
