@@ -2,7 +2,6 @@ package com.beacmc.beacmcauth.bungeecord;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.config.Config;
-import com.beacmc.beacmcauth.api.social.SocialType;
 import com.beacmc.beacmcauth.bungeecord.auth.BungeePremiumChangerProvider;
 import com.beacmc.beacmcauth.bungeecord.library.BungeeLibraryProvider;
 import com.beacmc.beacmcauth.bungeecord.logger.BungeeServerLogger;
@@ -10,10 +9,7 @@ import com.beacmc.beacmcauth.bungeecord.message.BungeeMessageProvider;
 import com.beacmc.beacmcauth.bungeecord.server.BungeeProxy;
 import com.beacmc.beacmcauth.bungeecord.server.command.*;
 import com.beacmc.beacmcauth.bungeecord.server.listener.AuthListener;
-import com.beacmc.beacmcauth.bungeecord.server.listener.VkontakteListener;
 import com.beacmc.beacmcauth.core.BaseBeacmcAuth;
-import com.beacmc.beacmcauth.core.social.types.vkontakte.VkontakteSocial;
-import com.ubivashka.vk.bungee.BungeeVkApiPlugin;
 import lombok.Getter;
 import net.md_5.bungee.api.plugin.Plugin;
 import org.bstats.bungeecord.Metrics;
@@ -48,12 +44,6 @@ public final class BungeeBeacmcAuth extends Plugin {
                 () -> String.valueOf(config.getAuthServers().size())));
         metrics.addCustomChart(new SingleLineChart("Registered players",
                 () -> Math.toIntExact(beacmcAuth.getDatabase().getProtectedPlayerDao().countOf())));
-
-        VkontakteSocial vkSocial = (VkontakteSocial) beacmcAuth.getSocialManager().getSocialByType(SocialType.VKONTAKTE);
-        if (this.getProxy().getPluginManager().getPlugin("VK-API") != null && vkSocial != null) {
-            vkSocial.setup(BungeeVkApiPlugin.getInstance());
-            this.getProxy().getPluginManager().registerListener(this, new VkontakteListener(beacmcAuth));
-        }
 
         this.getProxy().getPluginManager().registerListener(this, new AuthListener(beacmcAuth));
         initCommands();

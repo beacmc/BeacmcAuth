@@ -11,10 +11,6 @@
       "optional": true
     },
     {
-      "id": "vk-api",
-      "optional": true
-    },
-    {
       "id": "packetevents",
       "optional": false
     }

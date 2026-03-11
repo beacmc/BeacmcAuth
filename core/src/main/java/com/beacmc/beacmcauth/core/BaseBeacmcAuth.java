@@ -11,7 +11,6 @@ import com.beacmc.beacmcauth.api.config.MojangAuthConfig;
 import com.beacmc.beacmcauth.api.config.loader.ConfigLoader;
 import com.beacmc.beacmcauth.api.config.social.DiscordConfig;
 import com.beacmc.beacmcauth.api.config.social.TelegramConfig;
-import com.beacmc.beacmcauth.api.config.social.VkontakteConfig;
 import com.beacmc.beacmcauth.api.database.Database;
 import com.beacmc.beacmcauth.api.email.EmailManager;
 import com.beacmc.beacmcauth.api.library.LibraryProvider;
@@ -31,7 +30,6 @@ import com.beacmc.beacmcauth.core.config.BaseMojangAuthConfig;
 import com.beacmc.beacmcauth.core.config.loader.BaseConfigLoader;
 import com.beacmc.beacmcauth.core.config.social.BaseDiscordConfig;
 import com.beacmc.beacmcauth.core.config.social.BaseTelegramConfig;
-import com.beacmc.beacmcauth.core.config.social.BaseVkontakteConfig;
 import com.beacmc.beacmcauth.core.database.BaseDatabase;
 import com.beacmc.beacmcauth.core.email.BaseEmailManager;
 import com.beacmc.beacmcauth.core.library.Libraries;
@@ -39,7 +37,6 @@ import com.beacmc.beacmcauth.core.packet.BasePlayerPositionTracker;
 import com.beacmc.beacmcauth.core.social.BaseSocialManager;
 import com.beacmc.beacmcauth.core.social.types.discord.DiscordSocial;
 import com.beacmc.beacmcauth.core.social.types.telegram.TelegramSocial;
-import com.beacmc.beacmcauth.core.social.types.vkontakte.VkontakteSocial;
 import com.beacmc.beacmcauth.core.song.BaseSongManager;
 import lombok.Getter;
 
@@ -66,7 +63,6 @@ public class BaseBeacmcAuth implements BeacmcAuth {
     private EmailConfig emailConfig;
     private MojangAuthConfig mojangAuthConfig;
     private DiscordConfig discordConfig;
-    private VkontakteConfig vkontakteConfig;
     private SocialManager socialManager;
     private ExecutorService executorService;
     private SongManager songManager;
@@ -98,9 +94,6 @@ public class BaseBeacmcAuth implements BeacmcAuth {
 
         if (discordConfig.isEnabled()) {
             socialManager.getSocials().add(new DiscordSocial(this));
-        }
-        if (vkontakteConfig.isEnabled()) {
-            socialManager.getSocials().add(new VkontakteSocial(this));
         }
 
         playerPositionTracker = new BasePlayerPositionTracker(this);
@@ -142,7 +135,6 @@ public class BaseBeacmcAuth implements BeacmcAuth {
         emailConfig = configLoader.load(new File(getDataFolder(), "email.yml"), BaseEmailConfig.class, new BaseEmailConfig());
         telegramConfig = configLoader.load(new File(getDataFolder(), "telegram.yml"), BaseTelegramConfig.class, new BaseTelegramConfig());
         discordConfig = configLoader.load(new File(getDataFolder(), "discord.yml"), BaseDiscordConfig.class, new BaseDiscordConfig());
-        vkontakteConfig = configLoader.load(new File(getDataFolder(), "vkontakte.yml"), BaseVkontakteConfig.class, new BaseVkontakteConfig());
         mojangAuthConfig = configLoader.load(new File(getDataFolder(), "license-auth.yml"), BaseMojangAuthConfig.class, new BaseMojangAuthConfig());
     }
 

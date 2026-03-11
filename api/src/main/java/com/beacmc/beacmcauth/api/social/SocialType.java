@@ -4,6 +4,5 @@ public enum SocialType {
 
     DISCORD,
     TELEGRAM,
-    VKONTAKTE,
     CUSTOM
 }

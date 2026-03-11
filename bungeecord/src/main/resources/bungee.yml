@@ -6,4 +6,3 @@ depends:
   - packetevents
 softDepends:
   - LuckPerms
-  - VK-API
