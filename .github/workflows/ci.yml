@@ -1,0 +1,49 @@
+name: Build BeacmcAuth
+on:
+  push:
+    branches:
+      - main
+      - "feature/**"
+  pull_request:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [ 21 ]
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.java }}
+          cache: maven
+
+      - name: Build all modules
+        run: mvn clean install -DskipTests
+
+      - name: Package Bungee module
+        run: mvn -pl bungee package -DskipTests
+
+      - name: Package Velocity module
+        run: mvn -pl velocity package -DskipTests
+
+      - name: Upload BungeeCord JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: bungeecord-jar
+          path: |
+            bungeecord/target/*.jar
+            !bungeecord/target/*-original.jar
+
+      - name: Upload Velocity JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: velocity-jar
+          path: |
+            velocity/target/*.jar
+            !velocity/target/*-original.jar
