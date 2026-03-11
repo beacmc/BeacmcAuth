@@ -4,7 +4,6 @@ import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.social.SocialType;
 import com.beacmc.beacmcauth.core.BaseBeacmcAuth;
-import com.beacmc.beacmcauth.core.social.types.vkontakte.VkontakteSocial;
 import com.beacmc.beacmcauth.velocity.auth.VelocityPremiumChangerProvider;
 import com.beacmc.beacmcauth.velocity.library.VelocityLibraryProvider;
 import com.beacmc.beacmcauth.velocity.logger.VelocityServerLogger;
@@ -12,7 +11,6 @@ import com.beacmc.beacmcauth.velocity.message.VelocityMessageProvider;
 import com.beacmc.beacmcauth.velocity.server.VelocityProxy;
 import com.beacmc.beacmcauth.velocity.server.command.*;
 import com.beacmc.beacmcauth.velocity.server.listener.AuthListener;
-import com.beacmc.beacmcauth.velocity.server.listener.VkontakteListener;
 import com.google.inject.Inject;
 import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.event.Subscribe;
@@ -70,17 +68,6 @@ public final class VelocityBeacmcAuth {
                 () -> String.valueOf(config.getAuthServers().size())));
         metrics.addCustomChart(new SingleLineChart("Registered players",
                 () -> Math.toIntExact(beacmcAuth.getDatabase().getProtectedPlayerDao().countOf())));
-
-        VkontakteSocial vkSocial = (VkontakteSocial) beacmcAuth.getSocialManager().getSocialByType(SocialType.VKONTAKTE);
-        if (this.getVelocityProxyServer().getPluginManager().getPlugin("vk-api").isPresent() && vkSocial != null) {
-            try {
-                Class.forName("com.ubivashka.vk.api.VkApiPlugin");
-                Object instance = velocityProxyServer.getPluginManager().getPlugin("vk-api").flatMap(PluginContainer::getInstance).orElse(null);
-                vkSocial.setup(instance);
-            } catch (Exception ignored) {
-            }
-            velocityProxyServer.getEventManager().register(this, new VkontakteListener(beacmcAuth));
-        }
 
         velocityProxyServer.getEventManager().register(this, new AuthListener(beacmcAuth));
         initCommands();

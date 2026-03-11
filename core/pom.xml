@@ -143,18 +143,7 @@
             <version>bb1d402666</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.bivashy</groupId>
-            <artifactId>vk-api.bungee</artifactId>
-            <version>0.4.2</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-pool2</artifactId>
-            <version>2.12.1</version>
-            <scope>provided</scope>
-        </dependency>
+
         <dependency>
             <groupId>com.github.retrooper</groupId>
             <artifactId>packetevents-api</artifactId>

@@ -65,7 +65,6 @@ public class ConfirmationButtonClick implements ButtonClickListener {
                 String disconnectMessage = switch (social.getType()) {
                     case DISCORD ->  messages.getDiscordConfirmationDeniedDisconnect();
                     case TELEGRAM -> messages.getTelegramConfirmationDeniedDisconnect();
-                    case VKONTAKTE -> messages.getVkontakteConfirmationDeniedDisconnect();
                     case CUSTOM -> null;
                 };
                 player.disconnect(disconnectMessage);

@@ -66,7 +66,6 @@ public class AccountSettingClick implements ButtonClickListener {
             String disconnectMessage = switch (social.getType()) {
                 case DISCORD -> messages.getDiscordKick();
                 case TELEGRAM -> messages.getTelegramKick();
-                case VKONTAKTE -> messages.getVkontakteKick();
                 case CUSTOM -> null;
             };
             player.disconnect(disconnectMessage);

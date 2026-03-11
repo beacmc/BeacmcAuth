@@ -170,14 +170,6 @@ public class BaseConfig implements Config {
         String telegramConfirmationSuccess = "&7Login confirmed, you will be redirected to the server";
         String telegramKick = "&cYou were kicked at the telegram request";
 
-        String vkontaktePrivateMessagesClosed = "&cYour private messages are closed. It is not possible to enter the game";
-        String vkontakteConfirmationChat = "&7Confirm account login in your vkontakte's private messages";
-        String vkontakteConfirmationTitle = "&7";
-        String vkontakteConfirmationSubtitle = "&7Confirm the vkontakte login";
-        String vkontakteConfirmationDeniedDisconnect = "&cEntry denied in vkontakte's private messages";
-        String vkontakteConfirmationSuccess = "&7Login confirmed, you will be redirected to the server";
-        String vkontakteKick = "&cYou were kicked at the vkontakte request";
-
         String logoutDisconnect = """
                 &6Your session was successfully reset
                 """;

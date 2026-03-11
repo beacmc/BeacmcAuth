@@ -118,20 +118,6 @@ public interface ConfigMessages {
 
     String getTelegramKick();
 
-    String getVkontaktePrivateMessagesClosed();
-
-    String getVkontakteConfirmationChat();
-
-    String getVkontakteConfirmationTitle();
-
-    String getVkontakteConfirmationSubtitle();
-
-    String getVkontakteConfirmationDeniedDisconnect();
-
-    String getVkontakteConfirmationSuccess();
-
-    String getVkontakteKick();
-
     String getAlreadyPremium();
 
     String getAlreadyCrack();

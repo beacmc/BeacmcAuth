@@ -9,7 +9,6 @@ import com.beacmc.beacmcauth.api.config.EmailConfig;
 import com.beacmc.beacmcauth.api.config.MojangAuthConfig;
 import com.beacmc.beacmcauth.api.config.social.DiscordConfig;
 import com.beacmc.beacmcauth.api.config.social.TelegramConfig;
-import com.beacmc.beacmcauth.api.config.social.VkontakteConfig;
 import com.beacmc.beacmcauth.api.database.Database;
 import com.beacmc.beacmcauth.api.email.EmailManager;
 import com.beacmc.beacmcauth.api.library.LibraryProvider;
@@ -51,8 +50,6 @@ public interface BeacmcAuth {
     Proxy getProxy();
 
     TelegramConfig getTelegramConfig();
-
-    VkontakteConfig getVkontakteConfig();
 
     File getDataFolder();
 

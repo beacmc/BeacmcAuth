@@ -205,12 +205,6 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.bivashy</groupId>
-            <artifactId>vk-api.bungee</artifactId>
-            <version>0.4.2</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>com.github.beacmc.libby</groupId>
             <artifactId>libby-bungee</artifactId>
             <version>bb1d402666</version>
@@ -226,12 +220,6 @@
             <groupId>com.j256.ormlite</groupId>
             <artifactId>ormlite-jdbc</artifactId>
             <version>6.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>2.20.0</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.github.koca2000</groupId>
