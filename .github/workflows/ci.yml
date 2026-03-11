@@ -24,13 +24,7 @@ jobs:
           cache: maven
 
       - name: Build all modules
-        run: mvn clean install -DskipTests
-
-      - name: Package Bungee module
-        run: mvn -pl bungee package -DskipTests
-
-      - name: Package Velocity module
-        run: mvn -pl velocity package -DskipTests
+        run: mvn clean install -pl api,core,bungeecord,velocity -DskipTests
 
       - name: Upload BungeeCord JAR
         uses: actions/upload-artifact@v4
