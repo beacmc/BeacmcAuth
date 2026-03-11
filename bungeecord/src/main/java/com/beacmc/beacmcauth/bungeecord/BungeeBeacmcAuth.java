@@ -38,11 +38,11 @@ public final class BungeeBeacmcAuth extends Plugin {
 
         Config config = beacmcAuth.getConfig();
         Metrics metrics = new Metrics(this, 23866);
-        metrics.addCustomChart(new SimplePie("Database type",
+        metrics.addCustomChart(new SimplePie("databaseType",
                 () -> config.getDatabaseSettings().getType().name()));
-        metrics.addCustomChart(new SimplePie("Auth servers count",
+        metrics.addCustomChart(new SimplePie("authServersCount",
                 () -> String.valueOf(config.getAuthServers().size())));
-        metrics.addCustomChart(new SingleLineChart("Registered players",
+        metrics.addCustomChart(new SingleLineChart("registeredPlayers",
                 () -> Math.toIntExact(beacmcAuth.getDatabase().getProtectedPlayerDao().countOf())));
 
         this.getProxy().getPluginManager().registerListener(this, new AuthListener(beacmcAuth));

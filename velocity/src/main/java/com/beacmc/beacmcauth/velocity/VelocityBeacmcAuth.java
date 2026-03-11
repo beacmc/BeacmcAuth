@@ -62,11 +62,11 @@ public final class VelocityBeacmcAuth {
 
         Config config = beacmcAuth.getConfig();
         Metrics metrics = getMetricsFactory().make(this, 23880);
-        metrics.addCustomChart(new SimplePie("Database type",
+        metrics.addCustomChart(new SimplePie("databaseType",
                 () -> config.getDatabaseSettings().getType().name()));
-        metrics.addCustomChart(new SimplePie("Auth servers count",
+        metrics.addCustomChart(new SimplePie("authServersCount",
                 () -> String.valueOf(config.getAuthServers().size())));
-        metrics.addCustomChart(new SingleLineChart("Registered players",
+        metrics.addCustomChart(new SingleLineChart("registeredPlayers",
                 () -> Math.toIntExact(beacmcAuth.getDatabase().getProtectedPlayerDao().countOf())));
 
         velocityProxyServer.getEventManager().register(this, new AuthListener(beacmcAuth));
