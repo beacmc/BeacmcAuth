@@ -92,10 +92,6 @@
                                     <shadedPattern>com.beacmc.beacmcauth.shaded.snakeyaml</shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>com.google.gson</pattern>
-                                    <shadedPattern>com.beacmc.beacmcauth.shaded.google.gson</shadedPattern>
-                                </relocation>
-                                <relocation>
                                     <pattern>org.mindrot.jbcrypt</pattern>
                                     <shadedPattern>com.beacmc.beacmcauth.shaded.jbcrypt</shadedPattern>
                                 </relocation>
