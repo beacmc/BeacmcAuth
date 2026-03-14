@@ -1,0 +1,29 @@
+name: Build BeacmcAuth
+on:
+  push:
+    tags:
+      - "v*"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [ 21 ]
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.java }}
+          cache: maven
+      - name: Build all modules
+        run: mvn clean install -pl api,core,bungeecord,velocity -DskipTests
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: CHANGELOG.md
+          files: |
+            velocity/target/BeacmcAuth-Velocity-*.jar
+            bungeecord/target/BeacmcAuth-Bungee-*.jar
