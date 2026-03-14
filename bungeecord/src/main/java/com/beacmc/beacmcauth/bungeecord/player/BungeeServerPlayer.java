@@ -8,6 +8,7 @@ import com.beacmc.beacmcauth.bungeecord.BungeeBeacmcAuth;
 import com.beacmc.beacmcauth.bungeecord.server.BungeeServer;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import net.md_5.bungee.api.ServerConnectRequest;
 import net.md_5.bungee.api.Title;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -56,12 +57,27 @@ public class BungeeServerPlayer implements ServerPlayer {
     @Override
     public void connect(Server server) {
         logger.debug("Create connection request. Player(" + player.getName() + "), Server(" + server.getName() + ")");
-        player.connect((ServerInfo) server.getOriginalServer());
+        player.connect(ServerConnectRequest.builder()
+                .target(server.getOriginalServer())
+                .callback((result, error) -> {
+                    if (error != null) {
+                        logger.warn("%s failed connect to server %s"
+                                .formatted(player.getName(), server.getName()));
+                        logger.warn(error.getMessage());
+                    }
+
+                    switch (result) {
+                        case EVENT_CANCEL, FAIL ->
+                                logger.warn("%s failed connect to server %s"
+                                        .formatted(player.getName(), server.getName()));
+                    }
+                })
+                .build());
     }
 
     @Override
     public void disconnect(String message) {
-        logger.debug("Player("+ player.getName() + ") disconnect for message: " + message);
+        logger.debug("Player(" + player.getName() + ") disconnect for message: " + message);
         player.disconnect(messageProvider.createMessage(message).toBaseComponent());
     }
 
