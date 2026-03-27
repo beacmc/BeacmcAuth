@@ -21,6 +21,7 @@ public class LoginRunnable implements Runnable {
     private final TaskScheduler task;
     private final int messageSendDelay;
     private Integer timer;
+    private Integer waitForConnect;
 
     public LoginRunnable(BeacmcAuth plugin, ServerPlayer player) {
         this.player = player;
@@ -28,6 +29,7 @@ public class LoginRunnable implements Runnable {
         Config config = plugin.getConfig();
 
         timer = 0;
+        waitForConnect = 0;
         maxTimeAuth = config.getTimePerLogin();
         authManager = plugin.getAuthManager();
 
@@ -51,8 +53,16 @@ public class LoginRunnable implements Runnable {
 
         final Config config = plugin.getConfig();
 
-        if (!authManager.getAuthPlayers().containsKey(player.getLowercaseName()) || !player.isConnected()) {
+        if (!authManager.getAuthPlayers().containsKey(player.getLowercaseName())) {
             task.cancel();
+            return;
+        }
+
+        if (!player.isConnected()) {
+            if (waitForConnect >= 10) {
+                task.cancel();
+            }
+            waitForConnect++;
             return;
         }
 
