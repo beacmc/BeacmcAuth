@@ -10,7 +10,6 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import net.md_5.bungee.api.ServerConnectRequest;
 import net.md_5.bungee.api.Title;
-import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.net.InetAddress;
@@ -53,6 +52,10 @@ public class BungeeServerPlayer implements ServerPlayer {
         return player.isConnected();
     }
 
+    @Override
+    public boolean isServerConnected() {
+        return player.getServer() != null && player.getServer().isConnected();
+    }
 
     @Override
     public void connect(Server server) {

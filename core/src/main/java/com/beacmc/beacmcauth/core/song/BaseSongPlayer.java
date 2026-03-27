@@ -39,7 +39,7 @@ public final class BaseSongPlayer extends SongPlayer {
         Runnable[] task = new Runnable[1];
         task[0] = () -> {
             int tick = atomicTick.getAndAdd(1);
-            if (tick > song.getSongLength() || !getPlayer().isConnected() || stopped) {
+            if (tick > song.getSongLength() || !getPlayer().isServerConnected() || stopped) {
                 return;
             }
 
@@ -62,7 +62,7 @@ public final class BaseSongPlayer extends SongPlayer {
 
     public void playTick(ServerPlayer player, Song song, int tick) {
         User user = PacketEvents.getAPI().getPlayerManager().getUser(player.getOriginalPlayer());
-        if (!player.isConnected()) {
+        if (!player.isServerConnected()) {
             return;
         }
 

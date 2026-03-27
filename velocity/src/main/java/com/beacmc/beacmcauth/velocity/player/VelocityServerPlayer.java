@@ -47,7 +47,12 @@ public class VelocityServerPlayer implements ServerPlayer {
 
     @Override
     public boolean isConnected() {
-        return player.isActive() && player.getCurrentServer().isPresent();
+        return player.isActive();
+    }
+
+    @Override
+    public boolean isServerConnected() {
+        return player.getCurrentServer().isPresent();
     }
 
 
