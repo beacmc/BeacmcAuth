@@ -35,7 +35,7 @@ public interface ServerPlayer extends CommandSender {
     boolean isServerConnected();
 
     default void playSound(User user, Sound sound, float volume, float pitch, Vector3i location) {
-        if (isConnected()) {
+        if (isServerConnected()) {
             WrapperPlayServerSoundEffect packet = new WrapperPlayServerSoundEffect(
                     sound,
                     SoundCategory.PLAYER,
