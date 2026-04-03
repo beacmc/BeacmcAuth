@@ -107,7 +107,7 @@ public class BaseConfig implements Config {
         String passwordsMatch = "&7Your old password and your new password are identical";
         String authReload = "&7Configuration rebooted";
         String accountNotFound = "&7Account not found";
-        String accountDeleted = "&7Account not found";
+        String accountDeleted = "&7Account deleted";
         String accountNotRegistered = "&7Account not yet registered";
         String yourAccountDeletedDisconnect = "&cYour account has been deleted";
         String accountPasswordChanged = "&7Account password successfully changed";
