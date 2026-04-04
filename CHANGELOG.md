@@ -1,50 +1,16 @@
 ### New Features
 
-* **`/logout` command**
-  Players can now reset their authentication session manually.
-
-* **Alt account detection**
-  Added an administrative command:
-
-  ```
-  /alts <player>
-  ```
-
-  This command allows administrators to search for alternative accounts.
-  You can also limit the number of alt accounts in the configuration.
-
-* **Additional account protection**
-  New commands for extra security and recovery:
-
-  ```
-  /email
-  /secret
-  ```
-
-  Players can now set an email and a secret question to recover their account.
-
----
-
-### Improvements
-
-* **Hybrid authentication fixed**
-  Players will now always use the **offline UUID**, fixing issues related to hybrid authentication.
-
-* **Social network linking feedback**
-  When a player links a social account, they will instantly receive information about their account in private messages.
-
-* **Server switching stability**
-  Fixed an issue with fast server switching.
-  The plugin will now first locate the correct **authentication or lobby server**, and only then connect the player.
-
-* **Plugin size significantly reduced**
-  The overall plugin size has been greatly optimized.
+* **Dialog windows support 1.21.6+**  
+  Added full support for dialog windows in Minecraft 1.21.6 and above.
 
 ---
 
 ### Fixes
 
-* Numerous minor bug fixes and stability improvements across the plugin.
+* **Endless music after authentication fixed**  
+  Resolved an issue where background music would continue indefinitely after login.
+
+* **Message sending fixed**  
+  Fixed problems with sending messages during and after the authentication process.
 
 ---
-
