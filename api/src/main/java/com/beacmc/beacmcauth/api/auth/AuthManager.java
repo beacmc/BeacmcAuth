@@ -27,6 +27,8 @@ public interface AuthManager {
      */
     CompletableFuture<Server> onConnect(ServerPlayer player);
 
+    void onServerConnect(ServerPlayer player);
+
     <T> @Nullable Message onPremiumLogin(String playerName, PremiumChangerProvider<T> premiumChangerProvider, T obj);
 
     void onDisconnect(ServerPlayer player);

@@ -1,7 +1,6 @@
-package com.beacmc.beacmcauth.core.packet;
+package com.beacmc.beacmcauth.core.packet.listener;
 
 import com.beacmc.beacmcauth.api.packet.position.PlayerPosition;
-import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListener;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
@@ -19,6 +18,7 @@ public class PositionListener implements PacketListener {
     private final Map<UUID, PlayerPosition> locations;
 
     @Override
+    @SuppressWarnings("ConstantConditions")
     public void onPacketReceive(PacketReceiveEvent event) {
         if (event.getPacketType() == PacketType.Play.Client.PLAYER_POSITION) {
             WrapperPlayClientPlayerPosition packet = new WrapperPlayClientPlayerPosition(event);

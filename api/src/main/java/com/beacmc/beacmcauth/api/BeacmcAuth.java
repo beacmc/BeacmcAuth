@@ -10,6 +10,7 @@ import com.beacmc.beacmcauth.api.config.MojangAuthConfig;
 import com.beacmc.beacmcauth.api.config.social.DiscordConfig;
 import com.beacmc.beacmcauth.api.config.social.TelegramConfig;
 import com.beacmc.beacmcauth.api.database.Database;
+import com.beacmc.beacmcauth.api.dialog.DialogManager;
 import com.beacmc.beacmcauth.api.email.EmailManager;
 import com.beacmc.beacmcauth.api.library.LibraryProvider;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
@@ -34,6 +35,8 @@ public interface BeacmcAuth {
     EmailConfig getEmailConfig();
 
     MojangAuthConfig getMojangAuthConfig();
+
+    DialogManager getDialogManager();
 
     Database getDatabase();
 

@@ -59,9 +59,7 @@ public class AuthListener {
     @Subscribe
     public void onPostConnect(ServerPostConnectEvent event) {
         Player player = event.getPlayer();
-        if (authManager.isAuthenticating(player.getUsername())) {
-            songManager.play(new VelocityServerPlayer(player), songManager.findRandomSong());
-        }
+        authManager.onServerConnect(new VelocityServerPlayer(player));
     }
 
     @Subscribe

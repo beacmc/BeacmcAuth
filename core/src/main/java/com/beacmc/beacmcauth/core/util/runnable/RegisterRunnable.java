@@ -6,6 +6,7 @@ import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
 import com.beacmc.beacmcauth.api.scheduler.TaskScheduler;
 import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
+import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 
 import java.util.concurrent.TimeUnit;
 
@@ -22,6 +23,7 @@ public class RegisterRunnable implements Runnable {
     private final TaskScheduler task;
     private final ServerLogger logger;
     private final int messageSendDelay;
+    private final boolean disableSendMessage;
     private Integer timer;
     private Integer waitForConnect;
 
@@ -29,6 +31,8 @@ public class RegisterRunnable implements Runnable {
         this.player = player;
         this.plugin = plugin;
         Config config = plugin.getConfig();
+
+        disableSendMessage = config.isDialogEnabled() && player.isNewerThanOrEqualsVersion(ClientVersion.V_1_21_6);
 
         timer = 0;
         waitForConnect = 0;
@@ -79,7 +83,7 @@ public class RegisterRunnable implements Runnable {
             return;
         }
 
-        if (timer % messageSendDelay == 0) {
+        if (timer % messageSendDelay == 0 && !disableSendMessage) {
             player.sendMessage(message);
             player.sendTitle(title, subtitle, in, stay, out);
         }

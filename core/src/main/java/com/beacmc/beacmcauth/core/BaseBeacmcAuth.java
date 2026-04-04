@@ -31,13 +31,17 @@ import com.beacmc.beacmcauth.core.config.loader.BaseConfigLoader;
 import com.beacmc.beacmcauth.core.config.social.BaseDiscordConfig;
 import com.beacmc.beacmcauth.core.config.social.BaseTelegramConfig;
 import com.beacmc.beacmcauth.core.database.BaseDatabase;
+import com.beacmc.beacmcauth.core.dialog.BaseDialogManager;
 import com.beacmc.beacmcauth.core.email.BaseEmailManager;
 import com.beacmc.beacmcauth.core.library.Libraries;
 import com.beacmc.beacmcauth.core.packet.BasePlayerPositionTracker;
+import com.beacmc.beacmcauth.core.packet.listener.DialogListener;
 import com.beacmc.beacmcauth.core.social.BaseSocialManager;
 import com.beacmc.beacmcauth.core.social.types.discord.DiscordSocial;
 import com.beacmc.beacmcauth.core.social.types.telegram.TelegramSocial;
 import com.beacmc.beacmcauth.core.song.BaseSongManager;
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import lombok.Getter;
 
 import java.io.*;
@@ -63,6 +67,7 @@ public class BaseBeacmcAuth implements BeacmcAuth {
     private EmailConfig emailConfig;
     private MojangAuthConfig mojangAuthConfig;
     private DiscordConfig discordConfig;
+    private BaseDialogManager dialogManager;
     private SocialManager socialManager;
     private ExecutorService executorService;
     private SongManager songManager;
@@ -73,16 +78,22 @@ public class BaseBeacmcAuth implements BeacmcAuth {
     @Override
     public BeacmcAuth onEnable() {
         executorService = Executors.newFixedThreadPool(8);
-
         libraryProvider.loadLibrary(Libraries.JDA);
 
         configLoader = new BaseConfigLoader();
         reloadAllConfigurations();
+
         database = new BaseDatabase(this);
         database.init();
+
         mojangAuthManager = new BaseMojangAuthManager(this);
         authManager = new BaseAuthManager(this);
         emailManager = new BaseEmailManager(this);
+
+        dialogManager = new BaseDialogManager(this);
+        dialogManager.loadDefaultDialogs();
+        dialogManager.registerDefaultListeners();
+
         socialManager = new BaseSocialManager(this);
         if (telegramConfig.isEnabled()) {
             getLibraryProvider().loadLibrary(Libraries.KOTLIN);
@@ -96,7 +107,10 @@ public class BaseBeacmcAuth implements BeacmcAuth {
             socialManager.getSocials().add(new DiscordSocial(this));
         }
 
-        playerPositionTracker = new BasePlayerPositionTracker(this);
+        playerPositionTracker = new BasePlayerPositionTracker();
+        PacketEvents.getAPI()
+                .getEventManager()
+                .registerListener(new DialogListener(this), PacketListenerPriority.HIGHEST);
         Path songs = getDataFolder().toPath().resolve("songs");
         if (!songs.toFile().exists()) {
             saveResource("songs/Panda.nbs");

@@ -183,4 +183,14 @@ public interface ConfigMessages {
     String getEmailAlreadyTaken();
 
     String getEmailModuleDisabled();
+
+    String getDialogWrongPassword();
+
+    String getDialogConfirmPassword();
+
+    String getDialogInvalidPassword();
+
+    String getDialogPasswordsDontMatch();
+
+    String getDialogCooldown();
 }

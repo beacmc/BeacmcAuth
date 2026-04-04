@@ -2,7 +2,6 @@ package com.beacmc.beacmcauth.velocity;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.config.Config;
-import com.beacmc.beacmcauth.api.social.SocialType;
 import com.beacmc.beacmcauth.core.BaseBeacmcAuth;
 import com.beacmc.beacmcauth.velocity.auth.VelocityPremiumChangerProvider;
 import com.beacmc.beacmcauth.velocity.library.VelocityLibraryProvider;
@@ -16,7 +15,6 @@ import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
-import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import lombok.Getter;

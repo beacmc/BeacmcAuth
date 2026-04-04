@@ -4,6 +4,10 @@ import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.config.ConfigMessages;
 import com.beacmc.beacmcauth.api.server.Server;
+import com.beacmc.beacmcauth.core.config.dialog.ChooseDialogSettings;
+import com.beacmc.beacmcauth.core.config.dialog.LoginDialogSettings;
+import com.beacmc.beacmcauth.core.config.dialog.RegisterDialogSettings;
+import com.beacmc.beacmcauth.core.config.dialog.SecretDialogSettings;
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
 import de.exlll.configlib.Ignore;
@@ -52,6 +56,12 @@ public class BaseConfig implements Config {
     private String recoveryPasswordChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private BaseDatabaseSettings databaseSettings = new BaseDatabaseSettings();
     private BaseAccountLimiterSettings accountLimiterSettings = new BaseAccountLimiterSettings();
+    @Comment({"", "Note: This feature works in version 1.21.6 and later"})
+    private boolean dialogEnabled = true;
+    private ChooseDialogSettings chooseDialogSettings = new ChooseDialogSettings();
+    private RegisterDialogSettings registerDialogSettings = new RegisterDialogSettings();
+    private LoginDialogSettings loginDialogSettings = new LoginDialogSettings();
+    private SecretDialogSettings secretDialogSettings = new SecretDialogSettings();
     private Messages messages = new Messages();
 
     @Ignore
@@ -205,5 +215,11 @@ public class BaseConfig implements Config {
                 &7You have been disconnected from the server due to a password change
                 &6Your new password is waiting for you in your Email
                 """;
+
+        String dialogWrongPassword = "&7The password is wrong. Attempts left: &#ffbb00%attempts%";
+        String dialogInvalidPassword = "&7The password does not meet the criteria. Between 8 and 64 characters";
+        String dialogPasswordsDontMatch = "&7The passwords don't match";
+        String dialogConfirmPassword = "&7Repeat your password in the second argument";
+        String dialogCooldown = "&cWait before the next use";
     }
 }

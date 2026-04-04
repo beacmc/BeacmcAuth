@@ -1,5 +1,6 @@
 package com.beacmc.beacmcauth.api.config;
 
+import com.beacmc.beacmcauth.api.dialog.DialogCreator;
 import com.beacmc.beacmcauth.api.server.Server;
 
 import java.util.List;
@@ -61,4 +62,14 @@ public interface Config {
     AccountLimiterSettings getAccountLimiterSettings();
 
     ConfigMessages getMessages();
+
+    boolean isDialogEnabled();
+
+    DialogCreator getChooseDialogSettings();
+
+    DialogCreator getRegisterDialogSettings();
+
+    DialogCreator getLoginDialogSettings();
+
+    DialogCreator getSecretDialogSettings();
 }

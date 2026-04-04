@@ -106,9 +106,7 @@ public class AuthListener implements Listener {
     @EventHandler
     public void onConnected(ServerConnectedEvent event) {
         ProxiedPlayer player = event.getPlayer();
-        if (authManager.isAuthenticating(player.getName())) {
-            songManager.play(new BungeeServerPlayer(player), songManager.findRandomSong());
-        }
+        authManager.onServerConnect(new BungeeServerPlayer(player));
     }
 
     @EventHandler

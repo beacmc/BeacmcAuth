@@ -13,6 +13,8 @@ import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.config.ConfigMessages;
 import com.beacmc.beacmcauth.api.config.MojangAuthConfig;
 import com.beacmc.beacmcauth.api.database.dao.ProtectedPlayerDao;
+import com.beacmc.beacmcauth.api.dialog.DialogManager;
+import com.beacmc.beacmcauth.api.dialog.custom.DialogType;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
 import com.beacmc.beacmcauth.api.message.Message;
 import com.beacmc.beacmcauth.api.model.AltAccounts;
@@ -21,6 +23,7 @@ import com.beacmc.beacmcauth.api.server.Server;
 import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.social.SocialManager;
 import com.beacmc.beacmcauth.api.social.confirmation.ConfirmationPlayer;
+import com.beacmc.beacmcauth.api.song.SongManager;
 import com.beacmc.beacmcauth.core.cache.AltAccountCache;
 import com.beacmc.beacmcauth.core.cache.AuthenticatingPlayersCache;
 import com.beacmc.beacmcauth.core.cache.PremiumPlayerCache;
@@ -35,9 +38,7 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import java.net.InetAddress;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -65,6 +66,47 @@ public class BaseAuthManager implements AuthManager {
         this.playerCache = plugin.getDatabase().getPlayersCache();
         this.dao = plugin.getDatabase().getProtectedPlayerDao();
         this.premiumPlayers = new PremiumPlayerCache();
+    }
+
+    @Override
+    public void onServerConnect(ServerPlayer player) {
+        if (!isAuthenticating(player)) {
+            return;
+        }
+
+        final DialogManager dialogManager = plugin.getDialogManager();
+
+        SongManager songManager = plugin.getSongManager();
+        songManager.play(player, songManager.findRandomSong());
+
+        AuthenticatingPlayer authPlayer = authenticatingPlayersCache.getCacheData(player.getLowercaseName());
+        ProtectedPlayer protectedPlayer = authPlayer.getPlayer();
+
+        if (!plugin.getConfig().isDialogEnabled()) {
+            return;
+        }
+
+        boolean canEmailRecovery = plugin.getEmailConfig().isEnabled()
+                && protectedPlayer.getEmail() != null;
+        boolean canSecretQuestionRecovery = protectedPlayer.getSecretQuestion() != null
+                && protectedPlayer.getHashedSecretAnswer() != null;
+
+        if (canEmailRecovery && !canSecretQuestionRecovery) {
+            player.showDialog(dialogManager.getDialog(DialogType.CHOOSE_DIALOG_WITHOUT_SECRET_QUESTION));
+            return;
+        } else if (!canEmailRecovery && canSecretQuestionRecovery) {
+            player.showDialog(dialogManager.getDialog(DialogType.CHOOSE_DIALOG_WITHOUT_EMAIL));
+            return;
+        } else if (canEmailRecovery) {
+            player.showDialog(dialogManager.getDialog(DialogType.CHOOSE_DIALOG_FULL));
+            return;
+        }
+
+        if (protectedPlayer.isRegister()) {
+            player.showDialog(dialogManager.getDialog(DialogType.LOGIN));
+        } else {
+            player.showDialog(dialogManager.getDialog(DialogType.REGISTER));
+        }
     }
 
     @Override
