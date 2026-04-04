@@ -250,6 +250,9 @@ public class BaseAuthManager implements AuthManager {
     public void onDisconnect(ServerPlayer player) {
         getAuthPlayers().removeById(player.getLowercaseName());
         PremiumPlayer premiumPlayer = premiumPlayers.getCacheData(player.getLowercaseName());
+
+        plugin.getSongManager().stop(player.getUUID());
+
         if (premiumPlayer == null || !premiumPlayer.isValidTemplateTime()) {
             premiumPlayers.removeCache(premiumPlayer);
         }
