@@ -1,8 +1,8 @@
-name: Build BeacmcAuth
+name: Release BeacmcAuth
 on:
   push:
     tags:
-      - "v*"
+      - "v*.*"
 permissions:
   contents: write
 jobs:
