@@ -46,6 +46,10 @@ public interface Cache<T extends CachedData<ID>, ID> extends Iterable<T> {
         getCaches().remove(data.getId(), data);
     }
 
+    default boolean contains(ID id) {
+        return getCaches().containsKey(id);
+    }
+
     default Stream<T> stream() {
         return getCaches().values().stream();
     }
