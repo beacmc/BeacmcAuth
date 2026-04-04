@@ -30,7 +30,7 @@ public class RegisterCommandExecutor implements CommandExecutor {
 
         final Config config = plugin.getConfig();
 
-        if (!authManager.getAuthPlayers().containsKey(player.getName().toLowerCase())) {
+        if (!authManager.getAuthPlayers().contains(player.getName().toLowerCase())) {
             player.sendMessage(config.getMessages().getAlreadyAuthed());
             return;
         }
@@ -74,7 +74,7 @@ public class RegisterCommandExecutor implements CommandExecutor {
 
             player.sendTitle("&7", "&7", 0, 25, 0);
             plugin.getSongManager().stop(player.getUUID());
-            authManager.getAuthPlayers().remove(protectedPlayer.getLowercaseName());
+            authManager.getAuthPlayers().removeById(protectedPlayer.getLowercaseName());
             authManager.register(protectedPlayer, password);
             authManager.connectPlayer(player, config.findServer(config.getLobbyServers()));
         });

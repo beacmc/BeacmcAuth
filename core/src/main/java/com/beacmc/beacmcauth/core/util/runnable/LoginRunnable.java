@@ -53,7 +53,7 @@ public class LoginRunnable implements Runnable {
 
         final Config config = plugin.getConfig();
 
-        if (!authManager.getAuthPlayers().containsKey(player.getLowercaseName())) {
+        if (!authManager.getAuthPlayers().contains(player.getLowercaseName())) {
             task.cancel();
             return;
         }
@@ -70,7 +70,7 @@ public class LoginRunnable implements Runnable {
 
         if (timer >= maxTimeAuth) {
             player.disconnect(config.getMessages().getTimeIsUp());
-            authManager.getAuthPlayers().remove(player.getName().toLowerCase());
+            authManager.getAuthPlayers().removeById(player.getName().toLowerCase());
             task.cancel();
             return;
         }

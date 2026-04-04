@@ -2,6 +2,7 @@ package com.beacmc.beacmcauth.core.auth;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.auth.AuthManager;
+import com.beacmc.beacmcauth.api.auth.AuthenticatingPlayer;
 import com.beacmc.beacmcauth.api.auth.premium.PremiumPlayer;
 import com.beacmc.beacmcauth.api.auth.premium.PremiumUser;
 import com.beacmc.beacmcauth.api.auth.premium.mojang.PremiumChangerProvider;
@@ -21,6 +22,7 @@ import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.social.SocialManager;
 import com.beacmc.beacmcauth.api.social.confirmation.ConfirmationPlayer;
 import com.beacmc.beacmcauth.core.cache.AltAccountCache;
+import com.beacmc.beacmcauth.core.cache.AuthenticatingPlayersCache;
 import com.beacmc.beacmcauth.core.cache.PremiumPlayerCache;
 import com.beacmc.beacmcauth.core.util.FutureUtil;
 import com.beacmc.beacmcauth.core.util.runnable.LoginRunnable;
@@ -44,7 +46,7 @@ import java.util.stream.Collectors;
 public class BaseAuthManager implements AuthManager {
 
     private final BeacmcAuth plugin;
-    private final Map<String, Integer> authorizationPlayers;
+    private final Cache<AuthenticatingPlayer, String> authenticatingPlayersCache;
     private final Cache<PremiumPlayer, String> premiumPlayers;
     private final ProtectedPlayerDao dao;
     @Getter
@@ -58,7 +60,7 @@ public class BaseAuthManager implements AuthManager {
         this.plugin = plugin;
         this.altAccountsCache = new AltAccountCache();
         this.executorService = plugin.getExecutorService();
-        this.authorizationPlayers = new HashMap<>();
+        this.authenticatingPlayersCache = new AuthenticatingPlayersCache();
         this.logger = plugin.getServerLogger();
         this.playerCache = plugin.getDatabase().getPlayersCache();
         this.dao = plugin.getDatabase().getProtectedPlayerDao();
@@ -122,7 +124,10 @@ public class BaseAuthManager implements AuthManager {
 
                     logger.debug("The player(" + player.getName() + ") has started registration");
 
-                    authorizationPlayers.put(player.getLowercaseName(), config.getPasswordAttempts());
+                    authenticatingPlayersCache.addOrUpdateCache(new AuthenticatingPlayer(
+                            protectedPlayer,
+                            config.getPasswordAttempts()
+                    ));
                     new RegisterRunnable(plugin, player);
                     addAltAccount(protectedPlayer, address.getHostAddress());
                     return CompletableFuture.completedFuture(config.findServer(config.getAuthServers()));
@@ -156,7 +161,10 @@ public class BaseAuthManager implements AuthManager {
 
                 logger.debug("The player(" + player.getName() + ") has started authorization");
 
-                authorizationPlayers.put(player.getLowercaseName(), config.getPasswordAttempts());
+                authenticatingPlayersCache.addOrUpdateCache(new AuthenticatingPlayer(
+                        protectedPlayer,
+                        config.getPasswordAttempts()
+                ));
                 new LoginRunnable(plugin, player);
                 return CompletableFuture.completedFuture(config.findServer(config.getAuthServers()));
             } catch (Throwable e) {
@@ -240,7 +248,7 @@ public class BaseAuthManager implements AuthManager {
 
     @Override
     public void onDisconnect(ServerPlayer player) {
-        getAuthPlayers().remove(player.getLowercaseName());
+        getAuthPlayers().removeById(player.getLowercaseName());
         PremiumPlayer premiumPlayer = premiumPlayers.getCacheData(player.getLowercaseName());
         if (premiumPlayer == null || !premiumPlayer.isValidTemplateTime()) {
             premiumPlayers.removeCache(premiumPlayer);
@@ -285,7 +293,7 @@ public class BaseAuthManager implements AuthManager {
     @Override
     public boolean isAuthenticating(@NotNull String playerName) {
         final SocialManager socialManager = plugin.getSocialManager();
-        return (getAuthPlayers().containsKey(playerName.toLowerCase())
+        return (getAuthPlayers().contains(playerName.toLowerCase())
                 || socialManager.getConfirmationByName(playerName.toLowerCase()) != null);
     }
 
@@ -380,7 +388,7 @@ public class BaseAuthManager implements AuthManager {
 
             try {
                 logger.debug("Player(" + player.getName() + ") successfully logged in");
-                getAuthPlayers().remove(protectedPlayer.getLowercaseName());
+                getAuthPlayers().removeById(protectedPlayer.getLowercaseName());
                 String ip = player.getInetAddress().getHostAddress();
                 long currentTime = System.currentTimeMillis();
                 dao.createOrUpdate(protectedPlayer
@@ -449,8 +457,8 @@ public class BaseAuthManager implements AuthManager {
     }
 
     @Override
-    public Map<String, Integer> getAuthPlayers() {
-        return authorizationPlayers;
+    public Cache<AuthenticatingPlayer, String> getAuthPlayers() {
+        return authenticatingPlayersCache;
     }
 
     public PremiumPlayer getOnlinePremiumPlayer(String lowercaseName) {

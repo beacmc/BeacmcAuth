@@ -2,6 +2,7 @@ package com.beacmc.beacmcauth.core.command.executor;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.auth.AuthManager;
+import com.beacmc.beacmcauth.api.auth.AuthenticatingPlayer;
 import com.beacmc.beacmcauth.api.command.CommandSender;
 import com.beacmc.beacmcauth.api.command.executor.CommandExecutor;
 import com.beacmc.beacmcauth.api.config.Config;
@@ -32,7 +33,7 @@ public class LoginCommandExecutor implements CommandExecutor {
 
         final Config config = plugin.getConfig();
 
-        if (!authManager.getAuthPlayers().containsKey(player.getName().toLowerCase())) {
+        if (!authManager.getAuthPlayers().contains(player.getName().toLowerCase())) {
             player.sendMessage(config.getMessages().getAlreadyAuthed());
             return;
         }
@@ -57,21 +58,23 @@ public class LoginCommandExecutor implements CommandExecutor {
             }
 
             if (!protectedPlayer.checkPassword(args[0])) {
-                int attempts = authManager.getAuthPlayers().get(protectedPlayer.getLowercaseName());
-                authManager.getAuthPlayers().put(protectedPlayer.getLowercaseName(), attempts - 1);
+                AuthenticatingPlayer authPlayer = authManager.getAuthPlayers()
+                        .getCacheData(protectedPlayer.getLowercaseName());
 
-                player.sendMessage(config.getMessages().getWrongPassword()
-                        .replace("%attempts%", String.valueOf(attempts - 1)));
-
-                if (authManager.getAuthPlayers().get(protectedPlayer.getLowercaseName()) <= 0) {
+                if (!authPlayer.useAttempt()) {
                     player.disconnect(config.getMessages().getAttemptsLeft());
+                } else {
+                    player.sendMessage(config.getMessages().getWrongPassword().replace(
+                            "%attempts%",
+                            String.valueOf(authPlayer.getAttempts() - 1))
+                    );
                 }
                 return;
             }
 
             player.sendMessage(config.getMessages().getLoginSuccess());
             player.sendTitle("&7", "&7", 0, 25, 0);
-            authManager.getAuthPlayers().remove(protectedPlayer.getLowercaseName());
+            authManager.getAuthPlayers().removeById(protectedPlayer.getLowercaseName());
 
             if (!plugin.getSocialManager().startPlayerConfirmations(protectedPlayer)) {
                 authManager.performLogin(protectedPlayer);

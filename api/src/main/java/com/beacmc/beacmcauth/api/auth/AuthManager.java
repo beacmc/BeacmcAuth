@@ -61,7 +61,7 @@ public interface AuthManager {
 
     void addAltAccount(ProtectedPlayer player, String ip);
 
-    Map<String, Integer> getAuthPlayers();
+    Cache<AuthenticatingPlayer, String> getAuthPlayers();
 
     Cache<ProtectedPlayer, UUID> getPlayerCache();
 

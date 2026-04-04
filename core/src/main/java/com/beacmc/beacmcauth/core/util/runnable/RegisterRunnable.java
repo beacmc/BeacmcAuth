@@ -57,7 +57,7 @@ public class RegisterRunnable implements Runnable {
 
         final Config config = plugin.getConfig();
 
-        if (!authManager.getAuthPlayers().containsKey(player.getName().toLowerCase())) {
+        if (!authManager.getAuthPlayers().contains(player.getName().toLowerCase())) {
             task.cancel();
             return;
         }
@@ -74,7 +74,7 @@ public class RegisterRunnable implements Runnable {
 
         if (timer >= maxTimeAuth) {
             player.disconnect(config.getMessages().getTimeIsUp());
-            authManager.getAuthPlayers().remove(player.getName().toLowerCase());
+            authManager.getAuthPlayers().removeById(player.getName().toLowerCase());
             task.cancel();
             return;
         }
