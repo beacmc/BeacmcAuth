@@ -77,60 +77,66 @@ public class BaseBeacmcAuth implements BeacmcAuth {
 
     @Override
     public BeacmcAuth onEnable() {
-        executorService = Executors.newFixedThreadPool(8);
-        libraryProvider.loadLibrary(Libraries.JDA);
+        try {
+            executorService = Executors.newFixedThreadPool(8);
+            libraryProvider.loadLibrary(Libraries.JDA);
 
-        configLoader = new BaseConfigLoader();
-        reloadAllConfigurations();
+            configLoader = new BaseConfigLoader();
+            reloadAllConfigurations();
 
-        database = new BaseDatabase(this);
-        database.init();
+            database = new BaseDatabase(this);
+            database.init();
 
-        mojangAuthManager = new BaseMojangAuthManager(this);
-        authManager = new BaseAuthManager(this);
-        emailManager = new BaseEmailManager(this);
+            mojangAuthManager = new BaseMojangAuthManager(this);
+            authManager = new BaseAuthManager(this);
+            emailManager = new BaseEmailManager(this);
 
-        dialogManager = new BaseDialogManager(this);
-        dialogManager.loadDefaultDialogs();
-        dialogManager.registerDefaultListeners();
+            dialogManager = new BaseDialogManager(this);
+            dialogManager.loadDefaultDialogs();
+            dialogManager.registerDefaultListeners();
 
-        socialManager = new BaseSocialManager(this);
-        if (telegramConfig.isEnabled()) {
-            getLibraryProvider().loadLibrary(Libraries.KOTLIN);
-            getLibraryProvider().loadLibrary(Libraries.OKIO);
-            getLibraryProvider().loadLibrary(Libraries.OKHTTP);
-            getLibraryProvider().loadLibrary(Libraries.TELEGRAM);
-            socialManager.getSocials().add(new TelegramSocial(this));
+            socialManager = new BaseSocialManager(this);
+            if (telegramConfig.isEnabled()) {
+                getLibraryProvider().loadLibrary(Libraries.KOTLIN);
+                getLibraryProvider().loadLibrary(Libraries.OKIO);
+                getLibraryProvider().loadLibrary(Libraries.OKHTTP);
+                getLibraryProvider().loadLibrary(Libraries.TELEGRAM);
+                socialManager.getSocials().add(new TelegramSocial(this));
+            }
+
+            if (discordConfig.isEnabled()) {
+                socialManager.getSocials().add(new DiscordSocial(this));
+            }
+
+            playerPositionTracker = new BasePlayerPositionTracker();
+            PacketEvents.getAPI()
+                    .getEventManager()
+                    .registerListener(new DialogListener(this), PacketListenerPriority.HIGHEST);
+            Path songs = getDataFolder().toPath().resolve("songs");
+            if (!songs.toFile().exists()) {
+                saveResource("songs/Panda.nbs");
+            }
+
+            songManager = new BaseSongManager(this);
+            songManager.loadSongs(songs);
+
+            commandManager = new BaseCommandManager();
+            commandManager.register("register", new RegisterCommandExecutor(this));
+            commandManager.register("login", new LoginCommandExecutor(this));
+            commandManager.register("link", new LinkCommandExecutor(this));
+            commandManager.register("changepassword", new ChangepasswordCommandExecutor(this));
+            commandManager.register("auth", new AuthCommandExecutor(this));
+            commandManager.register("premium", new PremiumCommandExecutor(this));
+            commandManager.register("crack", new CrackCommandExecutor(this));
+            commandManager.register("alts", new AltsCommandExecutor(this, authManager));
+            commandManager.register("secret", new SecretCommandExecutor(this, authManager));
+            commandManager.register("logout", new LogoutCommandExecutor(this, authManager));
+            commandManager.register("email", new EmailCommandExecutor(this));
+        } catch (Throwable e) {
+            serverLogger.error("Error when turning on the server");
+            serverLogger.error("Message: " + e.getMessage());
+            proxy.shutdown();
         }
-
-        if (discordConfig.isEnabled()) {
-            socialManager.getSocials().add(new DiscordSocial(this));
-        }
-
-        playerPositionTracker = new BasePlayerPositionTracker();
-        PacketEvents.getAPI()
-                .getEventManager()
-                .registerListener(new DialogListener(this), PacketListenerPriority.HIGHEST);
-        Path songs = getDataFolder().toPath().resolve("songs");
-        if (!songs.toFile().exists()) {
-            saveResource("songs/Panda.nbs");
-        }
-
-        songManager = new BaseSongManager(this);
-        songManager.loadSongs(songs);
-
-        commandManager = new BaseCommandManager();
-        commandManager.register("register", new RegisterCommandExecutor(this));
-        commandManager.register("login", new LoginCommandExecutor(this));
-        commandManager.register("link", new LinkCommandExecutor(this));
-        commandManager.register("changepassword", new ChangepasswordCommandExecutor(this));
-        commandManager.register("auth", new AuthCommandExecutor(this));
-        commandManager.register("premium", new PremiumCommandExecutor(this));
-        commandManager.register("crack", new CrackCommandExecutor(this));
-        commandManager.register("alts", new AltsCommandExecutor(this, authManager));
-        commandManager.register("secret", new SecretCommandExecutor(this, authManager));
-        commandManager.register("logout", new LogoutCommandExecutor(this, authManager));
-        commandManager.register("email", new EmailCommandExecutor(this));
         return this;
     }
 
