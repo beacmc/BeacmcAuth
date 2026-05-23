@@ -49,6 +49,10 @@ public class LogoutCommandExecutor implements CommandExecutor {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        }, plugin.getExecutorService());
+        }, plugin.getExecutorService()).exceptionally(e -> {
+            plugin.getServerLogger().error("LogoutCommandExecutor have " + e.getCause().getClass().getSimpleName());
+            plugin.getServerLogger().error("Message: " + e.getMessage());
+            return null;
+        });
     }
 }

@@ -6,6 +6,7 @@ import com.beacmc.beacmcauth.api.auth.AuthenticatingPlayer;
 import com.beacmc.beacmcauth.api.command.CommandSender;
 import com.beacmc.beacmcauth.api.command.executor.CommandExecutor;
 import com.beacmc.beacmcauth.api.config.Config;
+import com.beacmc.beacmcauth.api.logger.ServerLogger;
 import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.core.cache.cooldown.GameCooldown;
@@ -17,9 +18,11 @@ public class LoginCommandExecutor implements CommandExecutor {
     private final BeacmcAuth plugin;
     private final AuthManager authManager;
     private final GameCooldown cooldown;
+    private final ServerLogger logger;
 
     public LoginCommandExecutor(BeacmcAuth plugin) {
         this.plugin = plugin;
+        this.logger = plugin.getServerLogger();
         this.authManager = plugin.getAuthManager();
         this.cooldown = GameCooldown.getInstance();
     }
@@ -77,10 +80,19 @@ public class LoginCommandExecutor implements CommandExecutor {
             authManager.getAuthPlayers().removeById(protectedPlayer.getLowercaseName());
 
             if (!plugin.getSocialManager().startPlayerConfirmations(protectedPlayer)) {
-                authManager.performLogin(protectedPlayer);
+                authManager.performLogin(protectedPlayer)
+                        .exceptionally(e -> {
+                            logger.error("LoginCommandExecutor have " + e.getClass().getSimpleName());
+                            logger.error("Message: " + e.getMessage());
+                            return null;
+                        });
                 plugin.getSongManager().stop(player.getUUID());
                 authManager.connectPlayer(player, config.findServer(config.getLobbyServers()));
             }
+        }).exceptionally(e -> {
+            logger.error("LoginCommandExecutor have " + e.getCause().getClass().getSimpleName());
+            logger.error("Message: " + e.getMessage());
+            return null;
         });
     }
 }

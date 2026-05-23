@@ -20,7 +20,11 @@ public interface EmailConfig {
 
     boolean isSmtpAuthEnabled();
 
+    boolean isSmtpDebug();
+
     boolean isSslEnabled();
+
+    boolean isTslEnabled();
 
     String getUsername();
 
@@ -43,16 +47,24 @@ public interface EmailConfig {
         properties.put("mail.smtp.host", getSmtpHost());
         properties.put("mail.smtp.port", getSmtpPort());
         properties.put("mail.smtp.auth", isSmtpAuthEnabled());
-        properties.put("mail.smtp.starttls.enable", isSslEnabled());
+        if (isSslEnabled() && !isTslEnabled()) {
+            properties.put("mail.smtp.ssl.enable", "true");
+        }
+        if (!isSslEnabled() && isTslEnabled()) {
+            properties.put("mail.smtp.starttls.enable", "true");
+        }
+        properties.put("mail.transport.protocol", "smtp");
         return properties;
     }
 
     default Session createSession() {
-        return Session.getInstance(getProperties(), new Authenticator() {
+        Session session = Session.getInstance(getProperties(), new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(getUsername(), getPassword());
             }
         });
+        session.setDebug(isSmtpDebug());
+        return session;
     }
 }

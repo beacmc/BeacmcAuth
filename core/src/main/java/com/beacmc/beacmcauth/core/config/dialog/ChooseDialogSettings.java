@@ -5,7 +5,6 @@ import com.beacmc.beacmcauth.api.config.dialog.button.ClickEventType;
 import com.beacmc.beacmcauth.api.dialog.DialogCreator;
 import com.beacmc.beacmcauth.api.config.dialog.button.DialogButton;
 import com.beacmc.beacmcauth.api.dialog.DialogManager;
-import com.beacmc.beacmcauth.api.dialog.custom.DialogType;
 import com.github.retrooper.packetevents.protocol.dialog.CommonDialogData;
 import com.github.retrooper.packetevents.protocol.dialog.Dialog;
 import com.github.retrooper.packetevents.protocol.dialog.DialogAction;

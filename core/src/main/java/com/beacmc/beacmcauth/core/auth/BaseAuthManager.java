@@ -25,9 +25,6 @@ import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.social.SocialManager;
 import com.beacmc.beacmcauth.api.social.confirmation.ConfirmationPlayer;
 import com.beacmc.beacmcauth.api.song.SongManager;
-import com.beacmc.beacmcauth.core.cache.AltAccountCache;
-import com.beacmc.beacmcauth.core.cache.AuthenticatingPlayersCache;
-import com.beacmc.beacmcauth.core.cache.PremiumPlayerCache;
 import com.beacmc.beacmcauth.core.util.FutureUtil;
 import com.beacmc.beacmcauth.core.util.runnable.LoginRunnable;
 import com.beacmc.beacmcauth.core.util.runnable.RegisterRunnable;
@@ -42,6 +39,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
@@ -134,87 +132,91 @@ public class BaseAuthManager implements AuthManager {
 
 
         return getProtectedPlayer(player.getUUID()).thenCompose(protectedPlayer -> {
-            if (protectedPlayer == null) {
-                logger.debug("Create ProtectedPlayer. Username: " + player.getName());
-                return createProtectedPlayer(player.getLowercaseName(), player.getName(), null, 0, System.currentTimeMillis(), address.getHostAddress(), address.getHostAddress(), player.getUUID());
-            }
-            return CompletableFuture.completedFuture(protectedPlayer);
-        }).thenCompose(protectedPlayer -> {
-            try {
-                if (protectedPlayer == null) {
-                    player.disconnect(config.getMessages().getInternalError());
-                    return CompletableFuture.failedFuture(new IllegalStateException("Unable to find ProtectedPlayer for player " + player));
-                }
-
-                if (protectedPlayer.isBanned()) {
-                    player.disconnect(config.getMessages().getAccountBanned());
-                    return CompletableFuture.failedFuture(new SecurityException("Player is banned"));
-                }
-
-                if (config.isNameCaseControl() && !protectedPlayer.getRealName().equals(player.getName())) {
-                    player.disconnect(config.getMessages().getNameCaseFailed()
-                            .replace("%current_name%", player.getName())
-                            .replace("%need_name%", protectedPlayer.getRealName()));
-                    return CompletableFuture.failedFuture(new SecurityException("The nicknames don't match"));
-                }
-
-                if (!protectedPlayer.isRegister()) {
-                    AltAccounts altAccounts = FutureUtil.await(getAltAccounts(address.getHostAddress()));
-                    if (accountLimiter.isEnabled() && altAccounts != null && altAccounts.getNames().size() >= accountLimiter.getLimit()) {
-                        player.disconnect(config.getMessages().getAlternativeAccountsLimitReached());
-                        return CompletableFuture.failedFuture(new SecurityException("the limit of alternative accounts has been reached."));
+                    if (protectedPlayer == null) {
+                        logger.debug("Create ProtectedPlayer. Username: " + player.getName());
+                        return createProtectedPlayer(player.getLowercaseName(), player.getName(), null, 0, System.currentTimeMillis(), address.getHostAddress(), address.getHostAddress(), player.getUUID());
                     }
-
-                    logger.debug("The player(" + player.getName() + ") has started registration");
-
-                    authenticatingPlayersCache.addOrUpdateCache(new AuthenticatingPlayer(
-                            protectedPlayer,
-                            config.getPasswordAttempts()
-                    ));
-                    new RegisterRunnable(plugin, player);
-                    addAltAccount(protectedPlayer, address.getHostAddress());
-                    return CompletableFuture.completedFuture(config.findServer(config.getAuthServers()));
-                }
-
-                PremiumPlayer premiumPlayer = getOnlinePremiumPlayer(player.getLowercaseName());
-                if (premiumPlayer != null) {
-                    if (premiumPlayer.isTemplate()) {
-                        UUID onlineUuid = premiumPlayer.getUniqueId();
-                        if (onlineUuid != null) {
-                            protectedPlayer.setOnlineUuid(onlineUuid);
+                    return CompletableFuture.completedFuture(protectedPlayer);
+                }).thenCompose(protectedPlayer -> {
+                    try {
+                        if (protectedPlayer == null) {
+                            player.disconnect(config.getMessages().getInternalError());
+                            return CompletableFuture.failedFuture(new IllegalStateException("Unable to find ProtectedPlayer for player " + player));
                         }
-                        premiumPlayers.addOrUpdateCache(new PremiumPlayer(premiumPlayer.getLowercaseName(), onlineUuid, false, 0));
+
+                        if (protectedPlayer.isBanned()) {
+                            player.disconnect(config.getMessages().getAccountBanned());
+                            return CompletableFuture.failedFuture(new SecurityException("Player is banned"));
+                        }
+
+                        if (config.isNameCaseControl() && !protectedPlayer.getRealName().equals(player.getName())) {
+                            player.disconnect(config.getMessages().getNameCaseFailed()
+                                    .replace("%current_name%", player.getName())
+                                    .replace("%need_name%", protectedPlayer.getRealName()));
+                            return CompletableFuture.failedFuture(new SecurityException("The nicknames don't match"));
+                        }
+
+                        if (!protectedPlayer.isRegister()) {
+                            AltAccounts altAccounts = FutureUtil.await(getAltAccounts(address.getHostAddress()));
+                            if (accountLimiter.isEnabled() && altAccounts != null && altAccounts.getNames().size() >= accountLimiter.getLimit()) {
+                                player.disconnect(config.getMessages().getAlternativeAccountsLimitReached());
+                                return CompletableFuture.failedFuture(new SecurityException("the limit of alternative accounts has been reached."));
+                            }
+
+                            logger.debug("The player(" + player.getName() + ") has started registration");
+
+                            authenticatingPlayersCache.addOrUpdateCache(new AuthenticatingPlayer(
+                                    protectedPlayer,
+                                    config.getPasswordAttempts()
+                            ));
+                            new RegisterRunnable(plugin, player);
+                            addAltAccount(protectedPlayer, address.getHostAddress());
+                            return CompletableFuture.completedFuture(config.findServer(config.getAuthServers()));
+                        }
+
+                        PremiumPlayer premiumPlayer = getOnlinePremiumPlayer(player.getLowercaseName());
+                        if (premiumPlayer != null) {
+                            if (premiumPlayer.isTemplate()) {
+                                UUID onlineUuid = premiumPlayer.getUniqueId();
+                                if (onlineUuid != null) {
+                                    protectedPlayer.setOnlineUuid(onlineUuid);
+                                }
+                                premiumPlayers.addOrUpdateCache(new PremiumPlayer(premiumPlayer.getLowercaseName(), onlineUuid, false, 0));
+                            }
+                            logger.debug("Automatic login for player(%s) with premium status".formatted(player.getName()));
+                            player.sendMessage(config.getMessages().getPremiumAccountAutoLogin());
+                            performLogin(protectedPlayer
+                                    .setLowercaseName(player.getLowercaseName())
+                                    .setRealName(player.getName()));
+                            return CompletableFuture.completedFuture(config.findServer(config.getLobbyServers()));
+                        }
+
+                        logger.debug("Checking the player(" + player.getName() + ") for an active session(" + config.getSessionTime() + ") and a match in the IP-address(" + address.getHostAddress() + ")");
+
+                        if (protectedPlayer.isSessionActive(config.getSessionTime()) && protectedPlayer.isValidIp(address.getHostAddress())) {
+                            logger.debug("the player(" + player.getName() + ") has an active session and a valid IP-address(" + address.getHostAddress() + ")");
+
+                            player.sendMessage(config.getMessages().getSessionActive());
+                            return CompletableFuture.completedFuture(config.findServer(config.getLobbyServers()));
+                        }
+
+                        logger.debug("The player(" + player.getName() + ") has started authorization");
+
+                        authenticatingPlayersCache.addOrUpdateCache(new AuthenticatingPlayer(
+                                protectedPlayer,
+                                config.getPasswordAttempts()
+                        ));
+                        new LoginRunnable(plugin, player);
+                        return CompletableFuture.completedFuture(config.findServer(config.getAuthServers()));
+                    } catch (Exception e) {
+                        player.disconnect(config.getMessages().getInternalError());
+                        return CompletableFuture.failedFuture(e);
                     }
-                    logger.debug("Automatic login for player(%s) with premium status".formatted(player.getName()));
-                    player.sendMessage(config.getMessages().getPremiumAccountAutoLogin());
-                    performLogin(protectedPlayer
-                            .setLowercaseName(player.getLowercaseName())
-                            .setRealName(player.getName()));
-                    return CompletableFuture.completedFuture(config.findServer(config.getLobbyServers()));
-                }
-
-                logger.debug("Checking the player(" + player.getName() + ") for an active session(" + config.getSessionTime() + ") and a match in the IP-address(" + address.getHostAddress() + ")");
-
-                if (protectedPlayer.isSessionActive(config.getSessionTime()) && protectedPlayer.isValidIp(address.getHostAddress())) {
-                    logger.debug("the player(" + player.getName() + ") has an active session and a valid IP-address(" + address.getHostAddress() + ")");
-
-                    player.sendMessage(config.getMessages().getSessionActive());
-                    return CompletableFuture.completedFuture(config.findServer(config.getLobbyServers()));
-                }
-
-                logger.debug("The player(" + player.getName() + ") has started authorization");
-
-                authenticatingPlayersCache.addOrUpdateCache(new AuthenticatingPlayer(
-                        protectedPlayer,
-                        config.getPasswordAttempts()
-                ));
-                new LoginRunnable(plugin, player);
-                return CompletableFuture.completedFuture(config.findServer(config.getAuthServers()));
-            } catch (Throwable e) {
-                player.disconnect(config.getMessages().getInternalError());
-                return CompletableFuture.failedFuture(e);
-            }
-        });
+                }).exceptionally(e -> {
+                    logger.error("BaseAuthManager#onConnect have " + e.getClass().getSimpleName());
+                    logger.error("Message: " + e.getMessage());
+                    return null;
+                });
     }
 
     @Override
@@ -281,10 +283,12 @@ public class BaseAuthManager implements AuthManager {
             premiumChangerProvider.forceOnlineMode(obj);
 
         } catch (Exception e) {
-            e.printStackTrace();
-            logger.error("Error during premium login for " + playerName);
-        }
+            logger.warn("Error during premium login for " + playerName);
 
+            logger.error("BaseAuthManager#onPremiumLogin have " + e.getCause().getClass().getSimpleName());
+            logger.error("Message: " + e.getMessage());
+            return null;
+        }
         return null;
     }
 
@@ -309,10 +313,10 @@ public class BaseAuthManager implements AuthManager {
             try {
                 dao.createOrUpdate(player.setSecretQuestion(question, answer));
                 playerCache.addOrUpdateCache(player);
+                return null;
             } catch (SQLException e) {
-                e.printStackTrace();
+                throw new CompletionException(e);
             }
-            return null;
         }, executorService);
     }
 
@@ -350,10 +354,9 @@ public class BaseAuthManager implements AuthManager {
                 ProtectedPlayer execute = new ProtectedPlayer(lowercaseName, realName, uuid, null, password, session, lastJoin, false, true, true, true, registerIp, lastIp, null, null, null, 0, 0, 0);
                 dao.create(execute);
                 return execute;
-            } catch (SQLException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                throw new CompletionException(e);
             }
-            return null;
         }, executorService);
     }
 
@@ -367,10 +370,9 @@ public class BaseAuthManager implements AuthManager {
                 ProtectedPlayer queryData = dao.queryForId(uuid);
                 playerCache.addOrUpdateCache(queryData);
                 return queryData;
-            } catch (SQLException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                throw new CompletionException(e);
             }
-            return null;
         }, executorService);
     }
 
@@ -392,10 +394,9 @@ public class BaseAuthManager implements AuthManager {
                         .queryForFirst();
                 playerCache.addOrUpdateCache(queryData);
                 return queryData;
-            } catch (SQLException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                throw new CompletionException(e);
             }
-            return null;
         }, executorService);
     }
 
@@ -444,9 +445,9 @@ public class BaseAuthManager implements AuthManager {
 
                 );
                 playerCache.addOrUpdateCache(protectedPlayer);
-            } catch (SQLException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
                 player.disconnect(plugin.getConfig().getMessages().getInternalError());
+                throw new CompletionException(e);
             }
             return protectedPlayer;
         }, executorService);
@@ -465,10 +466,9 @@ public class BaseAuthManager implements AuthManager {
                         .collect(Collectors.toList()));
                 altAccountsCache.addOrUpdateCache(altAccounts);
                 return altAccounts;
-            } catch (SQLException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                throw new CompletionException(e);
             }
-            return null;
         }, executorService);
     }
 

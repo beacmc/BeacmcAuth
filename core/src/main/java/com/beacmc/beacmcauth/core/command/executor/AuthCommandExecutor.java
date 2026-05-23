@@ -7,6 +7,7 @@ import com.beacmc.beacmcauth.api.command.executor.CommandExecutor;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.database.Database;
 import com.beacmc.beacmcauth.api.database.dao.ProtectedPlayerDao;
+import com.beacmc.beacmcauth.api.logger.ServerLogger;
 import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
 import org.mindrot.jbcrypt.BCrypt;
@@ -19,12 +20,14 @@ public class AuthCommandExecutor implements CommandExecutor {
     private final Database database;
     private final BeacmcAuth plugin;
     private final AuthManager authManager;
+    private final ServerLogger logger;
 
     public AuthCommandExecutor(BeacmcAuth plugin) {
         this.database = plugin.getDatabase();
         this.dao = database.getProtectedPlayerDao();
         this.plugin = plugin;
         this.authManager = plugin.getAuthManager();
+        this.logger = plugin.getServerLogger();
     }
 
     @Override
@@ -79,6 +82,10 @@ public class AuthCommandExecutor implements CommandExecutor {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+        }).exceptionally(e -> {
+            logger.error("AuthCommandExecutor#handleDeleteAccount have " + e.getCause().getClass().getSimpleName());
+            logger.error("Message: " + e.getMessage());
+            return null;
         });
     }
 
@@ -103,6 +110,10 @@ public class AuthCommandExecutor implements CommandExecutor {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+        }).exceptionally(e -> {
+            logger.error("AuthCommandExecutor#handleChangePassword have " + e.getClass().getSimpleName());
+            logger.error("Message: " + e.getMessage());
+            return null;
         });
     }
 }

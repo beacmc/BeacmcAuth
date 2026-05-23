@@ -95,6 +95,22 @@
                                     <pattern>org.mindrot.jbcrypt</pattern>
                                     <shadedPattern>com.beacmc.beacmcauth.shaded.jbcrypt</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>redis.clients</pattern>
+                                    <shadedPattern>com.beacmc.beacmcauth.shaded.redis</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.apache.commons</pattern>
+                                    <shadedPattern>com.beacmc.beacmcauth.shaded.apache.commons</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.json</pattern>
+                                    <shadedPattern>com.beacmc.beacmcauth.shaded.json</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.slf4j</pattern>
+                                    <shadedPattern>com.beacmc.beacmcauth.shaded.slf4j</shadedPattern>
+                                </relocation>
                             </relocations>
                         </configuration>
                     </execution>

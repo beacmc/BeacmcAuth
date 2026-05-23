@@ -15,9 +15,11 @@ public class BaseEmailConfig implements EmailConfig {
     private boolean enabled = false;
     private Pattern emailPattern = Pattern.compile("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
     private String smtpHost = "smtp.gmail.com";
-    private int smtpPort = 485;
+    private int smtpPort = 465;
     private boolean smtpAuthEnabled = true;
+    private boolean smtpDebug = false;
     private boolean sslEnabled = true;
+    private boolean tslEnabled = false;
     private String username = "username@gmail.com";
     private String password = "password";
     private String mailSubject = "Account recovery";

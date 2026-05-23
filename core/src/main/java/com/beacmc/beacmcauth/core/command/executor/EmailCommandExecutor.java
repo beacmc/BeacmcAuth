@@ -10,6 +10,7 @@ import com.beacmc.beacmcauth.api.config.ConfigMessages;
 import com.beacmc.beacmcauth.api.config.EmailConfig;
 import com.beacmc.beacmcauth.api.database.dao.ProtectedPlayerDao;
 import com.beacmc.beacmcauth.api.email.EmailManager;
+import com.beacmc.beacmcauth.api.logger.ServerLogger;
 import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.core.cache.cooldown.GameCooldown;
@@ -33,6 +34,7 @@ public class EmailCommandExecutor implements CommandExecutor {
     private final ProtectedPlayerDao dao;
     private final RecoveryCooldown cooldown;
     private final GameCooldown gameCooldown;
+    private final ServerLogger logger;
 
     public EmailCommandExecutor(BeacmcAuth plugin) {
         this.plugin = plugin;
@@ -43,6 +45,7 @@ public class EmailCommandExecutor implements CommandExecutor {
         this.dao = plugin.getDatabase().getProtectedPlayerDao();
         this.cooldown = RecoveryCooldown.getInstance();
         this.gameCooldown = GameCooldown.getInstance();
+        this.logger = plugin.getServerLogger();
     }
 
     @Override
@@ -182,6 +185,10 @@ public class EmailCommandExecutor implements CommandExecutor {
                     }
                 }
             }
-        }, executorService);
+        }, executorService).exceptionally(e -> {
+            logger.error("EmailCommandExecutor have " + e.getCause().getClass().getSimpleName());
+            logger.error("Message: " + e.getMessage());
+            return null;
+        });
     }
 }

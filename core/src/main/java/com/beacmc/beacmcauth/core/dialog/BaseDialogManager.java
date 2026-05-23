@@ -9,7 +9,6 @@ import com.beacmc.beacmcauth.api.dialog.custom.CustomDialog;
 import com.beacmc.beacmcauth.api.dialog.custom.DialogType;
 import com.beacmc.beacmcauth.api.dialog.custom.DialogUniqueId;
 import com.beacmc.beacmcauth.api.dialog.custom.DynamicUniqueId;
-import com.beacmc.beacmcauth.core.cache.CustomDialogCache;
 import com.beacmc.beacmcauth.core.config.dialog.ChooseDialogSettings;
 import com.beacmc.beacmcauth.core.config.dialog.LoginDialogSettings;
 import com.beacmc.beacmcauth.core.config.dialog.RegisterDialogSettings;

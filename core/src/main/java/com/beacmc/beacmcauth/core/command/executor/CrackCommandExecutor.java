@@ -7,6 +7,7 @@ import com.beacmc.beacmcauth.api.command.CommandSender;
 import com.beacmc.beacmcauth.api.command.executor.CommandExecutor;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.config.ConfigMessages;
+import com.beacmc.beacmcauth.api.logger.ServerLogger;
 import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.core.cache.cooldown.GameCooldown;
 
@@ -17,9 +18,11 @@ public class CrackCommandExecutor implements CommandExecutor {
     private final AuthManager authManager;
     private final BeacmcAuth plugin;
     private final GameCooldown cooldown;
+    private final ServerLogger logger;
 
     public CrackCommandExecutor(BeacmcAuth plugin) {
         this.plugin = plugin;
+        this.logger = plugin.getServerLogger();
 
         authManager = plugin.getAuthManager();
         cooldown = GameCooldown.getInstance();
@@ -59,6 +62,10 @@ public class CrackCommandExecutor implements CommandExecutor {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+        }).exceptionally(e -> {
+            logger.error("CrackCommandExecutor have " + e.getCause().getClass().getSimpleName());
+            logger.error("Message: " + e.getMessage());
+            return null;
         });
     }
 }

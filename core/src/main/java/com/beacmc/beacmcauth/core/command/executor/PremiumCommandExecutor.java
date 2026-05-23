@@ -7,6 +7,7 @@ import com.beacmc.beacmcauth.api.command.CommandSender;
 import com.beacmc.beacmcauth.api.command.executor.CommandExecutor;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.config.ConfigMessages;
+import com.beacmc.beacmcauth.api.logger.ServerLogger;
 import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.core.cache.cooldown.GameCooldown;
 
@@ -15,9 +16,11 @@ public class PremiumCommandExecutor implements CommandExecutor {
     private final AuthManager authManager;
     private final BeacmcAuth plugin;
     private final GameCooldown cooldown;
+    private final ServerLogger logger;
 
     public PremiumCommandExecutor(BeacmcAuth plugin) {
         this.plugin = plugin;
+        this.logger = plugin.getServerLogger();
 
         authManager = plugin.getAuthManager();
         cooldown = GameCooldown.getInstance();
@@ -55,6 +58,10 @@ public class PremiumCommandExecutor implements CommandExecutor {
                 authManager.getPremiumPlayerCache().addCache(premiumPlayer);
                 player.disconnect(messages.getPremiumSuccess());
             });
+        }).exceptionally(e -> {
+            logger.error("PremiumCommandExecutor have " + e.getCause().getClass().getSimpleName());
+            logger.error("Message: " + e.getMessage());
+            return null;
         });
     }
 }

@@ -10,6 +10,7 @@ import com.beacmc.beacmcauth.core.util.PlaceholderUtil;
 import com.j256.ormlite.stmt.SelectArg;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
 import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
@@ -51,13 +52,18 @@ public class BaseEmailManager implements EmailManager {
 
         return CompletableFuture.supplyAsync(() -> {
             try {
-                Message message = new MimeMessage(config.createSession());
+                Session session = config.createSession();
+
+                Message message = new MimeMessage(session);
                 message.setFrom(new InternetAddress(config.getUsername()));
                 message.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
                 message.setSubject(mailSubject);
                 message.setContent(mailText, "text/html; charset=UTF-8");
 
-                Transport.send(message);
+                Transport transport = session.getTransport("smtp");
+                transport.connect();
+                transport.sendMessage(message, message.getAllRecipients());
+                transport.close();
                 return true;
             } catch (MessagingException e) {
                 throw new CompletionException(e);

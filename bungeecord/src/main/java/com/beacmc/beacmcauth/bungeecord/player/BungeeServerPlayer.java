@@ -11,6 +11,7 @@ import lombok.ToString;
 import net.md_5.bungee.api.ServerConnectRequest;
 import net.md_5.bungee.api.Title;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.event.ServerConnectEvent;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -61,6 +62,7 @@ public class BungeeServerPlayer implements ServerPlayer {
     public void connect(Server server) {
         logger.debug("Create connection request. Player(" + player.getName() + "), Server(" + server.getName() + ")");
         player.connect(ServerConnectRequest.builder()
+                .reason(ServerConnectEvent.Reason.PLUGIN)
                 .target(server.getOriginalServer())
                 .callback((result, error) -> {
                     if (error != null) {
@@ -69,10 +71,12 @@ public class BungeeServerPlayer implements ServerPlayer {
                         logger.warn(error.getMessage());
                     }
 
+                    if (result == null)
+                        return;
+
                     switch (result) {
-                        case EVENT_CANCEL, FAIL ->
-                                logger.warn("%s failed connect to server %s"
-                                        .formatted(player.getName(), server.getName()));
+                        case EVENT_CANCEL, FAIL -> logger.warn("%s failed connect to server %s"
+                                .formatted(player.getName(), server.getName()));
                     }
                 })
                 .build());

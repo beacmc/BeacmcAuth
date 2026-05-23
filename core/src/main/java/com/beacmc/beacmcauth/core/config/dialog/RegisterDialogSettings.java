@@ -1,7 +1,6 @@
 package com.beacmc.beacmcauth.core.config.dialog;
 
 import com.beacmc.beacmcauth.api.AdventureColor;
-import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.config.dialog.button.ClickEventType;
 import com.beacmc.beacmcauth.api.config.dialog.button.DialogButton;
 import com.beacmc.beacmcauth.api.config.dialog.input.DialogTextInput;

@@ -132,9 +132,12 @@ public class BaseBeacmcAuth implements BeacmcAuth {
             commandManager.register("secret", new SecretCommandExecutor(this, authManager));
             commandManager.register("logout", new LogoutCommandExecutor(this, authManager));
             commandManager.register("email", new EmailCommandExecutor(this));
-        } catch (Throwable e) {
+        } catch (Exception e) {
             serverLogger.error("Error when turning on the server");
-            serverLogger.error("Message: " + e.getMessage());
+            serverLogger.error("Message: %s" + e.getMessage());
+            if (config.isDebugEnabled()) {
+                e.printStackTrace();
+            }
             proxy.shutdown();
         }
         return this;

@@ -39,7 +39,15 @@ public class AltsCommandExecutor implements CommandExecutor {
 
                 String message = String.join(", ", altAccounts.getNames());
                 sender.sendMessage(message);
+            }).exceptionally(e -> {
+                plugin.getServerLogger().error("AuthCommandExecutor#handleChangePassword have " + e.getCause().getClass().getSimpleName());
+                plugin.getServerLogger().error("Message: " + e.getMessage());
+                return null;
             });
+        }).exceptionally(e -> {
+            plugin.getServerLogger().error("AuthCommandExecutor#handleChangePassword have " + e.getCause().getClass().getSimpleName());
+            plugin.getServerLogger().error("Message: " + e.getMessage());
+            return null;
         });
     }
 }

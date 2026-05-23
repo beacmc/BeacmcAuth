@@ -133,6 +133,10 @@ public class SecretCommandExecutor implements CommandExecutor {
                 }
                 default -> player.sendMessage(messages.getSecretCommandUsage());
             }
+        }).exceptionally(e -> {
+            plugin.getServerLogger().error("RegisterCommandExecutor have " + e.getCause().getClass().getSimpleName());
+            plugin.getServerLogger().error("Message: " + e.getMessage());
+            return null;
         });
     }
 }
