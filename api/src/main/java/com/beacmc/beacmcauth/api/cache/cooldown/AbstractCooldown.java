@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @Getter
-public class AbstractCooldown<ID> implements Cache<CooldownUser<ID>, ID> {
+public class AbstractCooldown<ID> extends Cache<CooldownUser<ID>, ID> {
 
     private final Map<ID, CooldownUser<ID>> caches = new ConcurrentHashMap<>();
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();

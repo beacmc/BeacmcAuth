@@ -1,61 +1,62 @@
 package com.beacmc.beacmcauth.api.cache;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
 import java.util.Map;
 import java.util.stream.Stream;
 
-public interface Cache<T extends CachedData<ID>, ID> extends Iterable<T> {
+public abstract class Cache<T extends CachedData<ID>, ID> implements Iterable<T> {
 
-    Map<ID, T> getCaches();
+    public abstract Map<ID, T> getCaches();
 
-    default T addOrUpdateCache(T data) {
-        if (data == null) return null;
-        getCaches().put(data.getId(), data);
-        return data;
+    public void addOrUpdateCache(T data) {
+        if (data != null)
+            getCaches().put(data.getId(), data);
     }
 
-    default void addCache(T data) {
-        if (data == null) return;
-        getCaches().put(data.getId(), data);
+    public void addCache(T data) {
+        if (data != null)
+            getCaches().put(data.getId(), data);
     }
 
-    default T updateCache(T data) {
-        if (data == null) return null;
+    public @Nullable T updateCache(T data) {
+        if (data == null)
+            return null;
 
         ID id = data.getId();
-        if (!getCaches().containsKey(id)) return null;
+        if (!getCaches().containsKey(id))
+            return null;
 
         getCaches().put(id, data);
         return data;
     }
 
-    default T getCacheData(ID id) {
-        if (id == null) return null;
-        return getCaches().get(id);
+    public T getCacheData(ID id) {
+        return id != null ? getCaches().get(id) : null;
     }
 
-    default void removeById(ID id) {
-        if (id == null) return;
-        getCaches().remove(id);
+    public void removeById(ID id) {
+        if (id != null)
+            getCaches().remove(id);
     }
 
-    default void removeCache(T data) {
-        if (data == null) return;
-        getCaches().remove(data.getId(), data);
+    public void removeCache(T data) {
+        if (data != null)
+            getCaches().remove(data.getId(), data);
     }
 
-    default boolean contains(ID id) {
+    public boolean contains(ID id) {
         return getCaches().containsKey(id);
     }
 
-    default Stream<T> stream() {
+    public @NotNull Stream<T> stream() {
         return getCaches().values().stream();
     }
 
     @Override
-    default @NotNull Iterator<T> iterator() {
+    public @NotNull Iterator<T> iterator() {
         return getCaches().values().iterator();
     }
 }

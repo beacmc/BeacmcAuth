@@ -2,6 +2,7 @@ package com.beacmc.beacmcauth.core.database;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.cache.Cache;
+import com.beacmc.beacmcauth.api.cache.ConcurrentCache;
 import com.beacmc.beacmcauth.api.config.DatabaseSettings;
 import com.beacmc.beacmcauth.api.database.Database;
 import com.beacmc.beacmcauth.api.database.DatabaseType;
@@ -9,7 +10,6 @@ import com.beacmc.beacmcauth.api.database.dao.ProtectedPlayerDao;
 import com.beacmc.beacmcauth.api.library.LibraryProvider;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
 import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
-import com.beacmc.beacmcauth.core.cache.PlayerCache;
 import com.beacmc.beacmcauth.core.database.dao.BaseProtectPlayerDao;
 import com.beacmc.beacmcauth.core.library.Libraries;
 import com.j256.ormlite.dao.Dao;
@@ -43,7 +43,7 @@ public class BaseDatabase implements Database {
     public BaseDatabase(BeacmcAuth plugin) {
         this.plugin = plugin;
         this.logger = plugin.getServerLogger();
-        this.playersCache = new PlayerCache();
+        this.playersCache = new ConcurrentCache<>();
     }
 
     @Override

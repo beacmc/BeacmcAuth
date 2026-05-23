@@ -10,13 +10,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
 @ToString
-public class PremiumUserCache implements Cache<PremiumUser, String> {
+public class PremiumUserCache extends Cache<PremiumUser, String> {
 
     private final Map<String, PremiumUser> caches = new ConcurrentHashMap<>();
 
     @Override
     public PremiumUser getCacheData(String id) {
-        PremiumUser user = Cache.super.getCacheData(id);
+        PremiumUser user = super.getCacheData(id);
         return user != null && user.isValid() ? user : null;
     }
 }

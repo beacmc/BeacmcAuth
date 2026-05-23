@@ -2,6 +2,7 @@ package com.beacmc.beacmcauth.core.dialog;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.cache.Cache;
+import com.beacmc.beacmcauth.api.cache.ConcurrentCache;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.dialog.*;
 import com.beacmc.beacmcauth.api.dialog.custom.CustomDialog;
@@ -29,7 +30,7 @@ import java.util.stream.Collectors;
 public class BaseDialogManager implements DialogManager {
 
     private final BeacmcAuth plugin;
-    private final Cache<CustomDialog, DialogUniqueId> dialogs = new CustomDialogCache();
+    private final Cache<CustomDialog, DialogUniqueId> dialogs = new ConcurrentCache<>();
     private final List<DialogClickListener> dialogClickListeners = new ArrayList<>();
 
     public void loadDefaultDialogs() {

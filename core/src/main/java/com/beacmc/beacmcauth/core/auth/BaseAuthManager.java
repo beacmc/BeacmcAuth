@@ -8,6 +8,7 @@ import com.beacmc.beacmcauth.api.auth.premium.PremiumUser;
 import com.beacmc.beacmcauth.api.auth.premium.mojang.PremiumChangerProvider;
 import com.beacmc.beacmcauth.api.auth.premium.response.Response;
 import com.beacmc.beacmcauth.api.cache.Cache;
+import com.beacmc.beacmcauth.api.cache.ConcurrentCache;
 import com.beacmc.beacmcauth.api.config.AccountLimiterSettings;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.config.ConfigMessages;
@@ -59,13 +60,13 @@ public class BaseAuthManager implements AuthManager {
 
     public BaseAuthManager(BeacmcAuth plugin) {
         this.plugin = plugin;
-        this.altAccountsCache = new AltAccountCache();
+        this.altAccountsCache = new ConcurrentCache<>();
         this.executorService = plugin.getExecutorService();
-        this.authenticatingPlayersCache = new AuthenticatingPlayersCache();
+        this.authenticatingPlayersCache = new ConcurrentCache<>();
         this.logger = plugin.getServerLogger();
         this.playerCache = plugin.getDatabase().getPlayersCache();
         this.dao = plugin.getDatabase().getProtectedPlayerDao();
-        this.premiumPlayers = new PremiumPlayerCache();
+        this.premiumPlayers = new ConcurrentCache<>();
     }
 
     @Override
