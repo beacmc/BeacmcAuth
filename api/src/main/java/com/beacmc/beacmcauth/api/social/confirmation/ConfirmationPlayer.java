@@ -26,8 +26,8 @@ public class ConfirmationPlayer {
 
         if (!confirmations.isEmpty()) {
             if (currentConfirmation == null) {
-                currentConfirmation = confirmations.get(0);
-                logger.debug("First confirmation(%s) for player(%s)".formatted(confirmations.get(0), player.getLowercaseName()));
+                currentConfirmation = confirmations.getFirst();
+                logger.debug("First confirmation(%s) for player(%s)".formatted(currentConfirmation, player.getLowercaseName()));
                 return currentConfirmation != null && currentConfirmation.startConfirmation(player);
             }
 

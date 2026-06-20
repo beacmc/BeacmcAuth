@@ -107,10 +107,6 @@
                                     <pattern>org.json</pattern>
                                     <shadedPattern>com.beacmc.beacmcauth.shaded.json</shadedPattern>
                                 </relocation>
-                                <relocation>
-                                    <pattern>org.slf4j</pattern>
-                                    <shadedPattern>com.beacmc.beacmcauth.shaded.slf4j</shadedPattern>
-                                </relocation>
                             </relocations>
                         </configuration>
                     </execution>
@@ -163,7 +159,7 @@
         <dependency>
             <groupId>com.velocitypowered</groupId>
             <artifactId>velocity-api</artifactId>
-            <version>3.3.0-SNAPSHOT</version>
+            <version>3.5.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -206,7 +202,7 @@
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-velocity</artifactId>
-            <version>3.1.0</version>
+            <version>3.2.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>

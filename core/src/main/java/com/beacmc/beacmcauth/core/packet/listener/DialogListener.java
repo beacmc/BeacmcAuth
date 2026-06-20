@@ -1,8 +1,6 @@
 package com.beacmc.beacmcauth.core.packet.listener;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
-import com.beacmc.beacmcauth.api.config.Config;
-import com.beacmc.beacmcauth.api.config.ConfigMessages;
 import com.beacmc.beacmcauth.api.dialog.DialogClickListener;
 import com.beacmc.beacmcauth.api.dialog.DialogManager;
 import com.github.retrooper.packetevents.event.PacketListener;
