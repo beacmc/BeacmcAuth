@@ -4,6 +4,7 @@ import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.social.SocialPlayer;
 import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
+import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.ToString;
 import org.jetbrains.annotations.Nullable;
@@ -21,7 +22,8 @@ public class TelegramPlayer implements SocialPlayer<User, Long> {
 
     @Override
     public void sendPrivateMessage(String message, @Nullable Object keyboard) {
-        SendMessage sendMessage = new SendMessage(getID(), message);
+        SendMessage sendMessage = new SendMessage(getID(), message)
+                .parseMode(ParseMode.HTML);
         if (keyboard instanceof InlineKeyboardMarkup markup) {
             sendMessage.replyMarkup(markup);
         }

@@ -19,6 +19,7 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
+import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.BaseResponse;
@@ -180,7 +181,8 @@ public class TelegramSocial implements Social<TelegramBot, Long> {
         new TelegramRunnable(plugin, serverPlayer, player);
         SendMessage sendMessage = new SendMessage(player.getTelegram(), getSocialConfig().getMessages().getConfirmationMessage()
                 .replace("%name%", player.getLowercaseName())
-                .replace("%ip%", serverPlayer.getInetAddress().getHostAddress()));
+                .replace("%ip%", serverPlayer.getInetAddress().getHostAddress()))
+                .parseMode(ParseMode.HTML);
 
         Object objectKeyboard = createKeyboard(getSocialConfig().getKeyboards().createConfirmationKeyboard(player));
         if (objectKeyboard instanceof InlineKeyboardMarkup markup) {
