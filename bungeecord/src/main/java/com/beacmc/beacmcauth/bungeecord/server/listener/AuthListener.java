@@ -127,7 +127,7 @@ public class AuthListener implements Listener {
         ServerPlayer player = new BungeeServerPlayer(proxiedPlayer);
         if (authManager.isAuthenticating(player)) {
             String cmd = event.getMessage().split("\\s+")[0];
-            if(event.isCommand() && whitelistCommands.contains(cmd.toLowerCase())) {
+            if (event.isCommand() && whitelistCommands.contains(cmd.toLowerCase())) {
                 return;
             }
             event.setCancelled(true);

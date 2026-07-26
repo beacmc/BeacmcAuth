@@ -67,6 +67,9 @@ public class BaseDatabase implements Database {
             if (databaseSettings.isStopServerOnFailedConnection()) {
                 logger.error("Database is not connected. Server stopping...");
                 logger.error("error message: " + e.getMessage());
+                if (plugin.getConfig().isDebugEnabled()) {
+                    e.printStackTrace();
+                }
                 plugin.getProxy().shutdown();
             }
             return;

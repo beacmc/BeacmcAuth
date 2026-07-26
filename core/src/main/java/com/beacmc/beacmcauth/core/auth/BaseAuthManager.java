@@ -43,6 +43,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class BaseAuthManager implements AuthManager {
@@ -51,10 +52,10 @@ public class BaseAuthManager implements AuthManager {
     private final Cache<AuthenticatingPlayer, String> authenticatingPlayersCache;
     private final Cache<PremiumPlayer, String> premiumPlayers;
     private final ProtectedPlayerDao dao;
-    @Getter
-    private final Cache<ProtectedPlayer, UUID> playerCache;
     private final Cache<AltAccounts, String> altAccountsCache;
     private final ServerLogger logger;
+    @Getter
+    private final Cache<ProtectedPlayer, UUID> playerCache;
     @Getter
     private final ExecutorService executorService;
 
@@ -450,7 +451,6 @@ public class BaseAuthManager implements AuthManager {
                         .setLastIp(ip)
                         .setSession(currentTime)
                         .setLastJoin(currentTime)
-
                 );
                 playerCache.addOrUpdateCache(protectedPlayer);
             } catch (Exception e) {
