@@ -71,43 +71,45 @@ public class BaseAuthManager implements AuthManager {
 
     @Override
     public void onServerConnect(ServerPlayer player) {
-        if (!isAuthenticating(player)) {
-            return;
-        }
+        plugin.getProxy().runTaskLater(() -> {
+            if (!isAuthenticating(player)) {
+                return;
+            }
 
-        final DialogManager dialogManager = plugin.getDialogManager();
+            final DialogManager dialogManager = plugin.getDialogManager();
 
-        SongManager songManager = plugin.getSongManager();
-        songManager.play(player, songManager.findRandomSong());
+            SongManager songManager = plugin.getSongManager();
+            songManager.play(player, songManager.findRandomSong());
 
-        AuthenticatingPlayer authPlayer = authenticatingPlayersCache.getCacheData(player.getLowercaseName());
-        ProtectedPlayer protectedPlayer = authPlayer.getPlayer();
+            AuthenticatingPlayer authPlayer = authenticatingPlayersCache.getCacheData(player.getLowercaseName());
+            ProtectedPlayer protectedPlayer = authPlayer.getPlayer();
 
-        if (!plugin.getConfig().isDialogEnabled()) {
-            return;
-        }
+            if (!plugin.getConfig().isDialogEnabled()) {
+                return;
+            }
 
-        boolean canEmailRecovery = plugin.getEmailConfig().isEnabled()
-                && protectedPlayer.getEmail() != null;
-        boolean canSecretQuestionRecovery = protectedPlayer.getSecretQuestion() != null
-                && protectedPlayer.getHashedSecretAnswer() != null;
+            boolean canEmailRecovery = plugin.getEmailConfig().isEnabled()
+                    && protectedPlayer.getEmail() != null;
+            boolean canSecretQuestionRecovery = protectedPlayer.getSecretQuestion() != null
+                    && protectedPlayer.getHashedSecretAnswer() != null;
 
-        if (canEmailRecovery && !canSecretQuestionRecovery) {
-            player.showDialog(dialogManager.getDialog(DialogType.CHOOSE_DIALOG_WITHOUT_SECRET_QUESTION));
-            return;
-        } else if (!canEmailRecovery && canSecretQuestionRecovery) {
-            player.showDialog(dialogManager.getDialog(DialogType.CHOOSE_DIALOG_WITHOUT_EMAIL));
-            return;
-        } else if (canEmailRecovery) {
-            player.showDialog(dialogManager.getDialog(DialogType.CHOOSE_DIALOG_FULL));
-            return;
-        }
+            if (canEmailRecovery && !canSecretQuestionRecovery) {
+                player.showDialog(dialogManager.getDialog(DialogType.CHOOSE_DIALOG_WITHOUT_SECRET_QUESTION));
+                return;
+            } else if (!canEmailRecovery && canSecretQuestionRecovery) {
+                player.showDialog(dialogManager.getDialog(DialogType.CHOOSE_DIALOG_WITHOUT_EMAIL));
+                return;
+            } else if (canEmailRecovery) {
+                player.showDialog(dialogManager.getDialog(DialogType.CHOOSE_DIALOG_FULL));
+                return;
+            }
 
-        if (protectedPlayer.isRegister()) {
-            player.showDialog(dialogManager.getDialog(DialogType.LOGIN));
-        } else {
-            player.showDialog(dialogManager.getDialog(DialogType.REGISTER));
-        }
+            if (protectedPlayer.isRegister()) {
+                player.showDialog(dialogManager.getDialog(DialogType.LOGIN));
+            } else {
+                player.showDialog(dialogManager.getDialog(DialogType.REGISTER));
+            }
+        }, 100L, TimeUnit.MILLISECONDS);
     }
 
     @Override
