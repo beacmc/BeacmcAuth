@@ -77,6 +77,7 @@ public class RegisterCommandExecutor implements CommandExecutor {
                     .replace("%password%", password));
 
             player.sendTitle("&7", "&7", 0, 25, 0);
+            player.sendMessage(config.getMessages().getNotLinked());
             plugin.getSongManager().stop(player.getUUID());
             authManager.getAuthPlayers().removeById(protectedPlayer.getLowercaseName());
             authManager.register(protectedPlayer, password);

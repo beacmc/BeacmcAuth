@@ -193,4 +193,6 @@ public interface ConfigMessages {
     String getDialogPasswordsDontMatch();
 
     String getDialogCooldown();
+
+    String getNotLinked();
 }

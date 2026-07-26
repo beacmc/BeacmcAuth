@@ -90,6 +90,7 @@ public class LoginCommandExecutor implements CommandExecutor {
 
                 plugin.getEventManager().fire(new AuthLoginEvent(protectedPlayer, player));
                 plugin.getSongManager().stop(player.getUUID());
+                player.sendMessage(config.getMessages().getNotLinked());
                 authManager.connectPlayer(player, config.findServer(config.getLobbyServers()));
             }
         }).exceptionally(e -> {

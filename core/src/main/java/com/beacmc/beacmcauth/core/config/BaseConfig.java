@@ -221,5 +221,7 @@ public class BaseConfig implements Config {
         String dialogPasswordsDontMatch = "&7The passwords don't match";
         String dialogConfirmPassword = "&7Repeat your password in the second argument";
         String dialogCooldown = "&cWait before the next use";
+
+        String notLinked = "You don't have any linked socials";
     }
 }
