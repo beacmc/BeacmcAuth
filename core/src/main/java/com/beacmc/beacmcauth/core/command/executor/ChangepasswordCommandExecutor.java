@@ -6,6 +6,7 @@ import com.beacmc.beacmcauth.api.command.CommandSender;
 import com.beacmc.beacmcauth.api.command.executor.CommandExecutor;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.database.dao.ProtectedPlayerDao;
+import com.beacmc.beacmcauth.api.event.type.ChangePasswordEvent;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
 import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.core.cache.cooldown.GameCooldown;
@@ -71,9 +72,13 @@ public class ChangepasswordCommandExecutor implements CommandExecutor {
                         return;
                     }
 
+                    assert protectedPlayer.getPassword() != null : "Password cannot be null";
+                    String oldPass = protectedPlayer.getPassword();
+
                     CompletableFuture.supplyAsync(() -> {
                         try {
                             dao.createOrUpdate(protectedPlayer.setPassword(BCrypt.hashpw(args[1], BCrypt.gensalt(config.getBCryptRounds()))));
+                            plugin.getEventManager().fire(new ChangePasswordEvent(protectedPlayer, player, oldPass));
                             player.sendMessage(config.getMessages().getChangePasswordSuccess());
                         } catch (SQLException e) {
                             e.printStackTrace();

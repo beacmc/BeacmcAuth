@@ -12,6 +12,7 @@ import com.beacmc.beacmcauth.api.config.social.TelegramConfig;
 import com.beacmc.beacmcauth.api.database.Database;
 import com.beacmc.beacmcauth.api.dialog.DialogManager;
 import com.beacmc.beacmcauth.api.email.EmailManager;
+import com.beacmc.beacmcauth.api.event.EventManager;
 import com.beacmc.beacmcauth.api.library.LibraryProvider;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
 import com.beacmc.beacmcauth.api.message.MessageProvider;
@@ -41,6 +42,8 @@ public interface BeacmcAuth {
     Database getDatabase();
 
     EmailManager getEmailManager();
+
+    EventManager getEventManager();
 
     AuthManager getAuthManager();
 

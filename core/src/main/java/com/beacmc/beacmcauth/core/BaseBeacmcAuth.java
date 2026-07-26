@@ -13,6 +13,7 @@ import com.beacmc.beacmcauth.api.config.social.DiscordConfig;
 import com.beacmc.beacmcauth.api.config.social.TelegramConfig;
 import com.beacmc.beacmcauth.api.database.Database;
 import com.beacmc.beacmcauth.api.email.EmailManager;
+import com.beacmc.beacmcauth.api.event.EventManager;
 import com.beacmc.beacmcauth.api.library.LibraryProvider;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
 import com.beacmc.beacmcauth.api.message.MessageProvider;
@@ -33,6 +34,7 @@ import com.beacmc.beacmcauth.core.config.social.BaseTelegramConfig;
 import com.beacmc.beacmcauth.core.database.BaseDatabase;
 import com.beacmc.beacmcauth.core.dialog.BaseDialogManager;
 import com.beacmc.beacmcauth.core.email.BaseEmailManager;
+import com.beacmc.beacmcauth.core.event.BaseEventManager;
 import com.beacmc.beacmcauth.core.library.Libraries;
 import com.beacmc.beacmcauth.core.packet.BasePlayerPositionTracker;
 import com.beacmc.beacmcauth.core.packet.listener.DialogListener;
@@ -74,6 +76,7 @@ public class BaseBeacmcAuth implements BeacmcAuth {
     private PlayerPositionTracker playerPositionTracker;
     private MojangAuthManager mojangAuthManager;
     private EmailManager emailManager;
+    private EventManager eventManager;
 
     @Override
     public BeacmcAuth onEnable() {
@@ -94,6 +97,8 @@ public class BaseBeacmcAuth implements BeacmcAuth {
             dialogManager = new BaseDialogManager(this);
             dialogManager.loadDefaultDialogs();
             dialogManager.registerDefaultListeners();
+
+            eventManager = new BaseEventManager();
 
             socialManager = new BaseSocialManager(this);
             if (telegramConfig.isEnabled()) {

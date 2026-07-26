@@ -7,6 +7,7 @@ import com.beacmc.beacmcauth.api.command.executor.CommandExecutor;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.config.ConfigMessages;
 import com.beacmc.beacmcauth.api.database.dao.ProtectedPlayerDao;
+import com.beacmc.beacmcauth.api.event.type.LogoutEvent;
 import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.core.cache.cooldown.GameCooldown;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +45,7 @@ public class LogoutCommandExecutor implements CommandExecutor {
             try {
                 dao.createOrUpdate(protectedPlayer.setSession(0));
                 authManager.getPlayerCache().addOrUpdateCache(protectedPlayer);
+                plugin.getEventManager().fire(new LogoutEvent(protectedPlayer, player));
                 player.disconnect(messages.getLogoutDisconnect());
                 cooldown.createCooldown(player.getLowercaseName(), 5_000);
             } catch (SQLException e) {

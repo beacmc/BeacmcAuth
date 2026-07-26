@@ -6,6 +6,7 @@ import com.beacmc.beacmcauth.api.auth.AuthenticatingPlayer;
 import com.beacmc.beacmcauth.api.cache.Cache;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.dialog.DialogClickListener;
+import com.beacmc.beacmcauth.api.event.type.AuthLoginEvent;
 import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.core.cache.cooldown.GameCooldown;
@@ -73,6 +74,7 @@ public class LoginListener implements DialogClickListener {
             player.closeDialog();
 
             if (!plugin.getSocialManager().startPlayerConfirmations(protectedPlayer)) {
+                plugin.getEventManager().fire(new AuthLoginEvent(protectedPlayer, player));
                 authManager.performLogin(protectedPlayer);
                 plugin.getSongManager().stop(player.getUUID());
                 authManager.connectPlayer(player, config.findServer(config.getLobbyServers()));

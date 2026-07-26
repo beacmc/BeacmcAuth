@@ -5,6 +5,7 @@ import com.beacmc.beacmcauth.api.auth.AuthManager;
 import com.beacmc.beacmcauth.api.command.CommandSender;
 import com.beacmc.beacmcauth.api.command.executor.CommandExecutor;
 import com.beacmc.beacmcauth.api.config.Config;
+import com.beacmc.beacmcauth.api.event.type.AuthRegisterEvent;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
 import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.core.cache.cooldown.GameCooldown;
@@ -79,6 +80,7 @@ public class RegisterCommandExecutor implements CommandExecutor {
             plugin.getSongManager().stop(player.getUUID());
             authManager.getAuthPlayers().removeById(protectedPlayer.getLowercaseName());
             authManager.register(protectedPlayer, password);
+            plugin.getEventManager().fire(new AuthRegisterEvent(protectedPlayer, player));
             authManager.connectPlayer(player, config.findServer(config.getLobbyServers()));
         }).exceptionally(e -> {
             logger.error("RegisterCommandExecutor have " + e.getCause().getClass().getSimpleName());

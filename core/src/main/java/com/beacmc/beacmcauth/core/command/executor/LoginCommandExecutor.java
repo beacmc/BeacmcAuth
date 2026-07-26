@@ -6,6 +6,7 @@ import com.beacmc.beacmcauth.api.auth.AuthenticatingPlayer;
 import com.beacmc.beacmcauth.api.command.CommandSender;
 import com.beacmc.beacmcauth.api.command.executor.CommandExecutor;
 import com.beacmc.beacmcauth.api.config.Config;
+import com.beacmc.beacmcauth.api.event.type.AuthLoginEvent;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
 import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
@@ -86,6 +87,8 @@ public class LoginCommandExecutor implements CommandExecutor {
                             logger.error("Message: " + e.getMessage());
                             return null;
                         });
+
+                plugin.getEventManager().fire(new AuthLoginEvent(protectedPlayer, player));
                 plugin.getSongManager().stop(player.getUUID());
                 authManager.connectPlayer(player, config.findServer(config.getLobbyServers()));
             }

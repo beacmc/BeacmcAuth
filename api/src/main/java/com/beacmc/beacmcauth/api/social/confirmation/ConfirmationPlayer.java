@@ -1,8 +1,10 @@
 package com.beacmc.beacmcauth.api.social.confirmation;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
+import com.beacmc.beacmcauth.api.event.type.AuthLoginEvent;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
 import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
+import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.social.Social;
 import lombok.*;
 
@@ -40,8 +42,11 @@ public class ConfirmationPlayer {
                 }
             }
         }
-        plugin.getAuthManager().connectGameServer(plugin.getProxy().getPlayer(player.getUuid()));
+        ServerPlayer serverPlayer = plugin.getProxy().getPlayer(player.getUuid());
+
+        plugin.getAuthManager().connectGameServer(serverPlayer);
         plugin.getAuthManager().performLogin(player);
+        plugin.getEventManager().fire(new AuthLoginEvent(player, serverPlayer));
         return false;
     }
 }
