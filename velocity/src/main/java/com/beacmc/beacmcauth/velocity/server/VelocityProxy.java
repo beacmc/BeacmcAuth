@@ -47,6 +47,12 @@ public class VelocityProxy implements Proxy {
     }
 
     @Override
+    public TaskScheduler runTaskLater(Runnable runnable, long delay, TimeUnit timeUnit) {
+        return new VelocityScheduler(VelocityBeacmcAuth.getInstance().getBeacmcAuth()).runTaskLater(
+                runnable, delay, timeUnit);
+    }
+
+    @Override
     public TaskScheduler runTask(Runnable runnable) {
         return new VelocityScheduler(VelocityBeacmcAuth.getInstance().getBeacmcAuth()).runTask(runnable);
     }

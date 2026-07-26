@@ -30,6 +30,8 @@ public interface Proxy {
 
     TaskScheduler runTaskDelay(Runnable runnable, long delay, TimeUnit timeUnit);
 
+    TaskScheduler runTaskLater(Runnable runnable, long delay, TimeUnit timeUnit);
+
     TaskScheduler runTask(Runnable runnable);
 
     void sendData(String channel, byte[] message, Server... servers);

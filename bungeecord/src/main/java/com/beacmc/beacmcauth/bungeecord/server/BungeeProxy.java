@@ -87,6 +87,11 @@ public class BungeeProxy implements Proxy {
     }
 
     @Override
+    public TaskScheduler runTaskLater(Runnable runnable, long delay, TimeUnit timeUnit) {
+        return new BungeeScheduler(proxyServer.getScheduler()).runTaskLater(runnable,  delay, timeUnit);
+    }
+
+    @Override
     public TaskScheduler runTask(Runnable runnable) {
         return new BungeeScheduler(proxyServer.getScheduler()).runTask(runnable);
     }

@@ -30,6 +30,15 @@ public class VelocityScheduler implements TaskScheduler {
     }
 
     @Override
+    public TaskScheduler runTaskLater(Runnable runnable, long delay, TimeUnit timeUnit) {
+        task = proxyServer.getScheduler()
+                .buildTask(VelocityBeacmcAuth.getInstance(), runnable)
+                .delay(delay, timeUnit)
+                .schedule();
+        return this;
+    }
+
+    @Override
     public TaskScheduler runTask(Runnable runnable) {
         task = proxyServer.getScheduler()
                 .buildTask(VelocityBeacmcAuth.getInstance(), runnable)

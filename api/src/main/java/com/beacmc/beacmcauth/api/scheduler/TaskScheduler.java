@@ -6,6 +6,8 @@ public interface TaskScheduler {
 
     TaskScheduler runTaskDelay(Runnable runnable, long delay, TimeUnit timeUnit);
 
+    TaskScheduler runTaskLater(Runnable runnable, long delay, TimeUnit timeUnit);
+
     TaskScheduler runTask(Runnable runnable);
 
     void cancel();

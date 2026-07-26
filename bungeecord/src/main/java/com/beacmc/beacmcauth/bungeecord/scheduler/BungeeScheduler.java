@@ -22,6 +22,12 @@ public class BungeeScheduler implements TaskScheduler {
     }
 
     @Override
+    public TaskScheduler runTaskLater(Runnable runnable, long delay, TimeUnit timeUnit) {
+       task = scheduler.schedule(BungeeBeacmcAuth.getInstance(), runnable, delay, timeUnit);
+       return this;
+    }
+
+    @Override
     public TaskScheduler runTask(Runnable runnable) {
         task = scheduler.schedule(BungeeBeacmcAuth.getInstance(), runnable, 0, TimeUnit.MILLISECONDS);
         return this;
