@@ -360,7 +360,7 @@ public class BaseAuthManager implements AuthManager {
     public CompletableFuture<ProtectedPlayer> createProtectedPlayer(String lowercaseName, String realName, String password, long session, long lastJoin, String registerIp, String lastIp, UUID uuid) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                ProtectedPlayer execute = new ProtectedPlayer(lowercaseName, realName, uuid, null, password, session, lastJoin, false, true, true, true, registerIp, lastIp, null, null, null, 0, 0, 0);
+                ProtectedPlayer execute = new ProtectedPlayer(lowercaseName, realName, uuid, null, password, session, lastJoin, false, true, true, registerIp, lastIp, null, null, null, 0, 0);
                 dao.create(execute);
                 return execute;
             } catch (Exception e) {
