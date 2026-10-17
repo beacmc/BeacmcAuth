@@ -53,9 +53,6 @@ public class ProtectedPlayer implements CachedData<UUID> {
     @DatabaseField(columnName = "telegram_2fa", defaultValue = "true")
     private boolean telegramTwoFaEnabled;
 
-    @DatabaseField(columnName = "vkontakte_2fa", defaultValue = "true")
-    private boolean vkontakteTwoFaEnabled;
-
     @DatabaseField(columnName = "reg_ip")
     private @Nullable String registerIp;
 
@@ -78,9 +75,6 @@ public class ProtectedPlayer implements CachedData<UUID> {
 
     @DatabaseField(columnName = "telegram", defaultValue = "0")
     private long telegram;
-
-    @DatabaseField(columnName = "vkontakte", defaultValue = "0")
-    private Integer vkontakte;
 
     public boolean isSessionActive(long sessionTime) {
         final long currentTimeMillis = System.currentTimeMillis();
