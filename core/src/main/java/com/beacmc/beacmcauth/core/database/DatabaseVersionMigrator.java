@@ -7,8 +7,6 @@ import java.util.Map;
 class DatabaseVersionMigrator {
 
     transient Map<String, String> migrateColumns = Map.of(
-            "vkontakte", "ALTER TABLE `auth_players` ADD COLUMN vkontakte INTEGER DEFAULT 0;",
-            "vkontakte_2fa", "ALTER TABLE `auth_players` ADD COLUMN vkontakte_2fa BOOLEAN DEFAULT true;",
             "online_uuid", "ALTER TABLE `auth_players` ADD COLUMN online_uuid CHAR(36) default NULL;",
             "email", "ALTER TABLE `auth_players` ADD COLUMN email CHAR(255) default NULL;",
             "secret_question", "ALTER TABLE `auth_players` ADD COLUMN secret_question CHAR(255) default NULL;",
