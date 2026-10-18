@@ -1,6 +1,8 @@
 package com.beacmc.beacmcauth.core.config.loader;
 
+import com.beacmc.beacmcauth.api.auth.action.AuthActionType;
 import com.beacmc.beacmcauth.api.config.loader.ConfigLoader;
+import com.beacmc.beacmcauth.core.config.serializer.AuthActionSerializer;
 import com.beacmc.beacmcauth.core.config.serializer.PatternSerializer;
 import de.exlll.configlib.YamlConfigurationProperties;
 import de.exlll.configlib.YamlConfigurations;
@@ -21,6 +23,7 @@ public class BaseConfigLoader implements ConfigLoader {
     public YamlConfigurationProperties getDefaultConfigProperties() {
         return YamlConfigurationProperties.newBuilder()
                 .addSerializer(Pattern.class, new PatternSerializer())
+                .addSerializer(AuthActionType.class, new AuthActionSerializer())
                 .build();
     }
 }
