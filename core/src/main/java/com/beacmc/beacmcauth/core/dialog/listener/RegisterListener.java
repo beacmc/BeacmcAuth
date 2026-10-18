@@ -35,6 +35,12 @@ public class RegisterListener implements DialogClickListener {
 
             ServerPlayer player = plugin.getProxy().getPlayer(user.getUUID());
             AuthenticatingPlayer authPlayer = authCache.getCacheData(user.getName().toLowerCase());
+
+            if (!authCache.contains(user.getName().toLowerCase())) {
+                player.closeDialog();
+                return;
+            }
+
             ProtectedPlayer protectedPlayer = authPlayer.getPlayer();
 
             boolean repeatPassword = config.isRegisterRepeatPassword();
