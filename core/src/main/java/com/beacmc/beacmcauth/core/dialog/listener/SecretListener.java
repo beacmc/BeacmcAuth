@@ -54,6 +54,12 @@ public class SecretListener implements DialogClickListener {
             ServerPlayer player = plugin.getProxy().getPlayer(user.getUUID());
             AuthenticatingPlayer authPlayer = authManager.getAuthPlayers()
                     .getCacheData(user.getName().toLowerCase());
+
+            if (authPlayer == null) {
+                player.closeDialog();
+                return;
+            }
+
             ProtectedPlayer protectedPlayer = authPlayer.getPlayer();
 
             String secretAnswer = nbt.getStringTagValueOrDefault("answer", "");
