@@ -2,8 +2,7 @@ package com.beacmc.beacmcauth.core;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.auth.AuthManager;
-import com.beacmc.beacmcauth.api.auth.premium.mojang.MojangAuthManager;
-import com.beacmc.beacmcauth.api.auth.premium.mojang.PremiumChangerProvider;
+import com.beacmc.beacmcauth.api.auth.premium.PremiumChangerProvider;
 import com.beacmc.beacmcauth.api.command.CommandManager;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.config.EmailConfig;
@@ -67,7 +66,6 @@ public class BaseBeacmcAuth implements BeacmcAuth {
     private TelegramConfig telegramConfig;
     private Config config;
     private EmailConfig emailConfig;
-    private MojangAuthConfig mojangAuthConfig;
     private DiscordConfig discordConfig;
     private ProtectionConfig protectionConfig;
     private BaseDialogManager dialogManager;
@@ -75,7 +73,6 @@ public class BaseBeacmcAuth implements BeacmcAuth {
     private ExecutorService executorService;
     private SongManager songManager;
     private PlayerPositionTracker playerPositionTracker;
-    private MojangAuthManager mojangAuthManager;
     private EmailManager emailManager;
     private EventManager eventManager;
     private BaseProtectionManager protectionManager;
@@ -92,7 +89,6 @@ public class BaseBeacmcAuth implements BeacmcAuth {
             database = new BaseDatabase(this);
             database.init();
 
-            mojangAuthManager = new BaseMojangAuthManager(this);
             authManager = new BaseAuthManager(this);
             emailManager = new BaseEmailManager(this);
 

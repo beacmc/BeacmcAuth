@@ -3,10 +3,10 @@ package com.beacmc.beacmcauth.core.auth;
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.auth.AuthManager;
 import com.beacmc.beacmcauth.api.auth.AuthenticatingPlayer;
+import com.beacmc.beacmcauth.api.auth.action.AuthActionTypes;
+import com.beacmc.beacmcauth.api.auth.premium.PremiumChangerProvider;
 import com.beacmc.beacmcauth.api.auth.premium.PremiumPlayer;
-import com.beacmc.beacmcauth.api.auth.premium.PremiumUser;
-import com.beacmc.beacmcauth.api.auth.premium.mojang.PremiumChangerProvider;
-import com.beacmc.beacmcauth.api.auth.premium.response.Response;
+import com.beacmc.beacmcauth.api.auth.protection.ProtectionManager;
 import com.beacmc.beacmcauth.api.cache.Cache;
 import com.beacmc.beacmcauth.api.cache.ConcurrentCache;
 import com.beacmc.beacmcauth.api.config.AccountLimiterSettings;
@@ -122,6 +122,7 @@ public class BaseAuthManager implements AuthManager {
         final Config config = plugin.getConfig();
         final InetAddress address = player.getInetAddress();
         final AccountLimiterSettings accountLimiter = config.getAccountLimiterSettings();
+        final ProtectionManager protectionManager = plugin.getProtectionManager();
 
         if (address == null || isAuthenticating(player)) {
             player.disconnect(config.getMessages().getInternalError());
@@ -135,6 +136,10 @@ public class BaseAuthManager implements AuthManager {
             return CompletableFuture.failedFuture(new SecurityException("The name does not match the parameters."));
         }
 
+        if (protectionManager.isBlockedAction(player, AuthActionTypes.LOGIN)) {
+            player.disconnect(messages.getLoginBlockedDisconnect());
+            return CompletableFuture.failedFuture(new IllegalStateException("Server access is unavailable."));
+        }
 
         return getProtectedPlayer(player.getUUID()).thenCompose(protectedPlayer -> {
             if (protectedPlayer == null) {
@@ -162,6 +167,11 @@ public class BaseAuthManager implements AuthManager {
                 }
 
                 if (!protectedPlayer.isRegister()) {
+                    if (protectionManager.isBlockedAction(player, AuthActionTypes.REGISTER)) {
+                        player.disconnect(messages.getRegisterBlockedDisconnect());
+                        return CompletableFuture.failedFuture(new IllegalStateException("Registration is unavailable."));
+                    }
+
                     AltAccounts altAccounts = FutureUtil.await(getAltAccounts(address.getHostAddress()));
                     if (accountLimiter.isEnabled() && altAccounts != null && altAccounts.getNames().size() >= accountLimiter.getLimit()) {
                         player.disconnect(config.getMessages().getAlternativeAccountsLimitReached());

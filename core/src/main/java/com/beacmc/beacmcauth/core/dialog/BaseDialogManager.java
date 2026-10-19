@@ -1,6 +1,7 @@
 package com.beacmc.beacmcauth.core.dialog;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
+import com.beacmc.beacmcauth.api.auth.action.AuthActionTypes;
 import com.beacmc.beacmcauth.api.cache.Cache;
 import com.beacmc.beacmcauth.api.cache.ConcurrentCache;
 import com.beacmc.beacmcauth.api.config.Config;
@@ -97,5 +98,17 @@ public class BaseDialogManager implements DialogManager {
             register(cacheId, dialog);
         }
         return dialog;
+    }
+
+    @Override
+    public boolean canShowDialog(ServerPlayer player) {
+        Config config = plugin.getConfig();
+        if (!config.isDialogEnabled()) {
+            return false;
+        }
+
+        return player.isConnected()
+                && player.isNewerThanOrEqualsVersion(ClientVersion.V_1_21_6)
+                && !plugin.getProtectionManager().isBlockedAction(player, AuthActionTypes.OPEN_AUTH_DIALOG);
     }
 }

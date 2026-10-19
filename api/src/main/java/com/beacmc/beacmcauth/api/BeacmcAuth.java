@@ -1,8 +1,7 @@
 package com.beacmc.beacmcauth.api;
 
 import com.beacmc.beacmcauth.api.auth.AuthManager;
-import com.beacmc.beacmcauth.api.auth.premium.mojang.MojangAuthManager;
-import com.beacmc.beacmcauth.api.auth.premium.mojang.PremiumChangerProvider;
+import com.beacmc.beacmcauth.api.auth.premium.PremiumChangerProvider;
 import com.beacmc.beacmcauth.api.auth.protection.ProtectionManager;
 import com.beacmc.beacmcauth.api.command.CommandManager;
 import com.beacmc.beacmcauth.api.config.Config;
@@ -36,8 +35,6 @@ public interface BeacmcAuth {
 
     EmailConfig getEmailConfig();
 
-    MojangAuthConfig getMojangAuthConfig();
-
     DialogManager getDialogManager();
 
     Database getDatabase();
@@ -59,8 +56,6 @@ public interface BeacmcAuth {
     TelegramConfig getTelegramConfig();
 
     File getDataFolder();
-
-    MojangAuthManager getMojangAuthManager();
 
     DiscordConfig getDiscordConfig();
 

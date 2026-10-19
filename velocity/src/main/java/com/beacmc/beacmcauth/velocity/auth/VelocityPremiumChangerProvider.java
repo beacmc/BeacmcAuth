@@ -1,6 +1,6 @@
 package com.beacmc.beacmcauth.velocity.auth;
 
-import com.beacmc.beacmcauth.api.auth.premium.mojang.PremiumChangerProvider;
+import com.beacmc.beacmcauth.api.auth.premium.PremiumChangerProvider;
 import com.velocitypowered.api.event.connection.PreLoginEvent;
 
 public class VelocityPremiumChangerProvider implements PremiumChangerProvider<PreLoginEvent> {
