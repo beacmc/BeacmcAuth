@@ -1,9 +1,11 @@
 package com.beacmc.beacmcauth.core.social.base.button;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
+import com.beacmc.beacmcauth.api.auth.AuthManager;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.config.ConfigMessages;
 import com.beacmc.beacmcauth.api.config.social.SocialConfig;
+import com.beacmc.beacmcauth.api.config.social.SocialMessages;
 import com.beacmc.beacmcauth.api.database.dao.ProtectedPlayerDao;
 import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.social.Social;
@@ -11,7 +13,6 @@ import com.beacmc.beacmcauth.api.social.SocialPlayer;
 import com.beacmc.beacmcauth.api.social.keyboard.button.Button;
 import com.beacmc.beacmcauth.api.social.keyboard.button.listener.ButtonClickListener;
 import com.beacmc.beacmcauth.core.util.CodeGenerator;
-import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.SQLException;
 import java.util.concurrent.CompletableFuture;
@@ -46,23 +47,24 @@ public class AccountSettingClick implements ButtonClickListener {
     private void handleKick(SocialPlayer<?, ?> socialPlayer, Social<?, ?> social, String id) {
         final SocialConfig socialConfig = social.getSocialConfig();
         final Config config = plugin.getConfig();
+        final ConfigMessages messages = config.getMessages();
+        final SocialMessages socialMessages = socialConfig.getMessages();
 
-        plugin.getAuthManager().getProtectedPlayer(id).thenAccept(protectedPlayer -> {
+        plugin.getAuthManager().getProtectedPlayer(id).thenAccept(protectedPlayer -> {;
             if (protectedPlayer == null || !socialPlayer.checkAccountLink(protectedPlayer)) {
-                socialPlayer.sendPrivateMessage(socialConfig.getMessages().getAccountNotLinked());
+                socialPlayer.sendPrivateMessage(socialMessages.getAccountNotLinked());
                 return;
             }
 
             ServerPlayer player = plugin.getProxy().getPlayer(protectedPlayer.getLowercaseName());
 
             if (player == null) {
-                socialPlayer.sendPrivateMessage(socialConfig.getMessages().getPlayerOffline());
+                socialPlayer.sendPrivateMessage(socialMessages.getPlayerOffline());
                 return;
             }
 
-            socialPlayer.sendPrivateMessage(socialConfig.getMessages().getAccountKickSuccess());
+            socialPlayer.sendPrivateMessage(socialMessages.getAccountKickSuccess());
 
-            ConfigMessages messages = config.getMessages();
             String disconnectMessage = switch (social.getType()) {
                 case DISCORD -> messages.getDiscordKick();
                 case TELEGRAM -> messages.getTelegramKick();
@@ -74,16 +76,17 @@ public class AccountSettingClick implements ButtonClickListener {
 
     private void handleTwoFA(SocialPlayer<?, ?> socialPlayer, Social<?, ?> social, String id) {
         final SocialConfig socialConfig = social.getSocialConfig();
+        final SocialMessages messages = socialConfig.getMessages();
 
         if (social.isCooldown(socialPlayer.getID())) {
-            socialPlayer.sendPrivateMessage(socialConfig.getMessages().getCooldown());
+            socialPlayer.sendPrivateMessage(messages.getCooldown());
             return;
         }
         social.createCooldown(socialPlayer.getID(), 500);
 
         plugin.getAuthManager().getProtectedPlayer(id).thenAccept(protectedPlayer -> {
             if (protectedPlayer == null || !socialPlayer.checkAccountLink(protectedPlayer)) {
-                socialPlayer.sendPrivateMessage(socialConfig.getMessages().getAccountNotLinked());
+                socialPlayer.sendPrivateMessage(messages.getAccountNotLinked());
                 return;
             }
 
@@ -91,9 +94,9 @@ public class AccountSettingClick implements ButtonClickListener {
                 social.switchPlayerTwoFa(protectedPlayer, !social.isPlayerTwoFaEnabled(protectedPlayer));
 
                 if (social.isPlayerTwoFaEnabled(protectedPlayer)) {
-                    socialPlayer.sendPrivateMessage(socialConfig.getMessages().getAccount2faEnabled());
+                    socialPlayer.sendPrivateMessage(messages.getAccount2faEnabled());
                 } else {
-                    socialPlayer.sendPrivateMessage(socialConfig.getMessages().getAccount2faDisabled());
+                    socialPlayer.sendPrivateMessage(messages.getAccount2faDisabled());
                 }
 
                 return protectedPlayer;
@@ -105,16 +108,17 @@ public class AccountSettingClick implements ButtonClickListener {
         final SocialConfig socialConfig = social.getSocialConfig();
         final ProtectedPlayerDao dao = plugin.getDatabase().getProtectedPlayerDao();
         final Config config = plugin.getConfig();
+        final SocialMessages messages = socialConfig.getMessages();
 
         if (social.isCooldown(socialPlayer.getID())) {
-            socialPlayer.sendPrivateMessage(socialConfig.getMessages().getCooldown());
+            socialPlayer.sendPrivateMessage(messages.getCooldown());
             return;
         }
         social.createCooldown(socialPlayer.getID(), 500);
 
         plugin.getAuthManager().getProtectedPlayer(id).thenAccept(protectedPlayer -> {
             if (protectedPlayer == null || !socialPlayer.checkAccountLink(protectedPlayer)) {
-                socialPlayer.sendPrivateMessage(socialConfig.getMessages().getAccountNotLinked());
+                socialPlayer.sendPrivateMessage(messages.getAccountNotLinked());
                 return;
             }
 
@@ -129,12 +133,12 @@ public class AccountSettingClick implements ButtonClickListener {
                 }
 
                 if (protectedPlayer.isBanned()) {
-                    socialPlayer.sendPrivateMessage(socialConfig.getMessages().getAccountBanned());
+                    socialPlayer.sendPrivateMessage(messages.getAccountBanned());
                     if (player != null) {
                         player.disconnect(config.getMessages().getAccountBanned());
                     }
                 } else {
-                    socialPlayer.sendPrivateMessage(socialConfig.getMessages().getAccountUnbanned());
+                    socialPlayer.sendPrivateMessage(messages.getAccountUnbanned());
                 }
 
                 return protectedPlayer;
@@ -144,8 +148,8 @@ public class AccountSettingClick implements ButtonClickListener {
 
     private void handleResetPassword(SocialPlayer<?, ?> socialPlayer, Social<?, ?> social, String id) {
         final SocialConfig socialConfig = social.getSocialConfig();
-        final ProtectedPlayerDao dao = plugin.getDatabase().getProtectedPlayerDao();
-        final Config config = plugin.getConfig();
+        final AuthManager authManager = plugin.getAuthManager();
+        final SocialMessages messages = socialConfig.getMessages();
 
         if (social.isCooldown(socialPlayer.getID())) {
             socialPlayer.sendPrivateMessage(socialConfig.getMessages().getCooldown());
@@ -153,46 +157,38 @@ public class AccountSettingClick implements ButtonClickListener {
         }
         social.createCooldown(socialPlayer.getID(), 500);
 
-        plugin.getAuthManager().getProtectedPlayer(id).thenAccept(protectedPlayer -> {
+        authManager.getProtectedPlayer(id).thenAccept(protectedPlayer -> {
             if (protectedPlayer == null || !socialPlayer.checkAccountLink(protectedPlayer)) {
-                socialPlayer.sendPrivateMessage(socialConfig.getMessages().getAccountNotLinked());
+                socialPlayer.sendPrivateMessage(messages.getAccountNotLinked());
                 return;
             }
 
-            CompletableFuture.supplyAsync(() -> {
-                String password = CodeGenerator.generate(socialConfig.getResetPasswordChars(), socialConfig.getPasswordResetLength());
-                try {
-                    protectedPlayer.setSession(0).setPassword(BCrypt.hashpw(password, BCrypt.gensalt(config.getBCryptRounds())));
-                    dao.createOrUpdate(protectedPlayer);
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-
-                socialPlayer.sendPrivateMessage(socialConfig.getMessages().getAccountResetPassword()
-                        .replace("%name%", protectedPlayer.getRealName())
-                        .replace("%password%", password));
-                return protectedPlayer;
-            }, executorService);
+            String password = CodeGenerator.generate(socialConfig.getResetPasswordChars(), socialConfig.getPasswordResetLength());
+            authManager.changePassword(protectedPlayer, password);
+            socialPlayer.sendPrivateMessage(messages.getAccountResetPassword()
+                    .replace("%name%", protectedPlayer.getRealName())
+                    .replace("%password%", password));
         });
     }
 
     private void handleUnlink(SocialPlayer<?, ?> socialPlayer, Social<?, ?> social, String id) {
         final SocialConfig socialConfig = social.getSocialConfig();
+        final SocialMessages messages = socialConfig.getMessages();
 
         plugin.getAuthManager().getProtectedPlayer(id).thenAccept(protectedPlayer -> {
             if (protectedPlayer == null || !socialPlayer.checkAccountLink(protectedPlayer)) {
-                socialPlayer.sendPrivateMessage(socialConfig.getMessages().getAccountNotLinked());
+                socialPlayer.sendPrivateMessage(messages.getAccountNotLinked());
                 return;
             }
 
             if (socialConfig.isDisableUnlink()) {
-                socialPlayer.sendPrivateMessage(socialConfig.getMessages().getUnlinkDisabled());
+                socialPlayer.sendPrivateMessage(messages.getUnlinkDisabled());
                 return;
             }
 
             CompletableFuture.supplyAsync(() -> {
                 social.unlinkPlayer(protectedPlayer);
-                socialPlayer.sendPrivateMessage(socialConfig.getMessages().getAccountUnlinkSuccess());
+                socialPlayer.sendPrivateMessage(messages.getAccountUnlinkSuccess());
                 return protectedPlayer;
             }, executorService);
         });

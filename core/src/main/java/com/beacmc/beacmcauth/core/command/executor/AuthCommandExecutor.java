@@ -10,7 +10,6 @@ import com.beacmc.beacmcauth.api.database.dao.ProtectedPlayerDao;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
 import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
-import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.SQLException;
 
@@ -104,13 +103,9 @@ public class AuthCommandExecutor implements CommandExecutor {
                 return;
             }
 
-            try {
-                dao.createOrUpdate(protectedPlayer.setSession(0).setPassword(BCrypt.hashpw(args[2], BCrypt.gensalt(config.getBCryptRounds()))));
-                database.getPlayersCache().addOrUpdateCache(protectedPlayer);
-                sender.sendMessage(config.getMessages().getAccountPasswordChanged());
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            String password = args[2];
+            authManager.changePassword(protectedPlayer, password);
+            sender.sendMessage(config.getMessages().getAccountPasswordChanged());
         }).exceptionally(e -> {
             logger.error("AuthCommandExecutor#handleChangePassword have " + e.getClass().getSimpleName());
             logger.error("Message: " + e.getMessage());

@@ -12,8 +12,6 @@ import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.wrapper.common.client.WrapperCommonClientCustomClickAction;
 import lombok.RequiredArgsConstructor;
 
-import java.awt.*;
-
 @RequiredArgsConstructor
 public class ChooseAuthDialogListener implements DialogClickListener {
 

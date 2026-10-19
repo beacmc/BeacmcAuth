@@ -6,7 +6,6 @@ import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
 import com.beacmc.beacmcauth.api.scheduler.TaskScheduler;
 import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
-import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 
 import java.util.concurrent.TimeUnit;
 

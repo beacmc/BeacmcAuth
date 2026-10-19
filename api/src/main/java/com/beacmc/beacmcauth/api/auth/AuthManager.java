@@ -26,7 +26,7 @@ public interface AuthManager {
 
     void onServerConnect(ServerPlayer player);
 
-    <T> @Nullable Message onPremiumLogin(String playerName, PremiumChangerProvider<T> premiumChangerProvider, T obj);
+    <T> CompletableFuture<Void> onPremiumLogin(String playerName, PremiumChangerProvider<T> premiumChangerProvider, T obj);
 
     void onDisconnect(ServerPlayer player);
 
@@ -34,7 +34,7 @@ public interface AuthManager {
 
     void connectAuthServer(ServerPlayer player);
 
-    void connectGameServer(ServerPlayer player);
+    void connectLobbyServer(ServerPlayer player);
 
     default boolean isAuthenticating(ServerPlayer player) {
         return isAuthenticating(player.getLowercaseName());
@@ -57,6 +57,8 @@ public interface AuthManager {
     CompletableFuture<ProtectedPlayer> performLogin(ProtectedPlayer protectedPlayer);
 
     CompletableFuture<ProtectedPlayer> register(ProtectedPlayer protectedPlayer, String password);
+
+    CompletableFuture<ProtectedPlayer> changePassword(ProtectedPlayer protectedPlayer, String newPassword);
 
     CompletableFuture<AltAccounts> getAltAccounts(String hostAddress);
 

@@ -61,8 +61,8 @@ public class SecretListener implements DialogClickListener {
             }
 
             ProtectedPlayer protectedPlayer = authPlayer.getPlayer();
-
             String secretAnswer = nbt.getStringTagValueOrDefault("answer", "");
+
             if (secretAnswer.isEmpty() || !protectedPlayer.checkSecretAnswer(secretAnswer)) {
                 player.disconnect(config.getMessages().getInvalidSecretAnswerDisconnect());
                 return;

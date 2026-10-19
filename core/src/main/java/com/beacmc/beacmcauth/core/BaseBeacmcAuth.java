@@ -96,7 +96,7 @@ public class BaseBeacmcAuth implements BeacmcAuth {
             this.reloadDialogs();
             dialogManager.registerDefaultListeners();
 
-            eventManager = new BaseEventManager();
+            eventManager = new BaseEventManager(serverLogger);
             protectionManager = new BaseProtectionManager(this);
 
             socialManager = new BaseSocialManager(this);

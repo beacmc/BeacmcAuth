@@ -16,11 +16,12 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 @Builder
+@EqualsAndHashCode
 public class ConfirmationPlayer {
 
-    ProtectedPlayer player;
-    List<Social<?, ?>> confirmations;
-    Social<?, ?> currentConfirmation;
+    private ProtectedPlayer player;
+    private List<Social<?, ?>> confirmations;
+    private Social<?, ?> currentConfirmation;
 
     public boolean nextConfirmationSocial(BeacmcAuth plugin) {
         final int lastIndex = currentConfirmation != null ? confirmations.lastIndexOf(currentConfirmation) : -1;
@@ -33,8 +34,9 @@ public class ConfirmationPlayer {
                 return currentConfirmation != null && currentConfirmation.startConfirmation(player);
             }
 
-            if (lastIndex != -1 && lastIndex + 1 < confirmations.size()) {
-                Social<?, ?> social = confirmations.get(lastIndex + 1);
+            int nextIndex = lastIndex + 1;
+            if (lastIndex != -1 && nextIndex < confirmations.size()) {
+                Social<?, ?> social = confirmations.get(nextIndex);
                 logger.debug("Next confirmation(%s) for player(%s)".formatted(social, player.getLowercaseName()));
                 if (social != null && social.startConfirmation(player)) {
                     currentConfirmation = social;
@@ -44,7 +46,7 @@ public class ConfirmationPlayer {
         }
         ServerPlayer serverPlayer = plugin.getProxy().getPlayer(player.getUuid());
 
-        plugin.getAuthManager().connectGameServer(serverPlayer);
+        plugin.getAuthManager().connectLobbyServer(serverPlayer);
         plugin.getAuthManager().performLogin(player);
         plugin.getEventManager().fire(new AuthLoginEvent(player, serverPlayer));
         return false;

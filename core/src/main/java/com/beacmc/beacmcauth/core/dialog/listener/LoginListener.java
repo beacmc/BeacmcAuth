@@ -17,7 +17,6 @@ import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.wrapper.common.client.WrapperCommonClientCustomClickAction;
 import lombok.RequiredArgsConstructor;
 
-import java.awt.*;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -38,7 +37,7 @@ public class LoginListener implements DialogClickListener {
             ServerPlayer player = plugin.getProxy().getPlayer(user.getUUID());
             AuthenticatingPlayer authPlayer = authCache.getCacheData(user.getName().toLowerCase());
 
-            if (!authCache.contains(user.getName().toLowerCase())) {
+            if (authPlayer == null) {
                 player.closeDialog();
                 return;
             }
@@ -77,7 +76,7 @@ public class LoginListener implements DialogClickListener {
                 plugin.getEventManager().fire(new AuthLoginEvent(protectedPlayer, player));
                 authManager.performLogin(protectedPlayer);
                 plugin.getSongManager().stop(player.getUUID());
-                authManager.connectPlayer(player, config.findServer(config.getLobbyServers()));
+                authManager.connectLobbyServer(player);
             }
         }
     }

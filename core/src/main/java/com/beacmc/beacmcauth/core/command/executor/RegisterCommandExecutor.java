@@ -80,9 +80,9 @@ public class RegisterCommandExecutor implements CommandExecutor {
             player.sendMessage(config.getMessages().getNotLinked());
             plugin.getSongManager().stop(player.getUUID());
             authManager.getAuthPlayers().removeById(protectedPlayer.getLowercaseName());
-            authManager.register(protectedPlayer, password);
             plugin.getEventManager().fire(new AuthRegisterEvent(protectedPlayer, player));
-            authManager.connectPlayer(player, config.findServer(config.getLobbyServers()));
+            authManager.register(protectedPlayer, password);
+            authManager.connectLobbyServer(player);
         }).exceptionally(e -> {
             logger.error("RegisterCommandExecutor have " + e.getCause().getClass().getSimpleName());
             logger.error("Message: " + e.getMessage());

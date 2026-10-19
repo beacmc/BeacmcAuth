@@ -1,9 +1,7 @@
 package com.beacmc.beacmcauth.api.dialog;
 
-import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.cache.Cache;
 import com.beacmc.beacmcauth.api.dialog.custom.CustomDialog;
-import com.beacmc.beacmcauth.api.dialog.custom.DialogType;
 import com.beacmc.beacmcauth.api.dialog.custom.DialogUniqueId;
 import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.github.retrooper.packetevents.protocol.dialog.Dialog;

@@ -12,14 +12,12 @@ import com.beacmc.beacmcauth.api.cache.ConcurrentCache;
 import com.beacmc.beacmcauth.api.config.AccountLimiterSettings;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.config.ConfigMessages;
-import com.beacmc.beacmcauth.api.config.MojangAuthConfig;
 import com.beacmc.beacmcauth.api.database.dao.ProtectedPlayerDao;
 import com.beacmc.beacmcauth.api.dialog.DialogManager;
 import com.beacmc.beacmcauth.api.dialog.custom.DialogType;
 import com.beacmc.beacmcauth.api.event.type.AuthPremiumLoginEvent;
 import com.beacmc.beacmcauth.api.event.type.AuthSessionActiveEvent;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
-import com.beacmc.beacmcauth.api.message.Message;
 import com.beacmc.beacmcauth.api.model.AltAccounts;
 import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.server.Server;
@@ -81,13 +79,13 @@ public class BaseAuthManager implements AuthManager {
 
             SongManager songManager = plugin.getSongManager();
             songManager.play(player, songManager.findRandomSong());
-
             AuthenticatingPlayer authPlayer = authenticatingPlayersCache.getCacheData(player.getLowercaseName());
-            ProtectedPlayer protectedPlayer = authPlayer.getPlayer();
 
-            if (!plugin.getConfig().isDialogEnabled()) {
+            if (!dialogManager.canShowDialog(player) || authPlayer == null) {
                 return;
             }
+
+            ProtectedPlayer protectedPlayer = authPlayer.getPlayer();
 
             boolean canEmailRecovery = plugin.getEmailConfig().isEnabled()
                     && protectedPlayer.getEmail() != null;
@@ -123,16 +121,15 @@ public class BaseAuthManager implements AuthManager {
         final InetAddress address = player.getInetAddress();
         final AccountLimiterSettings accountLimiter = config.getAccountLimiterSettings();
         final ProtectionManager protectionManager = plugin.getProtectionManager();
+        final ConfigMessages messages = config.getMessages();
 
         if (address == null || isAuthenticating(player)) {
-            player.disconnect(config.getMessages().getInternalError());
+            player.disconnect(messages.getInternalError());
             return CompletableFuture.failedFuture(new IllegalStateException("Player is authenticating or have null address"));
         }
 
-        logger.debug("Check player(" + player.getName() + ") nickname matcher(" + config.getNicknameRegex() + "). Success: " + config.getNicknameRegex().matcher(player.getName()).matches());
-
         if (!config.getNicknameRegex().matcher(player.getName()).matches()) {
-            player.disconnect(config.getMessages().getInvalidCharacterInName());
+            player.disconnect(messages.getInvalidCharacterInName());
             return CompletableFuture.failedFuture(new SecurityException("The name does not match the parameters."));
         }
 
@@ -150,17 +147,17 @@ public class BaseAuthManager implements AuthManager {
         }).thenCompose(protectedPlayer -> {
             try {
                 if (protectedPlayer == null) {
-                    player.disconnect(config.getMessages().getInternalError());
+                    player.disconnect(messages.getInternalError());
                     return CompletableFuture.failedFuture(new IllegalStateException("Unable to find ProtectedPlayer for player " + player));
                 }
 
                 if (protectedPlayer.isBanned()) {
-                    player.disconnect(config.getMessages().getAccountBanned());
+                    player.disconnect(messages.getAccountBanned());
                     return CompletableFuture.failedFuture(new SecurityException("Player is banned"));
                 }
 
                 if (config.isNameCaseControl() && !protectedPlayer.getRealName().equals(player.getName())) {
-                    player.disconnect(config.getMessages().getNameCaseFailed()
+                    player.disconnect(messages.getNameCaseFailed()
                             .replace("%current_name%", player.getName())
                             .replace("%need_name%", protectedPlayer.getRealName()));
                     return CompletableFuture.failedFuture(new SecurityException("The nicknames don't match"));
@@ -174,7 +171,7 @@ public class BaseAuthManager implements AuthManager {
 
                     AltAccounts altAccounts = FutureUtil.await(getAltAccounts(address.getHostAddress()));
                     if (accountLimiter.isEnabled() && altAccounts != null && altAccounts.getNames().size() >= accountLimiter.getLimit()) {
-                        player.disconnect(config.getMessages().getAlternativeAccountsLimitReached());
+                        player.disconnect(messages.getAlternativeAccountsLimitReached());
                         return CompletableFuture.failedFuture(new SecurityException("the limit of alternative accounts has been reached."));
                     }
 
@@ -199,7 +196,7 @@ public class BaseAuthManager implements AuthManager {
                         premiumPlayers.addOrUpdateCache(new PremiumPlayer(premiumPlayer.getLowercaseName(), onlineUuid, false, 0));
                     }
                     logger.debug("Automatic login for player(%s) with premium status".formatted(player.getName()));
-                    player.sendMessage(config.getMessages().getPremiumAccountAutoLogin());
+                    player.sendMessage(messages.getPremiumAccountAutoLogin());
 
                     plugin.getEventManager().fire(new AuthPremiumLoginEvent(protectedPlayer, player));
 
@@ -214,7 +211,7 @@ public class BaseAuthManager implements AuthManager {
                 if (protectedPlayer.isSessionActive(config.getSessionTime()) && protectedPlayer.isValidIp(address.getHostAddress())) {
                     logger.debug("the player(" + player.getName() + ") has an active session and a valid IP-address(" + address.getHostAddress() + ")");
 
-                    player.sendMessage(config.getMessages().getSessionActive());
+                    player.sendMessage(messages.getSessionActive());
                     plugin.getEventManager().fire(new AuthSessionActiveEvent(protectedPlayer, player));
                     return CompletableFuture.completedFuture(config.findServer(config.getLobbyServers()));
                 }
@@ -228,7 +225,7 @@ public class BaseAuthManager implements AuthManager {
                 new LoginRunnable(plugin, player);
                 return CompletableFuture.completedFuture(config.findServer(config.getAuthServers()));
             } catch (Exception e) {
-                player.disconnect(config.getMessages().getInternalError());
+                player.disconnect(messages.getInternalError());
                 return CompletableFuture.failedFuture(e);
             }
         }).exceptionally(e -> {
@@ -239,76 +236,44 @@ public class BaseAuthManager implements AuthManager {
     }
 
     @Override
-    public <T> @Nullable Message onPremiumLogin(
+    public <T> CompletableFuture<Void> onPremiumLogin(
             String playerName,
             PremiumChangerProvider<T> premiumChangerProvider,
             T obj
     ) {
-        if (playerName == null) {
-            return null;
-        }
+        return getProtectedPlayer(playerName).thenCompose(protectedPlayer -> {
+            if (playerName == null) {
+                return CompletableFuture.completedFuture(null);
+            }
 
-        final MojangAuthConfig authConfig = plugin.getMojangAuthConfig();
-        final ConfigMessages messages = plugin.getConfig().getMessages();
+            if (plugin.getProtectionManager().isBlockedAction(playerName, AuthActionTypes.PREMIUM_AUTHENTICATION)) {
+                return CompletableFuture.completedFuture(null);
+            }
 
-        try {
-            ProtectedPlayer protectedPlayer = getProtectedPlayer(playerName).get();
-            if (protectedPlayer == null || !protectedPlayer.isRegister())
-                return null;
-
-            Response<PremiumUser> response = plugin
-                    .getMojangAuthManager()
-                    .getPremiumUser(playerName)
-                    .join();
-
-            PremiumUser premiumUser = response.getData();
-            UUID mojangUuid = premiumUser != null ? premiumUser.getUuid() : null;
-
-            if (premiumUser == null) {
-                premiumPlayers.removeById(playerName);
-                logger.debug("Premium user not found. Response: " + response);
+            if (!protectedPlayer.isRegister()) {
+                return CompletableFuture.completedFuture(null);
             }
 
             UUID storedOnlineUuid = protectedPlayer.getOnlineUuid();
-
-            PremiumPlayer cachedPremium =
-                    getOnlinePremiumPlayer(protectedPlayer.getLowercaseName());
-
-            boolean disallowedResponse =
-                    (response.isRateLimited() && !authConfig.isLicenseJoinRateLimited())
-                            || (!response.isSuccess()
-                            && !authConfig.isLicenseJoinMojangDown()
-                            && (cachedPremium == null || !cachedPremium.isTemplate()));
-
-            if (disallowedResponse) {
-                return plugin.getMessageProvider()
-                        .createMessage(messages.getInternalError());
-            }
+            PremiumPlayer premiumPlayer =
+                    getOnlinePremiumPlayer(playerName.toLowerCase());
 
             if (storedOnlineUuid != null) {
-                boolean validUuidMatch = storedOnlineUuid.equals(mojangUuid);
-
-                if (!validUuidMatch) {
-                    return null;
-                }
                 premiumPlayers.addOrUpdateCache(
-                        new PremiumPlayer(playerName, mojangUuid, false, 0)
+                        new PremiumPlayer(playerName, storedOnlineUuid, false, 0)
                 );
-            } else if (cachedPremium != null && cachedPremium.isTemplate()) {
-                cachedPremium.setUniqueId(mojangUuid);
-            } else {
-                return null;
+                premiumChangerProvider.forceOnlineMode(obj);
+            } else if (premiumPlayer != null && premiumPlayer.isTemplate()) {
+
+                if (premiumPlayer.isValidTemplateTime()) {
+                    premiumChangerProvider.forceOnlineMode(obj);
+                } else {
+                    getPremiumPlayerCache().removeCache(premiumPlayer);
+                }
             }
-            premiumChangerProvider.forceOnlineMode(obj);
 
-        } catch (Exception e) {
-            logger.warn("Error during premium login for " + playerName);
-
-            logger.error("BaseAuthManager#onPremiumLogin have " + e.getCause().getClass().getSimpleName());
-            logger.error("Message: " + e.getMessage());
-            return null;
-        }
-        return null;
+            return CompletableFuture.completedFuture(null);
+        });
     }
 
 
@@ -354,7 +319,7 @@ public class BaseAuthManager implements AuthManager {
     }
 
     @Override
-    public void connectGameServer(ServerPlayer player) {
+    public void connectLobbyServer(ServerPlayer player) {
         final Config config = plugin.getConfig();
         connectPlayer(player, config.findServer(config.getLobbyServers()));
     }
@@ -396,20 +361,20 @@ public class BaseAuthManager implements AuthManager {
     }
 
     @Override
-    public CompletableFuture<ProtectedPlayer> getPremiumPlayer(UUID premiumUuid) {
+    public CompletableFuture<ProtectedPlayer> getProtectedPlayerByOnlineId(UUID onlineUuid) {
+        if (onlineUuid == null) return null;
         return CompletableFuture.supplyAsync(() -> {
-            if (premiumUuid == null) return null;
 
             try {
                 ProtectedPlayer cachedData = playerCache.stream()
-                        .filter(protectedPlayer -> protectedPlayer.getOnlineUuid() == premiumUuid)
+                        .filter(protectedPlayer -> onlineUuid.equals(protectedPlayer.getOnlineUuid()))
                         .findFirst()
                         .orElse(null);
                 if (cachedData != null) return cachedData;
 
                 ProtectedPlayer queryData = dao.queryBuilder()
                         .where()
-                        .eq("online_uuid", new SelectArg(premiumUuid))
+                        .eq(ProtectedPlayer.ONLINE_UUID_COLUMN, new SelectArg(onlineUuid))
                         .queryForFirst();
                 playerCache.addOrUpdateCache(queryData);
                 return queryData;
@@ -425,14 +390,15 @@ public class BaseAuthManager implements AuthManager {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 ProtectedPlayer cachedData = playerCache.stream()
-                        .filter(protectedPlayer -> protectedPlayer.getLowercaseName().equals(playerName))
+                        .filter(protectedPlayer -> protectedPlayer.getLowercaseName()
+                                .equalsIgnoreCase(playerName))
                         .findFirst()
                         .orElse(null);
                 if (cachedData != null) return cachedData;
 
                 ProtectedPlayer queryData = dao.queryBuilder()
                         .where()
-                        .eq("lowercase_name", new SelectArg(playerName))
+                        .eq(ProtectedPlayer.LOWERCASE_NAME_COLUMN, new SelectArg(playerName))
                         .queryForFirst();
                 playerCache.addOrUpdateCache(queryData);
                 return queryData;
@@ -478,7 +444,10 @@ public class BaseAuthManager implements AuthManager {
                 AltAccounts cached = altAccountsCache.getCacheData(hostAddress);
                 if (cached != null) return cached;
 
-                List<ProtectedPlayer> players = dao.queryForEq("reg_ip", hostAddress);
+                List<ProtectedPlayer> players = dao.queryForEq(
+                        ProtectedPlayer.REGISTER_IP_COLUMN,
+                        new SelectArg(hostAddress)
+                );
                 AltAccounts altAccounts = new AltAccounts(hostAddress, players.stream()
                         .map(ProtectedPlayer::getRealName)
                         .collect(Collectors.toList()));
@@ -493,9 +462,28 @@ public class BaseAuthManager implements AuthManager {
     @Override
     public void addAltAccount(ProtectedPlayer player, String ip) {
         AltAccounts altAccounts = altAccountsCache.getCacheData(ip);
-        if (altAccounts != null) {
-            altAccounts.getNames().add(player.getRealName());
+        String playerName = player.getRealName();
+        if (altAccounts != null && !altAccounts.getNames().contains(playerName)) {
+            altAccounts.getNames().add(playerName);
         }
+    }
+
+    @Override
+    public CompletableFuture<ProtectedPlayer> changePassword(ProtectedPlayer protectedPlayer, String newPassword) {
+        return CompletableFuture.supplyAsync(() -> {
+            final Config config = plugin.getConfig();
+
+            try {
+                logger.debug("Player(" + protectedPlayer.getRealName() + ") successfully changed password");
+                dao.createOrUpdate(protectedPlayer
+                        .setSession(0)
+                        .setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt(config.getBCryptRounds()))));
+                playerCache.addOrUpdateCache(protectedPlayer);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return protectedPlayer;
+        }, executorService);
     }
 
     @Override
