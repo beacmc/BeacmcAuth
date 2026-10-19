@@ -223,5 +223,8 @@ public class BaseConfig implements Config {
         String dialogCooldown = "&cWait before the next use";
 
         String notLinked = "You don't have any linked socials";
+        String registerBlockedDisconnect = "&cRegistration is disabled. If this is an error, please contact the administration.";
+        String loginBlockedDisconnect = "&cServer access is disabled. If this is an error, please contact the administration.";
+        String changePasswordBlockedMessage = "&cPassword changes are disabled. If this is an error, please contact the administration.";
     }
 }

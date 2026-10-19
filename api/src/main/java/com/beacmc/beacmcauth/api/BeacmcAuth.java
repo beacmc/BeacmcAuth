@@ -3,10 +3,11 @@ package com.beacmc.beacmcauth.api;
 import com.beacmc.beacmcauth.api.auth.AuthManager;
 import com.beacmc.beacmcauth.api.auth.premium.mojang.MojangAuthManager;
 import com.beacmc.beacmcauth.api.auth.premium.mojang.PremiumChangerProvider;
+import com.beacmc.beacmcauth.api.auth.protection.ProtectionManager;
 import com.beacmc.beacmcauth.api.command.CommandManager;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.config.EmailConfig;
-import com.beacmc.beacmcauth.api.config.MojangAuthConfig;
+import com.beacmc.beacmcauth.api.config.ProtectionConfig;
 import com.beacmc.beacmcauth.api.config.social.DiscordConfig;
 import com.beacmc.beacmcauth.api.config.social.TelegramConfig;
 import com.beacmc.beacmcauth.api.database.Database;
@@ -92,4 +93,8 @@ public interface BeacmcAuth {
     SongManager getSongManager();
 
     PlayerPositionTracker getPlayerPositionTracker();
+
+    ProtectionManager getProtectionManager();
+
+    ProtectionConfig getProtectionConfig();
 }

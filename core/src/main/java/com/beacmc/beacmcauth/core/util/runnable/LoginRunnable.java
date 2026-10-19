@@ -30,7 +30,7 @@ public class LoginRunnable implements Runnable {
         this.plugin = plugin;
         Config config = plugin.getConfig();
 
-        disableSendMessage = config.isDialogEnabled() && player.isNewerThanOrEqualsVersion(ClientVersion.V_1_21_6);
+        disableSendMessage = plugin.getDialogManager().canShowDialog(player);
 
         timer = 0;
         waitForConnect = 0;

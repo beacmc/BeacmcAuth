@@ -2,6 +2,7 @@ package com.beacmc.beacmcauth.core.command.executor;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.auth.AuthManager;
+import com.beacmc.beacmcauth.api.auth.action.AuthActionTypes;
 import com.beacmc.beacmcauth.api.command.CommandSender;
 import com.beacmc.beacmcauth.api.command.executor.CommandExecutor;
 import com.beacmc.beacmcauth.api.config.Config;
@@ -50,6 +51,11 @@ public class ChangepasswordCommandExecutor implements CommandExecutor {
 
         if (cooldown.isCooldown(player.getLowercaseName())) {
             player.sendMessage(config.getMessages().getCooldown());
+            return;
+        }
+
+        if (plugin.getProtectionManager().isBlockedAction(player, AuthActionTypes.CHANGE_PASSWORD)) {
+            player.sendMessage(messages.getChangePasswordBlockedMessage());
             return;
         }
 

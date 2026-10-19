@@ -7,7 +7,7 @@ import com.beacmc.beacmcauth.api.auth.premium.mojang.PremiumChangerProvider;
 import com.beacmc.beacmcauth.api.command.CommandManager;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.config.EmailConfig;
-import com.beacmc.beacmcauth.api.config.MojangAuthConfig;
+import com.beacmc.beacmcauth.api.config.ProtectionConfig;
 import com.beacmc.beacmcauth.api.config.loader.ConfigLoader;
 import com.beacmc.beacmcauth.api.config.social.DiscordConfig;
 import com.beacmc.beacmcauth.api.config.social.TelegramConfig;
@@ -22,12 +22,12 @@ import com.beacmc.beacmcauth.api.server.Proxy;
 import com.beacmc.beacmcauth.api.social.SocialManager;
 import com.beacmc.beacmcauth.api.song.SongManager;
 import com.beacmc.beacmcauth.core.auth.BaseAuthManager;
-import com.beacmc.beacmcauth.core.auth.mojang.BaseMojangAuthManager;
+import com.beacmc.beacmcauth.core.auth.protection.BaseProtectionManager;
 import com.beacmc.beacmcauth.core.command.BaseCommandManager;
 import com.beacmc.beacmcauth.core.command.executor.*;
 import com.beacmc.beacmcauth.core.config.BaseConfig;
 import com.beacmc.beacmcauth.core.config.BaseEmailConfig;
-import com.beacmc.beacmcauth.core.config.BaseMojangAuthConfig;
+import com.beacmc.beacmcauth.core.config.BaseProtectionConfig;
 import com.beacmc.beacmcauth.core.config.loader.BaseConfigLoader;
 import com.beacmc.beacmcauth.core.config.social.BaseDiscordConfig;
 import com.beacmc.beacmcauth.core.config.social.BaseTelegramConfig;
@@ -69,6 +69,7 @@ public class BaseBeacmcAuth implements BeacmcAuth {
     private EmailConfig emailConfig;
     private MojangAuthConfig mojangAuthConfig;
     private DiscordConfig discordConfig;
+    private ProtectionConfig protectionConfig;
     private BaseDialogManager dialogManager;
     private SocialManager socialManager;
     private ExecutorService executorService;
@@ -77,6 +78,7 @@ public class BaseBeacmcAuth implements BeacmcAuth {
     private MojangAuthManager mojangAuthManager;
     private EmailManager emailManager;
     private EventManager eventManager;
+    private BaseProtectionManager protectionManager;
 
     @Override
     public BeacmcAuth onEnable() {
@@ -99,6 +101,7 @@ public class BaseBeacmcAuth implements BeacmcAuth {
             dialogManager.registerDefaultListeners();
 
             eventManager = new BaseEventManager();
+            protectionManager = new BaseProtectionManager(this);
 
             socialManager = new BaseSocialManager(this);
             if (telegramConfig.isEnabled()) {
