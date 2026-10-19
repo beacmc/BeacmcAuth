@@ -30,6 +30,11 @@ public class ChooseAuthDialogListener implements DialogClickListener {
             AuthenticatingPlayer authPlayer = authManager.getAuthPlayers()
                     .getCacheData(user.getName().toLowerCase());
 
+            if (authPlayer == null) {
+                player.closeDialog();
+                return;
+            }
+
             if (authPlayer.getPlayer().isRegister()) {
                 Dialog dialog = dialogManager.getDialog(DialogType.LOGIN);
                 player.showDialog(dialog);
