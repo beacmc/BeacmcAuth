@@ -5,7 +5,7 @@ public enum AuthActionTypes implements AuthActionType {
     REGISTER,
     LOGIN,
     OPEN_AUTH_DIALOG,
-    PREMIUM_LOGIN,
+    PREMIUM_AUTHENTICATION,
     CHANGE_PASSWORD;
 
     @Override
