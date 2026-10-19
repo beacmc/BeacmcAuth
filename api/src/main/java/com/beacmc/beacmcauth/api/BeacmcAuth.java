@@ -47,6 +47,8 @@ public interface BeacmcAuth {
 
     void reloadAllConfigurations();
 
+    void reloadDialogs();
+
     MessageProvider getMessageProvider();
 
     BeacmcAuth setMessageProvider(MessageProvider messageProvider);

@@ -93,7 +93,7 @@ public class BaseBeacmcAuth implements BeacmcAuth {
             emailManager = new BaseEmailManager(this);
 
             dialogManager = new BaseDialogManager(this);
-            dialogManager.loadDefaultDialogs();
+            this.reloadDialogs();
             dialogManager.registerDefaultListeners();
 
             eventManager = new BaseEventManager();
@@ -162,7 +162,13 @@ public class BaseBeacmcAuth implements BeacmcAuth {
         emailConfig = configLoader.load(new File(getDataFolder(), "email.yml"), BaseEmailConfig.class, new BaseEmailConfig());
         telegramConfig = configLoader.load(new File(getDataFolder(), "telegram.yml"), BaseTelegramConfig.class, new BaseTelegramConfig());
         discordConfig = configLoader.load(new File(getDataFolder(), "discord.yml"), BaseDiscordConfig.class, new BaseDiscordConfig());
-        mojangAuthConfig = configLoader.load(new File(getDataFolder(), "license-auth.yml"), BaseMojangAuthConfig.class, new BaseMojangAuthConfig());
+        protectionConfig = configLoader.load(new File(getDataFolder(), "protection.yml"), BaseProtectionConfig.class, new BaseProtectionConfig());
+    }
+
+    @Override
+    public void reloadDialogs() {
+        dialogManager.getDialogs().clear();
+        dialogManager.loadDefaultDialogs();
     }
 
     public <T> BeacmcAuth setPremiumProvider(PremiumChangerProvider<T> premiumChangerProvider) {

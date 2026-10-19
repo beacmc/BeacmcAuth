@@ -57,8 +57,9 @@ public class AuthCommandExecutor implements CommandExecutor {
     private void handleReloadConfig(CommandSender sender, String[] ignored) {
         final Config config = plugin.getConfig();
 
-        sender.sendMessage(config.getMessages().getAuthReload());
         plugin.reloadAllConfigurations();
+        plugin.reloadDialogs();
+        sender.sendMessage(config.getMessages().getAuthReload());
     }
 
     private void handleDeleteAccount(CommandSender sender, String[] args) {
