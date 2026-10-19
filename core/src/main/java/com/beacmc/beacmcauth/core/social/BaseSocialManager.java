@@ -24,6 +24,7 @@ import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,8 +40,8 @@ public class BaseSocialManager implements SocialManager {
 
     public BaseSocialManager(BeacmcAuth plugin) {
         this.plugin = plugin;
-        this.confirmationPlayers = new ArrayList<>();
-        this.socials = new ArrayList<>();
+        this.confirmationPlayers = Collections.synchronizedList(new ArrayList<>());
+        this.socials = Collections.synchronizedList(new ArrayList<>());
         this.socialCommandRegistry = new BaseSocialCommandRegistry();
         this.buttonClickRegistry = new BaseButtonClickRegistry();
         this.linkManager = new BaseLinkManager();
@@ -99,9 +100,11 @@ public class BaseSocialManager implements SocialManager {
 
     @Override
     public @NotNull List<Social<?, ?>> getPlayerLinkedSocials(ProtectedPlayer player) {
-        return socials.stream()
-                .filter(social -> social.isPlayerLinked(player))
-                .collect(Collectors.toList());
+        synchronized (socials) {
+            return socials.stream()
+                    .filter(social -> social.isPlayerLinked(player))
+                    .collect(Collectors.toList());
+        }
     }
 
     @Override
