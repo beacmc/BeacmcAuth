@@ -9,7 +9,7 @@ import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.protocol.sound.Sound;
 import com.github.retrooper.packetevents.protocol.sound.SoundCategory;
-import com.github.retrooper.packetevents.util.Vector3i;
+import com.github.retrooper.packetevents.util.Vector3d;
 import com.github.retrooper.packetevents.wrapper.common.server.WrapperCommonServerClearDialog;
 import com.github.retrooper.packetevents.wrapper.common.server.WrapperCommonServerShowDialog;
 import com.github.retrooper.packetevents.wrapper.configuration.server.WrapperConfigServerClearDialog;
@@ -44,7 +44,7 @@ public interface ServerPlayer extends CommandSender {
 
     boolean isServerConnected();
 
-    default void playSound(User user, Sound sound, float volume, float pitch, Vector3i location) {
+    default void playSound(User user, Sound sound, float volume, float pitch, Vector3d location) {
         if (isServerConnected()) {
             WrapperPlayServerSoundEffect packet = new WrapperPlayServerSoundEffect(
                     sound,
@@ -57,7 +57,7 @@ public interface ServerPlayer extends CommandSender {
         }
     }
 
-    default void playSound(Sound sound, float volume, float pitch, Vector3i location) {
+    default void playSound(Sound sound, float volume, float pitch, Vector3d location) {
         User user = PacketEvents.getAPI().getPlayerManager().getUser(getOriginalPlayer());
         playSound(user, sound, volume, pitch, location);
     }

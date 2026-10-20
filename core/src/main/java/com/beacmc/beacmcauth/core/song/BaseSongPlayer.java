@@ -85,7 +85,7 @@ public final class BaseSongPlayer extends SongPlayer {
                 soundName = getInstrumentName(instrument);
             }
 
-            player.playSound(user, Sounds.getByName(soundName), note.getVolume(), pitch, pos.asVector3i());
+            player.playSound(user, Sounds.getByName(soundName), note.getVolume(), pitch, pos.asVector3d());
         }
     }
 
