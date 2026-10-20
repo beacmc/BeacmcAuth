@@ -2,8 +2,8 @@ package com.beacmc.beacmcauth.core.config.dialog;
 
 import com.beacmc.beacmcauth.api.AdventureColor;
 import com.beacmc.beacmcauth.api.config.dialog.button.ClickEventType;
-import com.beacmc.beacmcauth.api.dialog.DialogCreator;
 import com.beacmc.beacmcauth.api.config.dialog.button.DialogButton;
+import com.beacmc.beacmcauth.api.dialog.DialogCreator;
 import com.beacmc.beacmcauth.api.dialog.DialogManager;
 import com.github.retrooper.packetevents.protocol.dialog.CommonDialogData;
 import com.github.retrooper.packetevents.protocol.dialog.Dialog;
@@ -13,7 +13,8 @@ import com.github.retrooper.packetevents.protocol.dialog.body.PlainMessage;
 import com.github.retrooper.packetevents.protocol.dialog.body.PlainMessageDialogBody;
 import com.github.retrooper.packetevents.protocol.dialog.button.ActionButton;
 import de.exlll.configlib.Configuration;
-import lombok.*;
+import lombok.Getter;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;

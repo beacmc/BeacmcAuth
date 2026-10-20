@@ -6,6 +6,7 @@ import com.beacmc.beacmcauth.api.auth.AuthenticatingPlayer;
 import com.beacmc.beacmcauth.api.command.CommandSender;
 import com.beacmc.beacmcauth.api.command.executor.CommandExecutor;
 import com.beacmc.beacmcauth.api.config.Config;
+import com.beacmc.beacmcauth.api.config.ConfigMessages;
 import com.beacmc.beacmcauth.api.event.type.AuthLoginEvent;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
 import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
@@ -36,14 +37,15 @@ public class LoginCommandExecutor implements CommandExecutor {
         }
 
         final Config config = plugin.getConfig();
+        final ConfigMessages messages = config.getMessages();
 
         if (!authManager.getAuthPlayers().contains(player.getName().toLowerCase())) {
-            player.sendMessage(config.getMessages().getAlreadyAuthed());
+            player.sendMessage(messages.getAlreadyAuthed());
             return;
         }
 
         if (cooldown.isCooldown(player.getLowercaseName())) {
-            player.sendMessage(config.getMessages().getCooldown());
+            player.sendMessage(messages.getCooldown());
             return;
         }
         cooldown.createCooldown(player.getLowercaseName(), 1_000);
@@ -52,23 +54,29 @@ public class LoginCommandExecutor implements CommandExecutor {
 
         future.thenAccept(protectedPlayer -> {
             if (!protectedPlayer.isRegister()) {
-                player.sendMessage(config.getMessages().getNotRegistered());
+                player.sendMessage(messages.getNotRegistered());
                 return;
             }
 
             if (args.length < 1) {
-                player.sendMessage(config.getMessages().getEnterPassword());
+                player.sendMessage(messages.getEnterPassword());
                 return;
             }
 
-            if (!protectedPlayer.checkPassword(args[0])) {
+            String password = args[0];
+            if (!protectedPlayer.checkPassword(password)) {
                 AuthenticatingPlayer authPlayer = authManager.getAuthPlayers()
                         .getCacheData(protectedPlayer.getLowercaseName());
 
+                if (authPlayer == null) {
+                    player.disconnect(messages.getInternalError());
+                    return;
+                }
+
                 if (!authPlayer.useAttempt()) {
-                    player.disconnect(config.getMessages().getAttemptsLeft());
+                    player.disconnect(messages.getAttemptsLeft());
                 } else {
-                    player.sendMessage(config.getMessages().getWrongPassword().replace(
+                    player.sendMessage(messages.getWrongPassword().replace(
                             "%attempts%",
                             String.valueOf(authPlayer.getAttempts() - 1))
                     );
@@ -76,7 +84,7 @@ public class LoginCommandExecutor implements CommandExecutor {
                 return;
             }
 
-            player.sendMessage(config.getMessages().getLoginSuccess());
+            player.sendMessage(messages.getLoginSuccess());
             player.sendTitle("&7", "&7", 0, 25, 0);
             authManager.getAuthPlayers().removeById(protectedPlayer.getLowercaseName());
 
@@ -90,8 +98,8 @@ public class LoginCommandExecutor implements CommandExecutor {
 
                 plugin.getEventManager().fire(new AuthLoginEvent(protectedPlayer, player));
                 plugin.getSongManager().stop(player.getUUID());
-                player.sendMessage(config.getMessages().getNotLinked());
-                authManager.connectPlayer(player, config.findServer(config.getLobbyServers()));
+                player.sendMessage(messages.getNotLinked());
+                authManager.connectLobbyServer(player);
             }
         }).exceptionally(e -> {
             logger.error("LoginCommandExecutor have " + e.getCause().getClass().getSimpleName());

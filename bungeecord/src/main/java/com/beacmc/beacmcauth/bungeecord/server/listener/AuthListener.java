@@ -2,10 +2,10 @@ package com.beacmc.beacmcauth.bungeecord.server.listener;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.auth.AuthManager;
-import com.beacmc.beacmcauth.api.auth.premium.mojang.PremiumChangerProvider;
+import com.beacmc.beacmcauth.api.auth.premium.PremiumChangerProvider;
+import com.beacmc.beacmcauth.api.auth.premium.PremiumPlayer;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
-import com.beacmc.beacmcauth.api.message.Message;
 import com.beacmc.beacmcauth.api.server.Server;
 import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.song.SongManager;
@@ -33,23 +33,26 @@ public class AuthListener implements Listener {
     private final SongManager songManager;
     private final ServerLogger logger;
 
-    private Field rewriteIdField;
-    private Field uniqueIdField;
+    private static final Field rewriteIdField;
+    private static final Field uniqueIdField;
 
-    public AuthListener(BeacmcAuth plugin) {
-        this.plugin = plugin;
-        this.logger = plugin.getServerLogger();
-        this.authManager = plugin.getAuthManager();
-        this.songManager = plugin.getSongManager();
-
+    static {
         try {
             Class<?> clazz = Class.forName("net.md_5.bungee.connection.InitialHandler");
             rewriteIdField = clazz.getDeclaredField("rewriteId");
             rewriteIdField.setAccessible(true);
             uniqueIdField = clazz.getDeclaredField("uniqueId");
             uniqueIdField.setAccessible(true);
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
+    }
+
+    public AuthListener(BeacmcAuth plugin) {
+        this.plugin = plugin;
+        this.logger = plugin.getServerLogger();
+        this.authManager = plugin.getAuthManager();
+        this.songManager = plugin.getSongManager();
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -58,10 +61,26 @@ public class AuthListener implements Listener {
         final PendingConnection connection = event.getConnection();
         String name = connection.getName();
 
-        Message disconnectMessage = authManager.onPremiumLogin(name.toLowerCase(), (PremiumChangerProvider<? super PendingConnection>) BungeeBeacmcAuth.getInstance().getBeacmcAuth().getPremiumProvider(), connection);
-        if (disconnectMessage != null) {
-            event.setReason(disconnectMessage.toBaseComponent());
-            event.setCancelled(true);
+        event.registerIntent(BungeeBeacmcAuth.getInstance());
+        try {
+            authManager.onPremiumLogin(
+                            name.toLowerCase(),
+                            (PremiumChangerProvider<? super PendingConnection>) BungeeBeacmcAuth
+                                    .getInstance()
+                                    .getBeacmcAuth()
+                                    .getPremiumProvider(),
+                            connection)
+                    .whenComplete((ignored, error) -> {
+                        try {
+                            if (error != null) {
+                                logger.error("Premium login have error: " + error.getMessage());
+                            }
+                        } finally {
+                            event.completeIntent(BungeeBeacmcAuth.getInstance());
+                        }
+                    });
+        } catch (Exception ignored) {
+            event.completeIntent(BungeeBeacmcAuth.getInstance());
         }
     }
 
@@ -69,12 +88,28 @@ public class AuthListener implements Listener {
     public void onLogin(LoginEvent event) {
         final PendingConnection connection = event.getConnection();
 
-        UUID playerUuid = UUIDFetcher.byName(connection.getName().toLowerCase());
+        String name = connection.getName();
+        UUID potentialOnlineUuid = connection.getUniqueId();
+        UUID offlineUuid = UUIDFetcher.byName(name.toLowerCase());
+        handleOnlineUuid(
+                name,
+                potentialOnlineUuid,
+                offlineUuid
+        );
         try {
-            rewriteIdField.set(connection, playerUuid);
-            uniqueIdField.set(connection, playerUuid);
+            rewriteIdField.set(connection, offlineUuid);
+            uniqueIdField.set(connection, offlineUuid);
         } catch (Throwable e) {
             e.printStackTrace();
+        }
+    }
+
+    private void handleOnlineUuid(String name, UUID potentialOnlineUuid, UUID offlineUuid) {
+        if (potentialOnlineUuid != null && !potentialOnlineUuid.equals(offlineUuid)) {
+            PremiumPlayer player = authManager.getOnlinePremiumPlayer(name.toLowerCase());
+            if (player != null && player.isTemplate()) {
+                player.setUniqueId(potentialOnlineUuid);
+            }
         }
     }
 

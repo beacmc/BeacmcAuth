@@ -195,4 +195,10 @@ public interface ConfigMessages {
     String getDialogCooldown();
 
     String getNotLinked();
+
+    String getRegisterBlockedDisconnect();
+
+    String getChangePasswordBlockedMessage();
+
+    String getLoginBlockedDisconnect();
 }

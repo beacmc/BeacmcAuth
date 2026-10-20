@@ -60,7 +60,7 @@ public class BungeeProxy implements Proxy {
     }
 
     @Override
-    public ProxyType getProxyType() {
+    public ProxyType getType() {
         return ProxyType.BUNGEECORD;
     }
 

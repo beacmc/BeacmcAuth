@@ -1,6 +1,5 @@
 package com.beacmc.beacmcauth.core.packet;
 
-import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.packet.position.PlayerPosition;
 import com.beacmc.beacmcauth.api.packet.position.PlayerPositionTracker;
 import com.beacmc.beacmcauth.core.packet.listener.PositionListener;

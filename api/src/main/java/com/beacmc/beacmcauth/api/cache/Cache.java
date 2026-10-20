@@ -1,5 +1,7 @@
 package com.beacmc.beacmcauth.api.cache;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -7,18 +9,20 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.stream.Stream;
 
+@Getter
+@RequiredArgsConstructor
 public abstract class Cache<T extends CachedData<ID>, ID> implements Iterable<T> {
 
-    public abstract Map<ID, T> getCaches();
+    protected final Map<ID, T> caches;
 
     public void addOrUpdateCache(T data) {
         if (data != null)
-            getCaches().put(data.getId(), data);
+            caches.put(data.getId(), data);
     }
 
     public void addCache(T data) {
         if (data != null)
-            getCaches().put(data.getId(), data);
+            caches.put(data.getId(), data);
     }
 
     public @Nullable T updateCache(T data) {
@@ -26,37 +30,44 @@ public abstract class Cache<T extends CachedData<ID>, ID> implements Iterable<T>
             return null;
 
         ID id = data.getId();
-        if (!getCaches().containsKey(id))
+        if (!caches.containsKey(id)) {
             return null;
+        }
 
-        getCaches().put(id, data);
+        caches.put(id, data);
         return data;
     }
 
-    public T getCacheData(ID id) {
-        return id != null ? getCaches().get(id) : null;
+    public @Nullable T getCacheData(ID id) {
+        return id != null ? caches.get(id) : null;
     }
 
     public void removeById(ID id) {
-        if (id != null)
-            getCaches().remove(id);
+        if (id != null) {
+            caches.remove(id);
+        }
     }
 
     public void removeCache(T data) {
-        if (data != null)
-            getCaches().remove(data.getId(), data);
+        if (data != null) {
+            caches.remove(data.getId(), data);
+        }
+    }
+
+    public void clear() {
+        caches.clear();
     }
 
     public boolean contains(ID id) {
-        return getCaches().containsKey(id);
+        return caches.containsKey(id);
     }
 
     public @NotNull Stream<T> stream() {
-        return getCaches().values().stream();
+        return caches.values().stream();
     }
 
     @Override
     public @NotNull Iterator<T> iterator() {
-        return getCaches().values().iterator();
+        return caches.values().iterator();
     }
 }

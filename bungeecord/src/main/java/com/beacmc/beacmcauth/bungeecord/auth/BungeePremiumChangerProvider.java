@@ -1,6 +1,6 @@
 package com.beacmc.beacmcauth.bungeecord.auth;
 
-import com.beacmc.beacmcauth.api.auth.premium.mojang.PremiumChangerProvider;
+import com.beacmc.beacmcauth.api.auth.premium.PremiumChangerProvider;
 import net.md_5.bungee.api.connection.PendingConnection;
 
 public class BungeePremiumChangerProvider implements PremiumChangerProvider<PendingConnection> {

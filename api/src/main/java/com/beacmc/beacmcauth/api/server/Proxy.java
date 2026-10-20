@@ -20,7 +20,7 @@ public interface Proxy {
 
     List<ServerPlayer> getPlayers();
 
-    ProxyType getProxyType();
+    ProxyType getType();
 
     void registerListener(Object listener);
 

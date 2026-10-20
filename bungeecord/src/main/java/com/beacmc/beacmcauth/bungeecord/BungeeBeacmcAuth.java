@@ -3,6 +3,7 @@ package com.beacmc.beacmcauth.bungeecord;
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.bungeecord.auth.BungeePremiumChangerProvider;
+import com.beacmc.beacmcauth.bungeecord.auth.protection.attack.NCXAttackProviderBootstrap;
 import com.beacmc.beacmcauth.bungeecord.library.BungeeLibraryProvider;
 import com.beacmc.beacmcauth.bungeecord.logger.BungeeServerLogger;
 import com.beacmc.beacmcauth.bungeecord.message.BungeeMessageProvider;
@@ -35,6 +36,7 @@ public final class BungeeBeacmcAuth extends Plugin {
                 .setPremiumProvider(new BungeePremiumChangerProvider());
 
         beacmcAuth.onEnable();
+        NCXAttackProviderBootstrap.bootstrap(beacmcAuth);
 
         Config config = beacmcAuth.getConfig();
         Metrics metrics = new Metrics(this, 23866);

@@ -1,4 +1,4 @@
-package com.beacmc.beacmcauth.api.auth.premium.mojang;
+package com.beacmc.beacmcauth.api.auth.premium;
 
 public interface PremiumChangerProvider<T> {
 

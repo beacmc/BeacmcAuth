@@ -2,12 +2,11 @@ package com.beacmc.beacmcauth.core;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.auth.AuthManager;
-import com.beacmc.beacmcauth.api.auth.premium.mojang.MojangAuthManager;
-import com.beacmc.beacmcauth.api.auth.premium.mojang.PremiumChangerProvider;
+import com.beacmc.beacmcauth.api.auth.premium.PremiumChangerProvider;
 import com.beacmc.beacmcauth.api.command.CommandManager;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.config.EmailConfig;
-import com.beacmc.beacmcauth.api.config.MojangAuthConfig;
+import com.beacmc.beacmcauth.api.config.ProtectionConfig;
 import com.beacmc.beacmcauth.api.config.loader.ConfigLoader;
 import com.beacmc.beacmcauth.api.config.social.DiscordConfig;
 import com.beacmc.beacmcauth.api.config.social.TelegramConfig;
@@ -22,12 +21,12 @@ import com.beacmc.beacmcauth.api.server.Proxy;
 import com.beacmc.beacmcauth.api.social.SocialManager;
 import com.beacmc.beacmcauth.api.song.SongManager;
 import com.beacmc.beacmcauth.core.auth.BaseAuthManager;
-import com.beacmc.beacmcauth.core.auth.mojang.BaseMojangAuthManager;
+import com.beacmc.beacmcauth.core.auth.protection.BaseProtectionManager;
 import com.beacmc.beacmcauth.core.command.BaseCommandManager;
 import com.beacmc.beacmcauth.core.command.executor.*;
 import com.beacmc.beacmcauth.core.config.BaseConfig;
 import com.beacmc.beacmcauth.core.config.BaseEmailConfig;
-import com.beacmc.beacmcauth.core.config.BaseMojangAuthConfig;
+import com.beacmc.beacmcauth.core.config.BaseProtectionConfig;
 import com.beacmc.beacmcauth.core.config.loader.BaseConfigLoader;
 import com.beacmc.beacmcauth.core.config.social.BaseDiscordConfig;
 import com.beacmc.beacmcauth.core.config.social.BaseTelegramConfig;
@@ -67,16 +66,16 @@ public class BaseBeacmcAuth implements BeacmcAuth {
     private TelegramConfig telegramConfig;
     private Config config;
     private EmailConfig emailConfig;
-    private MojangAuthConfig mojangAuthConfig;
     private DiscordConfig discordConfig;
+    private ProtectionConfig protectionConfig;
     private BaseDialogManager dialogManager;
     private SocialManager socialManager;
     private ExecutorService executorService;
     private SongManager songManager;
     private PlayerPositionTracker playerPositionTracker;
-    private MojangAuthManager mojangAuthManager;
     private EmailManager emailManager;
     private EventManager eventManager;
+    private BaseProtectionManager protectionManager;
 
     @Override
     public BeacmcAuth onEnable() {
@@ -90,15 +89,15 @@ public class BaseBeacmcAuth implements BeacmcAuth {
             database = new BaseDatabase(this);
             database.init();
 
-            mojangAuthManager = new BaseMojangAuthManager(this);
             authManager = new BaseAuthManager(this);
             emailManager = new BaseEmailManager(this);
 
             dialogManager = new BaseDialogManager(this);
-            dialogManager.loadDefaultDialogs();
+            this.reloadDialogs();
             dialogManager.registerDefaultListeners();
 
-            eventManager = new BaseEventManager();
+            eventManager = new BaseEventManager(serverLogger);
+            protectionManager = new BaseProtectionManager(this);
 
             socialManager = new BaseSocialManager(this);
             if (telegramConfig.isEnabled()) {
@@ -163,7 +162,13 @@ public class BaseBeacmcAuth implements BeacmcAuth {
         emailConfig = configLoader.load(new File(getDataFolder(), "email.yml"), BaseEmailConfig.class, new BaseEmailConfig());
         telegramConfig = configLoader.load(new File(getDataFolder(), "telegram.yml"), BaseTelegramConfig.class, new BaseTelegramConfig());
         discordConfig = configLoader.load(new File(getDataFolder(), "discord.yml"), BaseDiscordConfig.class, new BaseDiscordConfig());
-        mojangAuthConfig = configLoader.load(new File(getDataFolder(), "license-auth.yml"), BaseMojangAuthConfig.class, new BaseMojangAuthConfig());
+        protectionConfig = configLoader.load(new File(getDataFolder(), "protection.yml"), BaseProtectionConfig.class, new BaseProtectionConfig());
+    }
+
+    @Override
+    public void reloadDialogs() {
+        dialogManager.getDialogs().clear();
+        dialogManager.loadDefaultDialogs();
     }
 
     public <T> BeacmcAuth setPremiumProvider(PremiumChangerProvider<T> premiumChangerProvider) {

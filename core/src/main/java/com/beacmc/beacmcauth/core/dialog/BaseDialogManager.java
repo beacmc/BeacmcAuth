@@ -1,19 +1,23 @@
 package com.beacmc.beacmcauth.core.dialog;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
+import com.beacmc.beacmcauth.api.auth.action.AuthActionTypes;
 import com.beacmc.beacmcauth.api.cache.Cache;
 import com.beacmc.beacmcauth.api.cache.ConcurrentCache;
 import com.beacmc.beacmcauth.api.config.Config;
-import com.beacmc.beacmcauth.api.dialog.*;
+import com.beacmc.beacmcauth.api.dialog.DialogClickListener;
+import com.beacmc.beacmcauth.api.dialog.DialogManager;
 import com.beacmc.beacmcauth.api.dialog.custom.CustomDialog;
 import com.beacmc.beacmcauth.api.dialog.custom.DialogType;
 import com.beacmc.beacmcauth.api.dialog.custom.DialogUniqueId;
 import com.beacmc.beacmcauth.api.dialog.custom.DynamicUniqueId;
+import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.core.config.dialog.ChooseDialogSettings;
 import com.beacmc.beacmcauth.core.config.dialog.LoginDialogSettings;
 import com.beacmc.beacmcauth.core.config.dialog.RegisterDialogSettings;
 import com.beacmc.beacmcauth.core.dialog.listener.*;
 import com.github.retrooper.packetevents.protocol.dialog.Dialog;
+import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -97,5 +101,17 @@ public class BaseDialogManager implements DialogManager {
             register(cacheId, dialog);
         }
         return dialog;
+    }
+
+    @Override
+    public boolean canShowDialog(ServerPlayer player) {
+        Config config = plugin.getConfig();
+        if (!config.isDialogEnabled()) {
+            return false;
+        }
+
+        return player.isConnected()
+                && player.isNewerThanOrEqualsVersion(ClientVersion.V_1_21_6)
+                && !plugin.getProtectionManager().isBlockedAction(player, AuthActionTypes.OPEN_AUTH_DIALOG);
     }
 }

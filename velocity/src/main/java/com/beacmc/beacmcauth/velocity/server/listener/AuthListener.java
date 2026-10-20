@@ -2,15 +2,16 @@ package com.beacmc.beacmcauth.velocity.server.listener;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.auth.AuthManager;
-import com.beacmc.beacmcauth.api.auth.premium.mojang.PremiumChangerProvider;
+import com.beacmc.beacmcauth.api.auth.premium.PremiumChangerProvider;
+import com.beacmc.beacmcauth.api.auth.premium.PremiumPlayer;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
-import com.beacmc.beacmcauth.api.message.Message;
 import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.beacmc.beacmcauth.api.song.SongManager;
 import com.beacmc.beacmcauth.core.util.UUIDFetcher;
 import com.beacmc.beacmcauth.velocity.VelocityBeacmcAuth;
 import com.beacmc.beacmcauth.velocity.player.VelocityServerPlayer;
+import com.velocitypowered.api.event.EventTask;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.command.CommandExecuteEvent;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
@@ -19,6 +20,8 @@ import com.velocitypowered.api.event.player.*;
 import com.velocitypowered.api.proxy.ConsoleCommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.util.GameProfile;
+
+import java.util.UUID;
 
 public class AuthListener {
 
@@ -36,11 +39,24 @@ public class AuthListener {
 
     @Subscribe
     @SuppressWarnings("unchecked")
-    public void onPreLogin(PreLoginEvent event) {
-        Message disconnectMessage = authManager.onPremiumLogin(event.getUsername().toLowerCase(), (PremiumChangerProvider<? super PreLoginEvent>) VelocityBeacmcAuth.getInstance().getBeacmcAuth().getPremiumProvider(), event);
-        if (disconnectMessage != null) {
-            event.setResult(PreLoginEvent.PreLoginComponentResult.denied(disconnectMessage.toComponent()));
-        }
+    public EventTask onPreLogin(PreLoginEvent event) {
+        return EventTask.withContinuation(continuation -> {
+            authManager.onPremiumLogin(
+                            event.getUsername().toLowerCase(),
+                            (PremiumChangerProvider<? super PreLoginEvent>) VelocityBeacmcAuth.getInstance()
+                                    .getBeacmcAuth()
+                                    .getPremiumProvider(),
+                            event)
+                    .whenComplete((ignored, error) -> {
+                        try {
+                            if (error != null) {
+                                logger.error("Premium login have error: " + error.getMessage());
+                            }
+                        } finally {
+                            continuation.resume();
+                        }
+                    });
+        });
     }
 
     @Subscribe
@@ -70,7 +86,23 @@ public class AuthListener {
     @Subscribe
     public void onGameProfile(GameProfileRequestEvent event) {
         GameProfile profile = event.getGameProfile();
-        event.setGameProfile(profile.withId(UUIDFetcher.byName(event.getUsername())));
+
+        String name = event.getUsername();
+        UUID offlineUuid = UUIDFetcher.byName(name);
+        UUID potentialOnlineUuid = profile.getId();
+
+        handleOnlineUuid(name, potentialOnlineUuid, offlineUuid);
+
+        event.setGameProfile(profile.withId(offlineUuid));
+    }
+
+    private void handleOnlineUuid(String name, UUID potentialOnlineUuid, UUID offlineUuid) {
+        if (potentialOnlineUuid != null && !potentialOnlineUuid.equals(offlineUuid)) {
+            PremiumPlayer player = authManager.getOnlinePremiumPlayer(name.toLowerCase());
+            if (player != null && player.isTemplate()) {
+                player.setUniqueId(potentialOnlineUuid);
+            }
+        }
     }
 
     @Subscribe

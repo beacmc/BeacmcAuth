@@ -1,10 +1,9 @@
 package com.beacmc.beacmcauth.api.dialog;
 
-import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.cache.Cache;
 import com.beacmc.beacmcauth.api.dialog.custom.CustomDialog;
-import com.beacmc.beacmcauth.api.dialog.custom.DialogType;
 import com.beacmc.beacmcauth.api.dialog.custom.DialogUniqueId;
+import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import com.github.retrooper.packetevents.protocol.dialog.Dialog;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,4 +51,6 @@ public interface DialogManager {
     List<DialogClickListener> getDialogClickListeners();
 
     Dialog buildAndSave(@NotNull String dialogKey, @NotNull Function<DialogManager, Dialog> function, @NotNull Map<String, ?> placeholders);
+
+    boolean canShowDialog(ServerPlayer player);
 }

@@ -12,8 +12,6 @@ import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.wrapper.common.client.WrapperCommonClientCustomClickAction;
 import lombok.RequiredArgsConstructor;
 
-import java.awt.*;
-
 @RequiredArgsConstructor
 public class ChooseAuthDialogListener implements DialogClickListener {
 
@@ -29,6 +27,11 @@ public class ChooseAuthDialogListener implements DialogClickListener {
             ServerPlayer player = proxy.getPlayer(user.getUUID());
             AuthenticatingPlayer authPlayer = authManager.getAuthPlayers()
                     .getCacheData(user.getName().toLowerCase());
+
+            if (authPlayer == null) {
+                player.closeDialog();
+                return;
+            }
 
             if (authPlayer.getPlayer().isRegister()) {
                 Dialog dialog = dialogManager.getDialog(DialogType.LOGIN);

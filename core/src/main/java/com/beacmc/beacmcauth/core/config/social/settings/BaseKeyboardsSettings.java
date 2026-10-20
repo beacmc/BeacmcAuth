@@ -5,6 +5,7 @@ import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.social.keyboard.Keyboard;
 import com.beacmc.beacmcauth.api.social.keyboard.button.Button;
 import com.beacmc.beacmcauth.api.social.keyboard.button.ButtonType;
+import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -89,8 +90,10 @@ public class BaseKeyboardsSettings implements KeyboardsSettings {
                 .map(button -> button.parseButtonPlaceholders(Map.of("{page}", page)))
                 .toList());
 
-        final int start = page * 4;
-        final int end = Math.min(4, protectedPlayers.size());
+        int accountsInOnePage = accountListKeyboardSettings.getAccountsInOnePage();
+
+        final int start = page * accountsInOnePage;
+        final int end = Math.min(accountsInOnePage, protectedPlayers.size());
         final List<ProtectedPlayer> pageContent = protectedPlayers.subList(start, end);
 
         if (pageContent.isEmpty()) {
@@ -116,6 +119,7 @@ public class BaseKeyboardsSettings implements KeyboardsSettings {
     @SuppressWarnings("FieldMayBeFinal")
     public static class BaseAccountListKeyboardSettings implements AccountListKeyboardSettings {
 
+        @Comment("Max value: 4")
         private int accountsInOnePage = 4;
         private Button accountButton = Button.builder()
                 .label("{name}")
@@ -136,5 +140,9 @@ public class BaseKeyboardsSettings implements KeyboardsSettings {
                         .build()
 
         );
+
+        public int getAccountsInOnePage() {
+            return Math.clamp(accountsInOnePage, 1, 4);
+        }
     }
 }

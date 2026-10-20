@@ -3,15 +3,17 @@ package com.beacmc.beacmcauth.api.cache.cooldown;
 import com.beacmc.beacmcauth.api.cache.Cache;
 import lombok.Getter;
 
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @Getter
 public class AbstractCooldown<ID> extends Cache<CooldownUser<ID>, ID> {
 
-    private final Map<ID, CooldownUser<ID>> caches = new ConcurrentHashMap<>();
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+
+    public AbstractCooldown() {
+        super(new ConcurrentHashMap<>());
+    }
 
     public void createCooldown(ID id, long time) {
         CooldownUser<ID> user = new CooldownUser<>(id, System.currentTimeMillis() + time);
