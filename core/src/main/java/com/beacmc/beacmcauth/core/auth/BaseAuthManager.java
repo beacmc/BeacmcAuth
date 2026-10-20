@@ -242,7 +242,7 @@ public class BaseAuthManager implements AuthManager {
             T obj
     ) {
         return getProtectedPlayer(playerName).thenCompose(protectedPlayer -> {
-            if (playerName == null) {
+            if (playerName == null || protectedPlayer == null) {
                 return CompletableFuture.completedFuture(null);
             }
 
