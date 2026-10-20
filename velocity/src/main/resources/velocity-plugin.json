@@ -1,7 +1,7 @@
 {
   "id": "beacmcauth",
   "name": "BeacmcAuth",
-  "version": "${project.version}",
+  "version": "${version}",
   "authors": [
     "beacmc"
   ],

@@ -1,5 +1,5 @@
 name: BeacmcAuth
-version: '${project.version}'
+version: '${version}'
 main: com.beacmc.beacmcauth.bungeecord.BungeeBeacmcAuth
 author: beacmc
 depends:

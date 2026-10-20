@@ -11,3 +11,12 @@ dependencies {
     implementation(libs.bstatsVelocity)
     implementation(libs.libbyVelocity)
 }
+
+tasks {
+    processResources {
+        val props = mapOf("version" to version)
+        filesMatching("velocity-plugin.json") {
+            expand(props)
+        }
+    }
+}

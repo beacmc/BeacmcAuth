@@ -11,3 +11,12 @@ dependencies {
     implementation(libs.libbyBungee)
     compileOnly(libs.nullcordxApi)
 }
+
+tasks {
+    processResources {
+        val props = mapOf("version" to version)
+        filesMatching("bungee.yml") {
+            expand(props)
+        }
+    }
+}
