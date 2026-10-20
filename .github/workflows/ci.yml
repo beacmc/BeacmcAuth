@@ -4,6 +4,7 @@ on:
     branches:
       - main
       - "feature/**"
+      - "fix/**"
   pull_request:
     branches:
       - main
@@ -14,30 +15,26 @@ jobs:
       matrix:
         java: [ 21 ]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: ${{ matrix.java }}
-          cache: maven
+          cache: gradle
+
+      - name: Make Gradle Wrapper executable
+        run: chmod +x gradlew
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Build all modules
-        run: mvn clean install -pl api,core,bungeecord,velocity -DskipTests
+        run: ./gradlew clean build
 
-      - name: Upload BungeeCord JAR
+      - name: Upload JAR
         uses: actions/upload-artifact@v4
         with:
-          name: bungeecord-jar
-          path: |
-            bungeecord/target/*.jar
-            !bungeecord/target/original-*.jar
-
-      - name: Upload Velocity JAR
-        uses: actions/upload-artifact@v4
-        with:
-          name: velocity-jar
-          path: |
-            velocity/target/*.jar
-            !velocity/target/original-*.jar
+          name: plugin-jar
+          path: build/libs/*.jar
