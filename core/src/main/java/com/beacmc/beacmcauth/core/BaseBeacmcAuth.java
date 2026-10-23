@@ -102,8 +102,8 @@ public class BaseBeacmcAuth implements BeacmcAuth {
             socialManager = new BaseSocialManager(this);
             if (telegramConfig.isEnabled()) {
                 getLibraryProvider().loadLibrary(Libraries.KOTLIN);
-                getLibraryProvider().loadLibrary(Libraries.OKIO);
                 getLibraryProvider().loadLibrary(Libraries.OKHTTP);
+                getLibraryProvider().loadLibrary(Libraries.OKHTTP_LOGGING);
                 getLibraryProvider().loadLibrary(Libraries.TELEGRAM);
                 socialManager.getSocials().add(new TelegramSocial(this));
             }

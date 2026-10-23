@@ -19,12 +19,12 @@ import com.beacmc.beacmcauth.core.util.runnable.DiscordRunnable;
 import lombok.ToString;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
+import net.dv8tion.jda.api.components.buttons.ButtonStyle;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.interactions.components.ItemComponent;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.internal.utils.JDALogger;
 
@@ -78,11 +78,17 @@ public class DiscordSocial implements Social<JDA, Long> {
 
     @Override
     public Object createKeyboard(Keyboard keyboard) {
-        List<ItemComponent[]> items = new ArrayList<>();
+        List<ActionRow> items = new ArrayList<>();
         keyboard.getButtons().forEach(buttons -> {
-            List<ItemComponent> row = new ArrayList<>();
-            buttons.forEach(button -> row.add(Button.of(getButtonStyle(button.getType()), button.getCallbackData(), button.getLabel())));
-            items.add(row.toArray(ItemComponent[]::new));
+            List<Button> row = new ArrayList<>();
+            buttons.forEach(button -> row.add(
+                    Button.of(
+                            getButtonStyle(button.getType()),
+                            button.getCallbackData(),
+                            button.getLabel()
+                    )
+            ));
+            items.add(ActionRow.of(row));
         });
         return items;
     }

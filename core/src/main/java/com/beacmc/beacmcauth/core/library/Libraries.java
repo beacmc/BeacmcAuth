@@ -7,7 +7,7 @@ public class Libraries {
     public static final Library JDA = Library.builder()
             .groupId("net{}dv8tion")
             .artifactId("JDA")
-            .version("5.2.2")
+            .version("6.7.0")
             .resolveTransitiveDependencies(true)
             .excludeTransitiveDependency("club{}minnced", "opus-java")
             .build();
@@ -33,25 +33,25 @@ public class Libraries {
     public static final Library OKHTTP = Library.builder()
             .groupId("com{}squareup{}okhttp3")
             .artifactId("okhttp")
-            .version("4.12.0")
+            .version("5.3.2")
+            .build();
+
+    public static final Library OKHTTP_LOGGING = Library.builder()
+            .groupId("com{}squareup{}okhttp3")
+            .artifactId("logging-interceptor")
+            .version("5.3.2")
             .build();
 
     public static final Library KOTLIN = Library.builder()
             .groupId("org{}jetbrains{}kotlin")
             .artifactId("kotlin-stdlib")
-            .version("1.9.23")
-            .build();
-
-    public static final Library OKIO = Library.builder()
-            .groupId("com{}squareup{}okio")
-            .artifactId("okio-jvm")
-            .version("3.9.0")
+            .version("2.3.21")
             .build();
 
 
     public static final Library TELEGRAM = Library.builder()
             .groupId("com{}github{}pengrad")
             .artifactId("java-telegram-bot-api")
-            .version("7.11.0")
+            .version("10.3.0")
             .build();
 }
