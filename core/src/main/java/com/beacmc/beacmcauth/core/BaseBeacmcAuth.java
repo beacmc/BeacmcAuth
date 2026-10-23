@@ -77,8 +77,13 @@ public class BaseBeacmcAuth implements BeacmcAuth {
     private EventManager eventManager;
     private BaseProtectionManager protectionManager;
 
+    @Getter
+    private static BeacmcAuth instance;
+
     @Override
     public BeacmcAuth onEnable() {
+        instance = this;
+
         try {
             executorService = Executors.newFixedThreadPool(8);
             libraryProvider.loadLibrary(Libraries.JDA);
@@ -152,6 +157,7 @@ public class BaseBeacmcAuth implements BeacmcAuth {
         commandManager = null;
         serverLogger = null;
         configLoader = null;
+        instance = null;
         return this;
     }
 
