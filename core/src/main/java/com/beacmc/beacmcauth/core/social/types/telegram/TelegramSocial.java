@@ -12,6 +12,7 @@ import com.beacmc.beacmcauth.api.social.SocialManager;
 import com.beacmc.beacmcauth.api.social.SocialType;
 import com.beacmc.beacmcauth.api.social.confirmation.ConfirmationPlayer;
 import com.beacmc.beacmcauth.api.social.keyboard.Keyboard;
+import com.beacmc.beacmcauth.api.social.keyboard.button.ButtonType;
 import com.beacmc.beacmcauth.core.cache.cooldown.TelegramCooldown;
 import com.beacmc.beacmcauth.core.social.types.telegram.listener.TelegramUpdatesListener;
 import com.beacmc.beacmcauth.core.util.runnable.TelegramRunnable;
@@ -61,10 +62,16 @@ public class TelegramSocial implements Social<TelegramBot, Long> {
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         keyboard.getButtons().forEach(lines -> {
             List<InlineKeyboardButton> line = new LinkedList<>();
-            lines.forEach(button ->
-                    line.add(new InlineKeyboardButton(button.getLabel())
-                            .callbackData(button.getCallbackData()))
-            );
+            lines.forEach(button -> {
+                InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton(button.getLabel())
+                        .callbackData(button.getCallbackData());
+
+                ButtonType type = button.getType();
+                if (type != null && type != ButtonType.SECONDARY) {
+                    inlineKeyboardButton.style(type.name().toLowerCase());
+                }
+                line.add(inlineKeyboardButton);
+            });
             markup.addRow(line.toArray(new InlineKeyboardButton[0]));
         });
         return markup;
