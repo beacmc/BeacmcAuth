@@ -20,7 +20,7 @@ public class DiscordListener extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        if (!(event.getChannel() instanceof PrivateChannel)) return;
+        if (!(event.getChannel() instanceof PrivateChannel) || event.getMessage().getAuthor().isBot()) return;
 
         final String message = event.getMessage().getContentRaw();
 
@@ -44,7 +44,7 @@ public class DiscordListener extends ListenerAdapter {
                 new DiscordPlayer(event.getUser()),
                 discord,
                 Button.builder()
-                        .callbackData(event.getComponentId())
+                        .callbackData(event.getButton().getCustomId())
                         .label(event.getButton().getLabel())
                         .type(ButtonType.SECONDARY)
                         .build()
