@@ -3,6 +3,7 @@ package com.beacmc.beacmcauth.api.auth;
 import com.beacmc.beacmcauth.api.auth.premium.PremiumChangerProvider;
 import com.beacmc.beacmcauth.api.auth.premium.PremiumPlayer;
 import com.beacmc.beacmcauth.api.cache.Cache;
+import com.beacmc.beacmcauth.api.crypto.hash.HashedPassword;
 import com.beacmc.beacmcauth.api.model.AltAccounts;
 import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.server.Server;
@@ -58,9 +59,13 @@ public interface AuthManager {
 
     CompletableFuture<ProtectedPlayer> register(ProtectedPlayer protectedPlayer, String password);
 
+    CompletableFuture<ProtectedPlayer> changePassword(ProtectedPlayer protectedPlayer, HashedPassword newPassword);
+
     CompletableFuture<ProtectedPlayer> changePassword(ProtectedPlayer protectedPlayer, String newPassword);
 
     CompletableFuture<AltAccounts> getAltAccounts(String hostAddress);
+
+    CompletableFuture<Boolean> checkPassword(ProtectedPlayer player, String hashedPassword);
 
     void addAltAccount(ProtectedPlayer player, String ip);
 

@@ -12,6 +12,9 @@ import com.beacmc.beacmcauth.api.cache.ConcurrentCache;
 import com.beacmc.beacmcauth.api.config.AccountLimiterSettings;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.config.ConfigMessages;
+import com.beacmc.beacmcauth.api.crypto.CryptoRegistry;
+import com.beacmc.beacmcauth.api.crypto.hash.Hash;
+import com.beacmc.beacmcauth.api.crypto.hash.HashedPassword;
 import com.beacmc.beacmcauth.api.database.dao.ProtectedPlayerDao;
 import com.beacmc.beacmcauth.api.dialog.DialogManager;
 import com.beacmc.beacmcauth.api.dialog.custom.DialogType;
@@ -32,7 +35,6 @@ import com.j256.ormlite.stmt.SelectArg;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mindrot.jbcrypt.BCrypt;
 
 import java.net.InetAddress;
 import java.sql.SQLException;
@@ -335,7 +337,27 @@ public class BaseAuthManager implements AuthManager {
     public CompletableFuture<ProtectedPlayer> createProtectedPlayer(String lowercaseName, String realName, String password, long session, long lastJoin, String registerIp, String lastIp, UUID uuid) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                ProtectedPlayer execute = new ProtectedPlayer(lowercaseName, realName, uuid, null, password, session, lastJoin, false, true, true, registerIp, lastIp, null, null, null, 0, 0);
+                ProtectedPlayer execute = new ProtectedPlayer(
+                        lowercaseName,
+                        realName,
+                        uuid,
+                        null,
+                        password,
+                        null, // FIXME
+                        session,
+                        lastJoin,
+                        false,
+                        true,
+                        true,
+                        registerIp,
+                        lastIp,
+                        null,
+                        null,
+                        null,
+                        0,
+                        0,
+                        null
+                );
                 dao.create(execute);
                 return execute;
             } catch (Exception e) {
@@ -469,21 +491,63 @@ public class BaseAuthManager implements AuthManager {
     }
 
     @Override
-    public CompletableFuture<ProtectedPlayer> changePassword(ProtectedPlayer protectedPlayer, String newPassword) {
-        return CompletableFuture.supplyAsync(() -> {
-            final Config config = plugin.getConfig();
+    public CompletableFuture<Boolean> checkPassword(ProtectedPlayer player, String password) {
+        HashedPassword model = player.getHashedPassword();
+        String hashedPassword = model.getPassword();
+        String hashId = model.getHashId();
 
+        Hash mainHash = plugin.getConfig().getPasswordHash();
+        Hash currentHash = mainHash.id().equals(hashId)
+                ? mainHash
+                : CryptoRegistry.INSTANCE.findById(hashId);
+
+        if (currentHash == null) {
+            return CompletableFuture.failedFuture(new CompletionException(
+                    "Unknown hash type: " + hashId,
+                    new IllegalArgumentException()
+            ));
+        }
+
+
+        return currentHash.matches(hashedPassword, password)
+                .thenCompose(result -> {
+                    if (!result || !mainHash.isMigrateAvailable(currentHash)) {
+                        return CompletableFuture.completedFuture(result);
+                    }
+
+                    return mainHash.migrate(password)
+                            .thenCompose(newPassword -> {
+                                player.setHashedPassword(newPassword);
+                                return changePassword(player, newPassword)
+                                        .thenApply(ignored -> true);
+                            });
+                });
+    }
+
+    @Override
+    public CompletableFuture<ProtectedPlayer> changePassword(ProtectedPlayer protectedPlayer, HashedPassword hashedPassword) {
+        return CompletableFuture.supplyAsync(() -> {
             try {
-                logger.debug("Player(" + protectedPlayer.getRealName() + ") successfully changed password");
                 dao.createOrUpdate(protectedPlayer
                         .setSession(0)
-                        .setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt(config.getBCryptRounds()))));
+                        .setPassword(hashedPassword));
                 playerCache.addOrUpdateCache(protectedPlayer);
+                logger.debug("Player(" + protectedPlayer.getRealName() + ") successfully changed password");
             } catch (SQLException e) {
                 e.printStackTrace();
             }
             return protectedPlayer;
         }, executorService);
+    }
+
+    @Override
+    public CompletableFuture<ProtectedPlayer> changePassword(ProtectedPlayer protectedPlayer, String newPassword) {
+        Hash hash = plugin.getConfig().getPasswordHash();
+        return hash.hash(newPassword)
+                .thenCompose(hashed -> changePassword(
+                        protectedPlayer,
+                        new HashedPassword(hash.id(), hashed)
+                ));
     }
 
     @Override
@@ -494,18 +558,20 @@ public class BaseAuthManager implements AuthManager {
         if (player == null) {
             return null;
         }
-
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                logger.debug("Player(" + protectedPlayer.getRealName() + ") successfully registered");
-                dao.createOrUpdate(protectedPlayer.setPassword(BCrypt.hashpw(password, BCrypt.gensalt(config.getBCryptRounds()))));
-                playerCache.addOrUpdateCache(protectedPlayer);
-            } catch (SQLException e) {
-                e.printStackTrace();
-                player.disconnect(config.getMessages().getInternalError());
-            }
-            return null;
-        }, executorService);
+        Hash passwordHash = config.getPasswordHash();
+        return passwordHash.hash(password)
+                .thenComposeAsync(hashedPassword -> {
+                    try {
+                        logger.debug("Player(" + protectedPlayer.getRealName() + ") successfully registered");
+                        dao.createOrUpdate(protectedPlayer
+                                .setPassword(new HashedPassword(passwordHash.id(), hashedPassword)));
+                        playerCache.addOrUpdateCache(protectedPlayer);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        player.disconnect(config.getMessages().getInternalError());
+                    }
+                    return null;
+                }, executorService);
     }
 
     @Override

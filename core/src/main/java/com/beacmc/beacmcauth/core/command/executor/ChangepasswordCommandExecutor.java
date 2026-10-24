@@ -62,28 +62,33 @@ public class ChangepasswordCommandExecutor implements CommandExecutor {
 
         authManager.getProtectedPlayer(player.getLowercaseName())
                 .thenAccept(protectedPlayer -> {
-                    if (!protectedPlayer.checkPassword(args[0])) {
-                        player.sendMessage(messages.getOldPasswordWrong());
-                        return;
-                    }
+                    authManager.checkPassword(protectedPlayer, args[0]).thenAccept(result -> {
+                        if (!result) {
+                            player.sendMessage(messages.getOldPasswordWrong());
+                            return;
+                        }
 
-                    if (!passwordPattern.matcher(args[1]).matches()) {
-                        player.sendMessage(messages.getInvalidPassword());
-                        return;
-                    }
+                        if (!passwordPattern.matcher(args[1]).matches()) {
+                            player.sendMessage(messages.getInvalidPassword());
+                            return;
+                        }
 
-                    if (args[1].equals(args[0])) {
-                        player.sendMessage(messages.getPasswordsMatch());
-                        return;
-                    }
+                        if (args[1].equals(args[0])) {
+                            player.sendMessage(messages.getPasswordsMatch());
+                            return;
+                        }
 
-                    assert protectedPlayer.getPassword() != null : "Password cannot be null";
-                    String oldPass = protectedPlayer.getPassword();
+                        String oldPass = protectedPlayer.getHashedPassword().getPassword();
 
-                    String password = args[1];
-                    authManager.changePassword(protectedPlayer, password);
-                    player.sendMessage(messages.getChangePasswordSuccess());
-                    plugin.getEventManager().fire(new ChangePasswordEvent(protectedPlayer, player, oldPass));
+                        String password = args[1];
+                        authManager.changePassword(protectedPlayer, password);
+                        player.sendMessage(messages.getChangePasswordSuccess());
+                        plugin.getEventManager().fire(new ChangePasswordEvent(protectedPlayer, player, oldPass));
+                    }).exceptionally(e -> {
+                        logger.error("ChangepasswordCommandExecutor have " + e.getCause().getClass().getSimpleName());
+                        logger.error("Message: " + e.getMessage());
+                        return null;
+                    });
                 }).exceptionally(e -> {
                     logger.error("ChangepasswordCommandExecutor have " + e.getCause().getClass().getSimpleName());
                     logger.error("Message: " + e.getMessage());

@@ -1,13 +1,13 @@
 package com.beacmc.beacmcauth.api.model;
 
 import com.beacmc.beacmcauth.api.cache.CachedData;
+import com.beacmc.beacmcauth.api.crypto.hash.HashedPassword;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import lombok.*;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.UUID;
 
@@ -27,6 +27,7 @@ public class ProtectedPlayer implements CachedData<UUID> {
     public static final String UUID_COLUMN = "uuid";
     public static final String ONLINE_UUID_COLUMN = "online_uuid";
     public static final String PASSWORD_COLUMN = "password";
+    public static final String HASH_TYPE_COLUMN = "hash_type";
     public static final String SESSION_COLUMN = "session";
     public static final String LAST_JOIN_COLUMN = "last_join";
     public static final String BANNED_COLUMN = "banned";
@@ -52,8 +53,15 @@ public class ProtectedPlayer implements CachedData<UUID> {
     @DatabaseField(columnName = ONLINE_UUID_COLUMN)
     private @Nullable UUID onlineUuid;
 
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
     @DatabaseField(columnName = PASSWORD_COLUMN)
     private @Nullable String password;
+
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
+    @DatabaseField(columnName = HASH_TYPE_COLUMN)
+    private @Nullable String hash_type;
 
     @DatabaseField(columnName = SESSION_COLUMN, defaultValue = "0")
     private long session;
@@ -93,6 +101,8 @@ public class ProtectedPlayer implements CachedData<UUID> {
     @DatabaseField(columnName = TELEGRAM_COLUMN, defaultValue = "0")
     private long telegram;
 
+    private transient HashedPassword hashedPassword;
+
     public boolean isSessionActive(long sessionTime) {
         final long currentTimeMillis = System.currentTimeMillis();
         final long sessionTimeMillis = (sessionTime * 60) * 1000;
@@ -102,9 +112,9 @@ public class ProtectedPlayer implements CachedData<UUID> {
 
     public ProtectedPlayer setSecretQuestion(@Nullable String question, @Nullable String answer) {
         this.secretQuestion = question;
-        this.hashedSecretAnswer = answer != null
-                ? BCrypt.hashpw(answer, BCrypt.gensalt(10))
-                : null;
+//        this.hashedSecretAnswer = answer != null
+//                ? BCrypt.hashpw(answer, BCrypt.gensalt(10))
+//                : null; FIXME
         return this;
     }
 
@@ -114,20 +124,36 @@ public class ProtectedPlayer implements CachedData<UUID> {
 
     public boolean checkSecretAnswer(String answer) {
         return secretQuestion != null
-                && hashedSecretAnswer != null
-                && BCrypt.checkpw(answer, hashedSecretAnswer);
+                && hashedSecretAnswer != null;
+//                && BCrypt.checkpw(answer, hashedSecretAnswer); FIXME
     }
 
     public boolean isValidIp(String ip) {
         return lastIp != null && lastIp.equals(ip);
     }
 
-    public boolean checkPassword(String pass) {
-        return BCrypt.checkpw(pass, getPassword());
+    public ProtectedPlayer setPassword(@Nullable HashedPassword hashedPassword) {
+        this.hashedPassword = hashedPassword;
+        if (hashedPassword != null) {
+            this.password = hashedPassword.getPassword();
+            this.hash_type = hashedPassword.getHashId();
+        } else {
+            this.password = null;
+            this.hash_type = null;
+        }
+        return this;
+    }
+
+    public HashedPassword getHashedPassword() {
+        if (hashedPassword == null) {
+            hashedPassword = new HashedPassword(hash_type, password);
+        }
+
+        return hashedPassword;
     }
 
     public boolean isRegister() {
-        return getPassword() != null;
+        return password != null;
     }
 
     @Override

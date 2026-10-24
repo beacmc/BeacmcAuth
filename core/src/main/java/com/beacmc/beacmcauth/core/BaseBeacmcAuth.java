@@ -10,6 +10,7 @@ import com.beacmc.beacmcauth.api.config.ProtectionConfig;
 import com.beacmc.beacmcauth.api.config.loader.ConfigLoader;
 import com.beacmc.beacmcauth.api.config.social.DiscordConfig;
 import com.beacmc.beacmcauth.api.config.social.TelegramConfig;
+import com.beacmc.beacmcauth.api.crypto.CryptoExecutor;
 import com.beacmc.beacmcauth.api.database.Database;
 import com.beacmc.beacmcauth.api.email.EmailManager;
 import com.beacmc.beacmcauth.api.event.EventManager;
@@ -157,6 +158,7 @@ public class BaseBeacmcAuth implements BeacmcAuth {
         commandManager = null;
         serverLogger = null;
         configLoader = null;
+        CryptoExecutor.shutdown();
         instance = null;
         return this;
     }

@@ -51,10 +51,24 @@ public class LoginListener implements DialogClickListener {
 
             ProtectedPlayer protectedPlayer = authPlayer.getPlayer();
             String password = nbt.getStringTagValueOrNull("password");
+            if (password == null || password.isBlank()) return;
 
-            if (password == null
-                    || password.isEmpty()
-                    || !protectedPlayer.checkPassword(password)) {
+            authManager.checkPassword(protectedPlayer, password).thenAccept(result -> {
+                if (result) {
+                    player.sendMessage(config.getMessages().getLoginSuccess());
+                    player.sendTitle("&7", "&7", 0, 25, 0);
+                    authManager.getAuthPlayers().removeById(protectedPlayer.getLowercaseName());
+                    player.closeDialog();
+
+                    if (!plugin.getSocialManager().startPlayerConfirmations(protectedPlayer)) {
+                        plugin.getEventManager().fire(new AuthLoginEvent(protectedPlayer, player));
+                        authManager.performLogin(protectedPlayer);
+                        plugin.getSongManager().stop(player.getUUID());
+                        authManager.connectLobbyServer(player);
+                    }
+                    return;
+                }
+
                 if (!authPlayer.useAttempt()) {
                     player.disconnect(config.getMessages().getAttemptsLeft());
                 } else {
@@ -64,20 +78,7 @@ public class LoginListener implements DialogClickListener {
                     );
                     player.showDialog(dialog);
                 }
-                return;
-            }
-
-            player.sendMessage(config.getMessages().getLoginSuccess());
-            player.sendTitle("&7", "&7", 0, 25, 0);
-            authManager.getAuthPlayers().removeById(protectedPlayer.getLowercaseName());
-            player.closeDialog();
-
-            if (!plugin.getSocialManager().startPlayerConfirmations(protectedPlayer)) {
-                plugin.getEventManager().fire(new AuthLoginEvent(protectedPlayer, player));
-                authManager.performLogin(protectedPlayer);
-                plugin.getSongManager().stop(player.getUUID());
-                authManager.connectLobbyServer(player);
-            }
+            });
         }
     }
 

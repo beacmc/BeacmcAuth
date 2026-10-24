@@ -1,5 +1,6 @@
 package com.beacmc.beacmcauth.api.config;
 
+import com.beacmc.beacmcauth.api.crypto.hash.Hash;
 import com.beacmc.beacmcauth.api.dialog.DialogCreator;
 import com.beacmc.beacmcauth.api.server.Server;
 
@@ -15,7 +16,11 @@ public interface Config {
 
     boolean isNameCaseControl();
 
+    Hash getPasswordHash();
+
     Integer getBCryptRounds();
+
+    Argon2Settings getArgon2Settings();
 
     Pattern getNicknameRegex();
 

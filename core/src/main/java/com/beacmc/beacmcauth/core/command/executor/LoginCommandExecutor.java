@@ -64,43 +64,46 @@ public class LoginCommandExecutor implements CommandExecutor {
             }
 
             String password = args[0];
-            if (!protectedPlayer.checkPassword(password)) {
-                AuthenticatingPlayer authPlayer = authManager.getAuthPlayers()
-                        .getCacheData(protectedPlayer.getLowercaseName());
 
-                if (authPlayer == null) {
-                    player.disconnect(messages.getInternalError());
-                    return;
+            authManager.checkPassword(protectedPlayer, password).thenAccept(result -> {
+                if (!result) {
+                    AuthenticatingPlayer authPlayer = authManager.getAuthPlayers()
+                            .getCacheData(protectedPlayer.getLowercaseName());
+
+                    if (authPlayer == null) {
+                        player.disconnect(messages.getInternalError());
+                        return;
+                    }
+
+                    if (!authPlayer.useAttempt()) {
+                        player.disconnect(messages.getAttemptsLeft());
+                    } else {
+                        player.sendMessage(messages.getWrongPassword().replace(
+                                "%attempts%",
+                                String.valueOf(authPlayer.getAttempts() - 1))
+                        );
+                    }
                 }
 
-                if (!authPlayer.useAttempt()) {
-                    player.disconnect(messages.getAttemptsLeft());
-                } else {
-                    player.sendMessage(messages.getWrongPassword().replace(
-                            "%attempts%",
-                            String.valueOf(authPlayer.getAttempts() - 1))
-                    );
+                player.sendMessage(messages.getLoginSuccess());
+                player.sendTitle("&7", "&7", 0, 25, 0);
+                authManager.getAuthPlayers().removeById(protectedPlayer.getLowercaseName());
+
+                if (!plugin.getSocialManager().startPlayerConfirmations(protectedPlayer)) {
+                    authManager.performLogin(protectedPlayer)
+                            .exceptionally(e -> {
+                                logger.error("LoginCommandExecutor have " + e.getClass().getSimpleName());
+                                logger.error("Message: " + e.getMessage());
+                                return null;
+                            });
+
+                    plugin.getEventManager().fire(new AuthLoginEvent(protectedPlayer, player));
+                    plugin.getSongManager().stop(player.getUUID());
+                    player.sendMessage(messages.getNotLinked());
+                    authManager.connectLobbyServer(player);
                 }
-                return;
-            }
+            });
 
-            player.sendMessage(messages.getLoginSuccess());
-            player.sendTitle("&7", "&7", 0, 25, 0);
-            authManager.getAuthPlayers().removeById(protectedPlayer.getLowercaseName());
-
-            if (!plugin.getSocialManager().startPlayerConfirmations(protectedPlayer)) {
-                authManager.performLogin(protectedPlayer)
-                        .exceptionally(e -> {
-                            logger.error("LoginCommandExecutor have " + e.getClass().getSimpleName());
-                            logger.error("Message: " + e.getMessage());
-                            return null;
-                        });
-
-                plugin.getEventManager().fire(new AuthLoginEvent(protectedPlayer, player));
-                plugin.getSongManager().stop(player.getUUID());
-                player.sendMessage(messages.getNotLinked());
-                authManager.connectLobbyServer(player);
-            }
         }).exceptionally(e -> {
             logger.error("LoginCommandExecutor have " + e.getCause().getClass().getSimpleName());
             logger.error("Message: " + e.getMessage());

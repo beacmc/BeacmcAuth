@@ -7,7 +7,7 @@ dependencies {
     compileOnly(libs.packetevents)
     compileOnly(libs.ormlite)
     compileOnly(libs.nbs4j)
-    compileOnly(libs.jbcrypt)
+    compileOnly(libs.bcrypt)
     compileOnly(libs.hicaricp)
     compileOnly(libs.libbyCore)
     compileOnly(libs.jda)

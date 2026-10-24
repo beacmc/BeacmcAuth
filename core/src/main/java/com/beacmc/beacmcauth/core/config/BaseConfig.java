@@ -3,11 +3,13 @@ package com.beacmc.beacmcauth.core.config;
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.config.ConfigMessages;
+import com.beacmc.beacmcauth.api.crypto.hash.Hash;
 import com.beacmc.beacmcauth.api.server.Server;
 import com.beacmc.beacmcauth.core.config.dialog.ChooseDialogSettings;
 import com.beacmc.beacmcauth.core.config.dialog.LoginDialogSettings;
 import com.beacmc.beacmcauth.core.config.dialog.RegisterDialogSettings;
 import com.beacmc.beacmcauth.core.config.dialog.SecretDialogSettings;
+import com.beacmc.beacmcauth.core.crypto.HashTypes;
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
 import de.exlll.configlib.Ignore;
@@ -28,8 +30,10 @@ public class BaseConfig implements Config {
     private Integer timePerRegister = 60;
     private int registerMessageSendDelaySeconds = 3;
     private int loginMessageSendDelaySeconds = 3;
-    @Comment({"", "A parameter of the bcrypt password hashing algorithm that determines", "the computational cost and, consequently, the time required to compute the hash."})
+    private Hash passwordHash = HashTypes.BCRYPT2Y;
+    @Comment({"", "A parameter of the bcrypt password hashing algorithm that determines", "the computational cost and, consequently, the time required to compute the crypto."})
     private Integer bCryptRounds = 12;
+    private BaseArgon2Settings argon2Settings = new BaseArgon2Settings();
     private Integer passwordAttempts = 3;
 
     @Comment({"", "Time unit types: DAYS, HOURS, MINUTES, SECONDS, MILLISECONDS, MICROSECONDS, NANOSECONDS"})
