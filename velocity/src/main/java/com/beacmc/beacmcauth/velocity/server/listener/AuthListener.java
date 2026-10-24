@@ -7,7 +7,6 @@ import com.beacmc.beacmcauth.api.auth.premium.PremiumPlayer;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
 import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
-import com.beacmc.beacmcauth.api.song.SongManager;
 import com.beacmc.beacmcauth.core.util.UUIDFetcher;
 import com.beacmc.beacmcauth.velocity.VelocityBeacmcAuth;
 import com.beacmc.beacmcauth.velocity.player.VelocityServerPlayer;

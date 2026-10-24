@@ -1,7 +1,6 @@
 package com.beacmc.beacmcauth.api.crypto;
 
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.concurrent.ArrayBlockingQueue;
