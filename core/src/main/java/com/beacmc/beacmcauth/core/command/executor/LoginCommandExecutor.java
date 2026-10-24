@@ -83,6 +83,7 @@ public class LoginCommandExecutor implements CommandExecutor {
                                 String.valueOf(authPlayer.getAttempts() - 1))
                         );
                     }
+                    return;
                 }
 
                 player.sendMessage(messages.getLoginSuccess());
