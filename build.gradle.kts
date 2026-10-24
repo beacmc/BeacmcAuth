@@ -5,7 +5,7 @@ plugins {
 
 allprojects {
     group = "com.beacmc.beacmcauth"
-    version = "3.0.3-BETA"
+    version = "3.1.0-BETA"
 
     repositories {
         mavenCentral()
