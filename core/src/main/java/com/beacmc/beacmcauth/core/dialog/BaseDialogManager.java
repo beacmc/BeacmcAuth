@@ -39,20 +39,6 @@ public class BaseDialogManager implements DialogManager {
     public void loadDefaultDialogs() {
         final Config config = plugin.getConfig();
 
-        ChooseDialogSettings chooseDialogSettings = (ChooseDialogSettings) config.getChooseDialogSettings();
-        this.register(
-                DialogType.CHOOSE_DIALOG_FULL,
-                chooseDialogSettings.createDialog(this)
-        );
-        this.register(
-                DialogType.CHOOSE_DIALOG_WITHOUT_EMAIL,
-                chooseDialogSettings.createDialog(this, false, true)
-        );
-        this.register(
-                DialogType.CHOOSE_DIALOG_WITHOUT_SECRET_QUESTION,
-                chooseDialogSettings.createDialog(this, true, false)
-        );
-
         RegisterDialogSettings registerDialogSettings = (RegisterDialogSettings) config.getRegisterDialogSettings();
         this.register(
                 DialogType.REGISTER,
@@ -74,12 +60,6 @@ public class BaseDialogManager implements DialogManager {
         registerListener(new LeaveListener(plugin));
         registerListener(new LoginListener(plugin));
         registerListener(new RegisterListener(plugin));
-        registerListener(new SecretListener(plugin));
-        registerListener(new ChooseAuthDialogListener(
-                plugin.getAuthManager(),
-                plugin.getDialogManager(),
-                plugin.getProxy()
-        ));
     }
 
     @Override

@@ -70,11 +70,7 @@ public interface Config {
 
     boolean isDialogEnabled();
 
-    DialogCreator getChooseDialogSettings();
-
     DialogCreator getRegisterDialogSettings();
 
     DialogCreator getLoginDialogSettings();
-
-    DialogCreator getSecretDialogSettings();
 }

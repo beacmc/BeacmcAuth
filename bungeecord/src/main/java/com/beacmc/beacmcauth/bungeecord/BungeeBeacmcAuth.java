@@ -60,8 +60,6 @@ public final class BungeeBeacmcAuth extends Plugin {
         this.getProxy().getPluginManager().registerCommand(this, new PremiumCommand(beacmcAuth));
         this.getProxy().getPluginManager().registerCommand(this, new CrackCommand(beacmcAuth));
         this.getProxy().getPluginManager().registerCommand(this, new AltsCommand(beacmcAuth));
-        this.getProxy().getPluginManager().registerCommand(this, new SecretCommand(beacmcAuth));
-        this.getProxy().getPluginManager().registerCommand(this, new EmailCommand(beacmcAuth));
         this.getProxy().getPluginManager().registerCommand(this, new LogoutCommand(beacmcAuth));
     }
 

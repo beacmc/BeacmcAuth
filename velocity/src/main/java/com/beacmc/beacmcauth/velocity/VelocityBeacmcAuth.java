@@ -94,24 +94,10 @@ public final class VelocityBeacmcAuth {
         );
 
         commandManager.register(
-                commandManager.metaBuilder("email")
-                        .plugin(this)
-                        .build(),
-                new EmailCommand(beacmcAuth)
-        );
-
-        commandManager.register(
                 commandManager.metaBuilder("logout")
                         .plugin(this)
                         .build(),
                 new LogoutCommand(beacmcAuth)
-        );
-
-        commandManager.register(
-                commandManager.metaBuilder("secret")
-                        .plugin(this)
-                        .build(),
-                new SecretCommand(beacmcAuth)
         );
 
         commandManager.register(

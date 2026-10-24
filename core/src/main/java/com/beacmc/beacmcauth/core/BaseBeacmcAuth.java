@@ -5,14 +5,12 @@ import com.beacmc.beacmcauth.api.auth.AuthManager;
 import com.beacmc.beacmcauth.api.auth.premium.PremiumChangerProvider;
 import com.beacmc.beacmcauth.api.command.CommandManager;
 import com.beacmc.beacmcauth.api.config.Config;
-import com.beacmc.beacmcauth.api.config.EmailConfig;
 import com.beacmc.beacmcauth.api.config.ProtectionConfig;
 import com.beacmc.beacmcauth.api.config.loader.ConfigLoader;
 import com.beacmc.beacmcauth.api.config.social.DiscordConfig;
 import com.beacmc.beacmcauth.api.config.social.TelegramConfig;
 import com.beacmc.beacmcauth.api.crypto.CryptoExecutor;
 import com.beacmc.beacmcauth.api.database.Database;
-import com.beacmc.beacmcauth.api.email.EmailManager;
 import com.beacmc.beacmcauth.api.event.EventManager;
 import com.beacmc.beacmcauth.api.library.LibraryProvider;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
@@ -26,14 +24,12 @@ import com.beacmc.beacmcauth.core.auth.protection.BaseProtectionManager;
 import com.beacmc.beacmcauth.core.command.BaseCommandManager;
 import com.beacmc.beacmcauth.core.command.executor.*;
 import com.beacmc.beacmcauth.core.config.BaseConfig;
-import com.beacmc.beacmcauth.core.config.BaseEmailConfig;
 import com.beacmc.beacmcauth.core.config.BaseProtectionConfig;
 import com.beacmc.beacmcauth.core.config.loader.BaseConfigLoader;
 import com.beacmc.beacmcauth.core.config.social.BaseDiscordConfig;
 import com.beacmc.beacmcauth.core.config.social.BaseTelegramConfig;
 import com.beacmc.beacmcauth.core.database.BaseDatabase;
 import com.beacmc.beacmcauth.core.dialog.BaseDialogManager;
-import com.beacmc.beacmcauth.core.email.BaseEmailManager;
 import com.beacmc.beacmcauth.core.event.BaseEventManager;
 import com.beacmc.beacmcauth.core.library.Libraries;
 import com.beacmc.beacmcauth.core.packet.BasePlayerPositionTracker;
@@ -66,7 +62,6 @@ public class BaseBeacmcAuth implements BeacmcAuth {
     private AuthManager authManager;
     private TelegramConfig telegramConfig;
     private Config config;
-    private EmailConfig emailConfig;
     private DiscordConfig discordConfig;
     private ProtectionConfig protectionConfig;
     private BaseDialogManager dialogManager;
@@ -74,7 +69,6 @@ public class BaseBeacmcAuth implements BeacmcAuth {
     private ExecutorService executorService;
     private SongManager songManager;
     private PlayerPositionTracker playerPositionTracker;
-    private EmailManager emailManager;
     private EventManager eventManager;
     private BaseProtectionManager protectionManager;
 
@@ -96,7 +90,6 @@ public class BaseBeacmcAuth implements BeacmcAuth {
             database.init();
 
             authManager = new BaseAuthManager(this);
-            emailManager = new BaseEmailManager(this);
 
             dialogManager = new BaseDialogManager(this);
             this.reloadDialogs();
@@ -139,9 +132,7 @@ public class BaseBeacmcAuth implements BeacmcAuth {
             commandManager.register("premium", new PremiumCommandExecutor(this));
             commandManager.register("crack", new CrackCommandExecutor(this));
             commandManager.register("alts", new AltsCommandExecutor(this, authManager));
-            commandManager.register("secret", new SecretCommandExecutor(this, authManager));
             commandManager.register("logout", new LogoutCommandExecutor(this, authManager));
-            commandManager.register("email", new EmailCommandExecutor(this));
         } catch (Exception e) {
             serverLogger.error("Error when turning on the server");
             serverLogger.error("Message: %s" + e.getMessage());
@@ -167,7 +158,6 @@ public class BaseBeacmcAuth implements BeacmcAuth {
     public void reloadAllConfigurations() {
         config = configLoader.load(new File(getDataFolder(), "config.yml"), BaseConfig.class, new BaseConfig())
                 .setPlugin(this);
-        emailConfig = configLoader.load(new File(getDataFolder(), "email.yml"), BaseEmailConfig.class, new BaseEmailConfig());
         telegramConfig = configLoader.load(new File(getDataFolder(), "telegram.yml"), BaseTelegramConfig.class, new BaseTelegramConfig());
         discordConfig = configLoader.load(new File(getDataFolder(), "discord.yml"), BaseDiscordConfig.class, new BaseDiscordConfig());
         protectionConfig = configLoader.load(new File(getDataFolder(), "protection.yml"), BaseProtectionConfig.class, new BaseProtectionConfig());

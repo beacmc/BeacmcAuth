@@ -5,13 +5,11 @@ import com.beacmc.beacmcauth.api.auth.premium.PremiumChangerProvider;
 import com.beacmc.beacmcauth.api.auth.protection.ProtectionManager;
 import com.beacmc.beacmcauth.api.command.CommandManager;
 import com.beacmc.beacmcauth.api.config.Config;
-import com.beacmc.beacmcauth.api.config.EmailConfig;
 import com.beacmc.beacmcauth.api.config.ProtectionConfig;
 import com.beacmc.beacmcauth.api.config.social.DiscordConfig;
 import com.beacmc.beacmcauth.api.config.social.TelegramConfig;
 import com.beacmc.beacmcauth.api.database.Database;
 import com.beacmc.beacmcauth.api.dialog.DialogManager;
-import com.beacmc.beacmcauth.api.email.EmailManager;
 import com.beacmc.beacmcauth.api.event.EventManager;
 import com.beacmc.beacmcauth.api.library.LibraryProvider;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
@@ -33,13 +31,9 @@ public interface BeacmcAuth {
 
     Config getConfig();
 
-    EmailConfig getEmailConfig();
-
     DialogManager getDialogManager();
 
     Database getDatabase();
-
-    EmailManager getEmailManager();
 
     EventManager getEventManager();
 

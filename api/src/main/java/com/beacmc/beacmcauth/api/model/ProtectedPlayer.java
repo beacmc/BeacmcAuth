@@ -35,9 +35,6 @@ public class ProtectedPlayer implements CachedData<UUID> {
     public static final String TELEGRAM_2FA_COLUMN = "telegram_2fa";
     public static final String REGISTER_IP_COLUMN = "reg_ip";
     public static final String LAST_IP_COLUMN = "last_ip";
-    public static final String EMAIL_COLUMN = "email";
-    public static final String SECRET_QUESTION_COLUMN = "secret_question";
-    public static final String SECRET_ANSWER_COLUMN = "hashed_secret_answer";
     public static final String DISCORD_COLUMN = "discord";
     public static final String TELEGRAM_COLUMN = "telegram";
 
@@ -84,17 +81,6 @@ public class ProtectedPlayer implements CachedData<UUID> {
     @DatabaseField(columnName = LAST_IP_COLUMN)
     private @Nullable String lastIp;
 
-    @DatabaseField(columnName = EMAIL_COLUMN)
-    private @Nullable String email;
-
-    @Setter(AccessLevel.NONE)
-    @DatabaseField(columnName = SECRET_QUESTION_COLUMN)
-    private @Nullable String secretQuestion;
-
-    @Setter(AccessLevel.NONE)
-    @DatabaseField(columnName = SECRET_ANSWER_COLUMN)
-    private @Nullable String hashedSecretAnswer;
-
     @DatabaseField(columnName = DISCORD_COLUMN, defaultValue = "0")
     private long discord;
 
@@ -110,22 +96,8 @@ public class ProtectedPlayer implements CachedData<UUID> {
         return getSession() + sessionTimeMillis > currentTimeMillis;
     }
 
-    public ProtectedPlayer setSecretQuestion(@Nullable String question, @Nullable String answer) {
-        this.secretQuestion = question;
-//        this.hashedSecretAnswer = answer != null
-//                ? BCrypt.hashpw(answer, BCrypt.gensalt(10))
-//                : null; FIXME
-        return this;
-    }
-
     public @NotNull UUID getAdaptiveUuid() {
         return onlineUuid != null ? onlineUuid : uuid;
-    }
-
-    public boolean checkSecretAnswer(String answer) {
-        return secretQuestion != null
-                && hashedSecretAnswer != null;
-//                && BCrypt.checkpw(answer, hashedSecretAnswer); FIXME
     }
 
     public boolean isValidIp(String ip) {

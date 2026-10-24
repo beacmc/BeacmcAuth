@@ -136,54 +136,6 @@ public interface ConfigMessages {
 
     String getAlternativeAccountsLimitReached();
 
-    String getSecretAnswerAlreadyCreated();
-
-    String getSecretAnswerCreated();
-
-    String getSecretAnswerNotCreated();
-
-    String getInvalidSecretAnswerDisconnect();
-
-    String getSecretAnswerSuccessUsedDisconnect();
-
-    String getSecretAnswerRemoved();
-
-    String getSecretCommandUsage();
-
-    String getSecretSetCommandUsage();
-
-    String getSecretRecovery();
-
-    String getAnswerTooLong();
-
-    String getSecretInvalidSyntax();
-
-    String getEmailCommandUsage();
-
-    String getEmailAddCommandUsage();
-
-    String getEmailRecoveryDisconnect();
-
-    String getEmailRemoved();
-
-    String getEmailAdded();
-
-    String getEmailInvalid();
-
-    String getEmailRecoveryInvalidDisconnect();
-
-    String getEmailNotAdded();
-
-    String getEmailAlreadyAdded();
-
-    String getEmailRecoveryCommandUsage();
-
-    String getCouldNotSendEmailMessages();
-
-    String getEmailAlreadyTaken();
-
-    String getEmailModuleDisabled();
-
     String getDialogWrongPassword();
 
     String getDialogConfirmPassword();

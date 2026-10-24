@@ -89,22 +89,6 @@ public class BaseAuthManager implements AuthManager {
 
             ProtectedPlayer protectedPlayer = authPlayer.getPlayer();
 
-            boolean canEmailRecovery = plugin.getEmailConfig().isEnabled()
-                    && protectedPlayer.getEmail() != null;
-            boolean canSecretQuestionRecovery = protectedPlayer.getSecretQuestion() != null
-                    && protectedPlayer.getHashedSecretAnswer() != null;
-
-            if (canEmailRecovery && !canSecretQuestionRecovery) {
-                player.showDialog(dialogManager.getDialog(DialogType.CHOOSE_DIALOG_WITHOUT_SECRET_QUESTION));
-                return;
-            } else if (!canEmailRecovery && canSecretQuestionRecovery) {
-                player.showDialog(dialogManager.getDialog(DialogType.CHOOSE_DIALOG_WITHOUT_EMAIL));
-                return;
-            } else if (canEmailRecovery) {
-                player.showDialog(dialogManager.getDialog(DialogType.CHOOSE_DIALOG_FULL));
-                return;
-            }
-
             if (protectedPlayer.isRegister()) {
                 player.showDialog(dialogManager.getDialog(DialogType.LOGIN));
             } else {
@@ -294,18 +278,6 @@ public class BaseAuthManager implements AuthManager {
         plugin.getSocialManager().getConfirmationPlayers().remove(confirmationPlayer);
     }
 
-    public CompletableFuture<Void> saveSecretQuestion(ProtectedPlayer player, String question, String answer) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                dao.createOrUpdate(player.setSecretQuestion(question, answer));
-                playerCache.addOrUpdateCache(player);
-                return null;
-            } catch (SQLException e) {
-                throw new CompletionException(e);
-            }
-        }, executorService);
-    }
-
     @Override
     public void connectPlayer(ServerPlayer player, Server server) {
         if (server == null || player == null) return;
@@ -351,9 +323,6 @@ public class BaseAuthManager implements AuthManager {
                         true,
                         registerIp,
                         lastIp,
-                        null,
-                        null,
-                        null,
                         0,
                         0,
                         null

@@ -27,14 +27,12 @@ public class AuthListener {
 
     private final BeacmcAuth plugin;
     private final AuthManager authManager;
-    private final SongManager songManager;
     private final ServerLogger logger;
 
     public AuthListener(BeacmcAuth plugin) {
         this.plugin = plugin;
         this.authManager = plugin.getAuthManager();
         this.logger = plugin.getServerLogger();
-        this.songManager = plugin.getSongManager();
     }
 
     @Subscribe

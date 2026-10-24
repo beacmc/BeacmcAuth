@@ -5,10 +5,8 @@ import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.config.ConfigMessages;
 import com.beacmc.beacmcauth.api.crypto.hash.Hash;
 import com.beacmc.beacmcauth.api.server.Server;
-import com.beacmc.beacmcauth.core.config.dialog.ChooseDialogSettings;
 import com.beacmc.beacmcauth.core.config.dialog.LoginDialogSettings;
 import com.beacmc.beacmcauth.core.config.dialog.RegisterDialogSettings;
-import com.beacmc.beacmcauth.core.config.dialog.SecretDialogSettings;
 import com.beacmc.beacmcauth.core.crypto.HashTypes;
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
@@ -62,10 +60,8 @@ public class BaseConfig implements Config {
     private BaseAccountLimiterSettings accountLimiterSettings = new BaseAccountLimiterSettings();
     @Comment({"", "Note: This feature works in version 1.21.6 and later"})
     private boolean dialogEnabled = true;
-    private ChooseDialogSettings chooseDialogSettings = new ChooseDialogSettings();
     private RegisterDialogSettings registerDialogSettings = new RegisterDialogSettings();
     private LoginDialogSettings loginDialogSettings = new LoginDialogSettings();
-    private SecretDialogSettings secretDialogSettings = new SecretDialogSettings();
     private Messages messages = new Messages();
 
     @Ignore
@@ -189,36 +185,6 @@ public class BaseConfig implements Config {
         String altsCommandUsage = "&7Usage: /alts <player>";
         String altsAccountsEmpty = "&7No alternative accounts found";
         String alternativeAccountsLimitReached = "&7the limit of alternative accounts has been reached";
-        String secretAnswerAlreadyCreated = "&7You have already created a secret answer.";
-        String secretAnswerCreated = "&7Your secret answer has been successfully created!";
-        String secretAnswerNotCreated = "&7You have not created a secret answer yet.";
-        String invalidSecretAnswerDisconnect = "&cInvalid secret answer. You have been disconnected.";
-        String secretAnswerSuccessUsedDisconnect = "&7Secret answer accepted. New password: &6%password%";
-        String secretAnswerRemoved = "&7A secret question has been successfully removed";
-        String secretSetCommandUsage = "&7Usage: /secret set <question>? <answer>";
-        String secretInvalidSyntax = "&7Invalid syntax, usage: <question>? <answer>";
-        String secretCommandUsage = "&7Usage: /secret <set/remove/recovery>";
-        String answerTooLong = "&7The answer is too long.";
-        String secretRecovery = """
-                &7Your question: &6%question%?
-                &7Enter the command &6/secret recovery <response>
-                """;
-        String emailCommandUsage = "&7Usage: /email <add/remove/recovery>";
-        String emailAddCommandUsage = "&7Usage: /email add <username@gmail.com>";
-        String emailRecoveryCommandUsage = "&7Usage: /email recovery <your-email>";
-        String emailRecoveryInvalidDisconnect = "&cThe email address is incorrect!";
-        String emailAdded = "&7Mail successfully added";
-        String emailRemoved = "&7Mail successfully removed";
-        String emailInvalid = "&7Invalid syntax. Example: username@gmail.com";
-        String emailNotAdded = "&7Email not added yet.";
-        String emailAlreadyAdded = "&7Email already added.";
-        String couldNotSendEmailMessages = "&7An error occurred while sending an email";
-        String emailAlreadyTaken = "&7This email is already taken";
-        String emailModuleDisabled = "&7Email disabled";
-        String emailRecoveryDisconnect = """
-                &7You have been disconnected from the server due to a password change
-                &6Your new password is waiting for you in your Email
-                """;
 
         String dialogWrongPassword = "&7The password is wrong. Attempts left: &#ffbb00%attempts%";
         String dialogInvalidPassword = "&7The password does not meet the criteria. Between 8 and 64 characters";

@@ -43,8 +43,6 @@ public interface AuthManager {
 
     boolean isAuthenticating(String playerName);
 
-    CompletableFuture<Void> saveSecretQuestion(ProtectedPlayer player, String question, String answer);
-
     CompletableFuture<ProtectedPlayer> createProtectedPlayer(String lowercaseName, String realName, String password, long session, long lastJoin, String registerIp, String lastIp, UUID uuid);
 
     CompletableFuture<ProtectedPlayer> getProtectedPlayer(UUID uuid);
