@@ -6,11 +6,12 @@ import java.util.Map;
 
 class DatabaseVersionMigrator {
 
-    transient Map<String, String> migrateColumns = Map.of(
-            "online_uuid", "ALTER TABLE `auth_players` ADD COLUMN online_uuid CHAR(36) default NULL;",
-            "email", "ALTER TABLE `auth_players` ADD COLUMN email CHAR(255) default NULL;",
-            "secret_question", "ALTER TABLE `auth_players` ADD COLUMN secret_question CHAR(255) default NULL;",
-            "hashed_secret_answer", "ALTER TABLE `auth_players` ADD COLUMN hashed_secret_answer CHAR(255) default NULL;"
+    private static final Map<String, String> migrateColumns = Map.of(
+            "online_uuid",
+            "ALTER TABLE auth_players ADD COLUMN online_uuid CHAR(36) DEFAULT NULL",
+
+            "hash_type",
+            "ALTER TABLE auth_players ADD COLUMN hash_type VARCHAR(32) DEFAULT NULL"
     );
 
     DatabaseVersionMigrator(Database database) throws Exception {
@@ -21,6 +22,12 @@ class DatabaseVersionMigrator {
 
                 if (!database.isColumnExists(columnName)) {
                     database.getProtectedPlayerDao().executeRaw(request);
+
+                    if (columnName.equals("hash_type")) {
+                        database.getProtectedPlayerDao().executeRaw(
+                                "UPDATE auth_players SET hash_type = 'bcrypt_2a' WHERE hash_type IS NULL"
+                        );
+                    }
                 }
             }
         } finally {
