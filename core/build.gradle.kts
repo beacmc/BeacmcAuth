@@ -5,7 +5,6 @@ plugins {
 dependencies {
     implementation(project(":api"))
     implementation(libs.configlib)
-    implementation(libs.jakartaMail)
     implementation(libs.bcrypt)
     implementation(libs.argon2)
     implementation(libs.libbyCore)

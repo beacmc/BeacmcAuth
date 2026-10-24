@@ -42,21 +42,33 @@ public class Argon2Hash implements Hash {
     public CompletableFuture<String> hash(String password) {
         return CompletableFuture.supplyAsync(() -> {
             Argon2Settings settings = plugin.getConfig().getArgon2Settings();
-            return argon2.hash(
-                    settings.getIterations(),
-                    settings.getMemoryKb(),
-                    settings.getParallelism(),
-                    password.getBytes(StandardCharsets.UTF_8)
-            );
+            char[] chars = password.toCharArray();
+            try {
+                return argon2.hash(
+                        settings.getIterations(),
+                        settings.getMemoryKb(),
+                        settings.getParallelism(),
+                        chars
+                );
+            } finally {
+                argon2.wipeArray(chars);
+            }
         }, service);
     }
 
     @Override
     public CompletableFuture<Boolean> matches(String hashedPassword, String rawPassword) {
         return CompletableFuture.supplyAsync(
-                () -> argon2.verify(
-                        hashedPassword,
-                        rawPassword.getBytes(StandardCharsets.UTF_8)),
+                () -> {
+                    char[] chars = rawPassword.toCharArray();
+                    try {
+                        return argon2.verify(
+                                hashedPassword,
+                                chars);
+                    } finally {
+                        argon2.wipeArray(chars);
+                    }
+                },
                 service);
     }
 }

@@ -11,6 +11,5 @@ dependencies {
     compileOnly(libs.hicaricp)
     compileOnly(libs.libbyCore)
     compileOnly(libs.jda)
-    compileOnly(libs.jakartaMail)
     compileOnly(libs.bungeecordChat)
 }

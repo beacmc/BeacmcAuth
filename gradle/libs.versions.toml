@@ -33,7 +33,6 @@ libbyBungee = { module = "com.github.beacmc.libby:libby-bungee", version.ref = "
 bungeecord = { module = "net.md-5:bungeecord-api", version.ref = "bungeecord" }
 bungeecordChat = { module = "net.md-5:bungeecord-chat", version.ref = "bungeecord" }
 velocity = { module = "com.velocitypowered:velocity-api", version.ref = "velocity" }
-jakartaMail = { module = "jakarta.mail:jakarta.mail-api", version.ref = "jakartaMail" }
 jda = { module = "net.dv8tion:JDA", version.ref = "jda" }
 telegramBotApi = { module = "com.github.pengrad:java-telegram-bot-api", version.ref = "telegramBotApi" }
 bstatsBungeecord = { module = "org.bstats:bstats-bungeecord", version.ref = "bstats" }
