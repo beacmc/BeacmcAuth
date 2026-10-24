@@ -2,7 +2,6 @@ package com.beacmc.beacmcauth.core.social.types.telegram.listener;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.social.SocialManager;
-import com.beacmc.beacmcauth.api.social.SocialType;
 import com.beacmc.beacmcauth.api.social.keyboard.button.Button;
 import com.beacmc.beacmcauth.api.social.keyboard.button.ButtonType;
 import com.beacmc.beacmcauth.core.social.types.telegram.TelegramPlayer;
@@ -21,12 +20,12 @@ import java.util.concurrent.Executors;
 public class TelegramUpdatesListener implements UpdatesListener {
 
     private final BeacmcAuth plugin;
+    private final TelegramSocial telegram;
     private final ExecutorService executorService = Executors.newFixedThreadPool(8);
 
     @Override
     public int process(List<Update> updates) {
         final SocialManager manager = plugin.getSocialManager();
-        final TelegramSocial telegram = (TelegramSocial) manager.getSocialByType(SocialType.TELEGRAM);
 
         if (telegram == null || updates.isEmpty())
             return CONFIRMED_UPDATES_NONE;

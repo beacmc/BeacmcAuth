@@ -1,11 +1,10 @@
 package com.beacmc.beacmcauth.core.social.types.discord.listener;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
-import com.beacmc.beacmcauth.api.social.Social;
-import com.beacmc.beacmcauth.api.social.SocialType;
 import com.beacmc.beacmcauth.api.social.keyboard.button.Button;
 import com.beacmc.beacmcauth.api.social.keyboard.button.ButtonType;
 import com.beacmc.beacmcauth.core.social.types.discord.DiscordPlayer;
+import com.beacmc.beacmcauth.core.social.types.discord.DiscordSocial;
 import lombok.AllArgsConstructor;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -17,13 +16,13 @@ import org.jetbrains.annotations.NotNull;
 public class DiscordListener extends ListenerAdapter {
 
     private final BeacmcAuth plugin;
+    private final DiscordSocial discord;
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if (!(event.getChannel() instanceof PrivateChannel)) return;
 
         final String message = event.getMessage().getContentRaw();
-        final Social<?, ?> discord = plugin.getSocialManager().getSocialByType(SocialType.DISCORD);
 
         if (!message.isEmpty()) {
             String[] args = message.split("\\s+");
@@ -41,13 +40,11 @@ public class DiscordListener extends ListenerAdapter {
 
     @Override
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
-        final Social<?, ?> discord = plugin.getSocialManager().getSocialByType(SocialType.DISCORD);
-
         plugin.getSocialManager().getButtonClickRegistry().executeListeners(
                 new DiscordPlayer(event.getUser()),
                 discord,
                 Button.builder()
-                        .callbackData(event.getButton().getId())
+                        .callbackData(event.getComponentId())
                         .label(event.getButton().getLabel())
                         .type(ButtonType.SECONDARY)
                         .build()

@@ -49,7 +49,7 @@ public class DiscordSocial implements Social<JDA, Long> {
         try {
             JDALogger.setFallbackLoggerEnabled(false);
             this.jda = JDABuilder.createDefault(plugin.getDiscordConfig().getToken(), Arrays.asList(GatewayIntent.values()))
-                    .addEventListeners(new DiscordListener(plugin))
+                    .addEventListeners(new DiscordListener(plugin, this))
                     .build()
                     .awaitReady();
 

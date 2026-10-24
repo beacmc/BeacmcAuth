@@ -44,7 +44,7 @@ public class TelegramSocial implements Social<TelegramBot, Long> {
         this.plugin = plugin;
         this.logger = plugin.getServerLogger();
         this.telegramBot = new TelegramBot(plugin.getTelegramConfig().getToken());
-        this.telegramBot.setUpdatesListener(new TelegramUpdatesListener(plugin));
+        this.telegramBot.setUpdatesListener(new TelegramUpdatesListener(plugin, this));
     }
 
     @Override
