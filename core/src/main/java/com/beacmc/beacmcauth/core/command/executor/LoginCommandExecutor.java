@@ -80,7 +80,7 @@ public class LoginCommandExecutor implements CommandExecutor {
                     } else {
                         player.sendMessage(messages.getWrongPassword().replace(
                                 "%attempts%",
-                                String.valueOf(authPlayer.getAttempts() - 1))
+                                String.valueOf(authPlayer.getAttempts()))
                         );
                     }
                     return;
