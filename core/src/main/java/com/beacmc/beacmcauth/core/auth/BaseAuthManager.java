@@ -269,6 +269,7 @@ public class BaseAuthManager implements AuthManager {
         PremiumPlayer premiumPlayer = premiumPlayers.getCacheData(player.getLowercaseName());
 
         plugin.getSongManager().stop(player.getUUID());
+        plugin.getProtectionManager().clearPlayerCache(player);
 
         if (premiumPlayer == null || !premiumPlayer.isValidTemplateTime()) {
             premiumPlayers.removeCache(premiumPlayer);

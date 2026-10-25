@@ -3,6 +3,7 @@ package com.beacmc.beacmcauth.core.command.executor;
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.auth.AuthManager;
 import com.beacmc.beacmcauth.api.auth.premium.PremiumPlayer;
+import com.beacmc.beacmcauth.api.auth.protection.ProtectionManager;
 import com.beacmc.beacmcauth.api.command.CommandSender;
 import com.beacmc.beacmcauth.api.command.executor.CommandExecutor;
 import com.beacmc.beacmcauth.api.config.Config;
@@ -35,9 +36,10 @@ public class CrackCommandExecutor implements CommandExecutor {
 
         final Config config = plugin.getConfig();
         final ConfigMessages messages = config.getMessages();
+        final ProtectionManager protectionManager = plugin.getProtectionManager();
 
         if (cooldown.isCooldown(player.getLowercaseName())) {
-            player.sendMessage(config.getMessages().getCooldown());
+            player.sendMessage(messages.getCooldown());
             return;
         }
         cooldown.createCooldown(player.getLowercaseName(), 5_000);
@@ -48,6 +50,18 @@ public class CrackCommandExecutor implements CommandExecutor {
 
                 if (protectedPlayer.getOnlineUuid() == null) {
                     player.sendMessage(messages.getAlreadyCrack());
+                    return;
+                }
+
+                if (!protectionManager.isAwaitingDangerousCommandConfirmation(
+                        player,
+                        getClass().getSimpleName())) {
+
+                    protectionManager.createAwaitingDangerousCommandConfirmation(
+                            player,
+                            getClass().getSimpleName()
+                    );
+                    player.sendMessage(messages.getDangerousCommandConfirmationMessage());
                     return;
                 }
 

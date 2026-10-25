@@ -153,4 +153,6 @@ public interface ConfigMessages {
     String getChangePasswordBlockedMessage();
 
     String getLoginBlockedDisconnect();
+
+    String getDangerousCommandConfirmationMessage();
 }

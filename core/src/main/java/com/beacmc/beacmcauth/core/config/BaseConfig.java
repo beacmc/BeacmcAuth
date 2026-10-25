@@ -196,5 +196,6 @@ public class BaseConfig implements Config {
         String registerBlockedDisconnect = "&cRegistration is disabled. If this is an error, please contact the administration.";
         String loginBlockedDisconnect = "&cServer access is disabled. If this is an error, please contact the administration.";
         String changePasswordBlockedMessage = "&cPassword changes are disabled. If this is an error, please contact the administration.";
+        String dangerousCommandConfirmationMessage = "&cFor security reasons, please confirm your action by repeating the command.";
     }
 }

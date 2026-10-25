@@ -15,6 +15,8 @@ public interface ProtectionConfig {
 
     List<String> getExemptPlayers();
 
+    DangerousCommandConfirmationSettings getDangerousCommandConfirmationSettings();
+
     default boolean isBlockedByDefault(@NotNull AuthActionType actionType) {
         return getBlockedActionsByDefault().getOrDefault(actionType.getIdentifier(), false);
     }

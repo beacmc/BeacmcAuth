@@ -1,6 +1,7 @@
 package com.beacmc.beacmcauth.core.config;
 
 import com.beacmc.beacmcauth.api.auth.action.AuthActionTypes;
+import com.beacmc.beacmcauth.api.config.DangerousCommandConfirmationSettings;
 import com.beacmc.beacmcauth.api.config.ProtectionConfig;
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
@@ -8,6 +9,7 @@ import lombok.Getter;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Getter
 @Configuration
@@ -44,4 +46,18 @@ public class BaseProtectionConfig implements ProtectionConfig {
             AuthActionTypes.PREMIUM_AUTHENTICATION.getIdentifier(), false,
             AuthActionTypes.OPEN_AUTH_DIALOG.getIdentifier(), true
     );
+    @Comment({"",
+            "Adds a confirmation step for commands that remove a player.",
+            "from the server, such as: /logout, /crack, and /premium"})
+    private BaseDangerousCommandConfirmationSettings dangerousCommandConfirmationSettings
+            = new BaseDangerousCommandConfirmationSettings();
+
+    @Getter
+    @Configuration
+    public static class BaseDangerousCommandConfirmationSettings implements DangerousCommandConfirmationSettings {
+
+        private boolean enabled = true;
+        private TimeUnit confirmationLifetimeUnit = TimeUnit.MINUTES;
+        private long confirmationLifetime = 1;
+    }
 }

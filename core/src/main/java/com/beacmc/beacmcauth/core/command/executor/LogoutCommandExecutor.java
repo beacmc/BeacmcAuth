@@ -2,6 +2,7 @@ package com.beacmc.beacmcauth.core.command.executor;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.auth.AuthManager;
+import com.beacmc.beacmcauth.api.auth.protection.ProtectionManager;
 import com.beacmc.beacmcauth.api.command.CommandSender;
 import com.beacmc.beacmcauth.api.command.executor.CommandExecutor;
 import com.beacmc.beacmcauth.api.config.Config;
@@ -28,6 +29,7 @@ public class LogoutCommandExecutor implements CommandExecutor {
         final Config config = plugin.getConfig();
         final ConfigMessages messages = config.getMessages();
         final GameCooldown cooldown = GameCooldown.getInstance();
+        final ProtectionManager protectionManager = plugin.getProtectionManager();
 
         if (cooldown.isCooldown(player.getLowercaseName())) {
             player.sendMessage(messages.getCooldown());
@@ -41,6 +43,18 @@ public class LogoutCommandExecutor implements CommandExecutor {
 
         authManager.getProtectedPlayer(player.getUUID()).thenAcceptAsync(protectedPlayer -> {
             if (protectedPlayer == null) return;
+
+            if (!protectionManager.isAwaitingDangerousCommandConfirmation(
+                    player,
+                    getClass().getSimpleName())) {
+
+                protectionManager.createAwaitingDangerousCommandConfirmation(
+                        player,
+                        getClass().getSimpleName()
+                );
+                player.sendMessage(messages.getDangerousCommandConfirmationMessage());
+                return;
+            }
 
             try {
                 dao.createOrUpdate(protectedPlayer.setSession(0));
