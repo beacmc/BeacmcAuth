@@ -41,8 +41,7 @@ public class BaseProtectionManager implements ProtectionManager {
 
     @Override
     public boolean isBlockedAction(ServerPlayer player, AuthActionType actionType) {
-        ProtectionConfig config = plugin.getProtectionConfig();
-        return isBlockedAction(actionType) && !config.isExemptPlayer(player);
+        return isBlockedAction(player.getName(), actionType);
     }
 
     @Override
