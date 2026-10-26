@@ -22,7 +22,7 @@ public interface ProtectionConfig {
     }
 
     default boolean isBlockedIfAttack(@NotNull AuthActionType actionType) {
-        return getBlockedActionsByDefault().getOrDefault(actionType.getIdentifier(), false);
+        return getBlockedActionsOnAttack().getOrDefault(actionType.getIdentifier(), false);
     }
 
     default boolean isExemptPlayer(String exemptPlayer) {
