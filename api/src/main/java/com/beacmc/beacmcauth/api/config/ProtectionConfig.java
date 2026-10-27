@@ -15,6 +15,8 @@ public interface ProtectionConfig {
 
     List<String> getExemptPlayers();
 
+    AntiBruteForceSettings getAntiBruteForceSettings();
+
     DangerousCommandConfirmationSettings getDangerousCommandConfirmationSettings();
 
     default boolean isBlockedByDefault(@NotNull AuthActionType actionType) {

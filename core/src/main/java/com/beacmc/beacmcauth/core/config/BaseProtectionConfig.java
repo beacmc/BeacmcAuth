@@ -1,10 +1,12 @@
 package com.beacmc.beacmcauth.core.config;
 
 import com.beacmc.beacmcauth.api.auth.action.AuthActionTypes;
+import com.beacmc.beacmcauth.api.config.AntiBruteForceSettings;
 import com.beacmc.beacmcauth.api.config.DangerousCommandConfirmationSettings;
 import com.beacmc.beacmcauth.api.config.ProtectionConfig;
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.List;
@@ -51,6 +53,7 @@ public class BaseProtectionConfig implements ProtectionConfig {
             "from the server, such as: /logout, /crack, and /premium"})
     private BaseDangerousCommandConfirmationSettings dangerousCommandConfirmationSettings
             = new BaseDangerousCommandConfirmationSettings();
+    private BaseAntiBruteForceSettings antiBruteForceSettings = new BaseAntiBruteForceSettings();
 
     @Getter
     @Configuration
@@ -59,5 +62,33 @@ public class BaseProtectionConfig implements ProtectionConfig {
         private boolean enabled = true;
         private TimeUnit confirmationLifetimeUnit = TimeUnit.MINUTES;
         private long confirmationLifetime = 1;
+    }
+
+    @Getter
+    @Configuration
+    public static class BaseAntiBruteForceSettings implements AntiBruteForceSettings {
+
+        private BaseLimiter accountLimiter = new BaseLimiter(5, 60, 120);
+        private BaseLimiter ipLimiter = new BaseLimiter(10, 60, 30);
+        private BaseDistributed distributed = new BaseDistributed();
+
+        @Getter
+        @Configuration
+        @AllArgsConstructor
+        public static class BaseLimiter implements AntiBruteForceSettings.Limiter {
+
+            private int maxFailures;
+            private int trackingPeriodSeconds;
+            private int lockDurationSeconds;
+        }
+
+        @Getter
+        @Configuration
+        public static class BaseDistributed implements AntiBruteForceSettings.Distributed {
+
+            private boolean enabled = true;
+            private int uniqueIpsThreshold = 5;
+            private int trackingPeriodSeconds = 120;
+        }
     }
 }
