@@ -118,16 +118,18 @@ public class BaseConfig implements Config {
         String authReload = "&7Configuration rebooted";
         String accountNotFound = "&7Account not found";
         String accountDeleted = "&7Account deleted";
+        String accountUnlinked = "&7Account successfully unlinked";
         String accountNotRegistered = "&7Account not yet registered";
         String yourAccountDeletedDisconnect = "&cYour account has been deleted";
         String accountPasswordChanged = "&7Account password successfully changed";
         String authHelp = """
-                #ffbb00&lBeacmcAuth commands
-                #ffbb00&m       &r
+                &#ffbb00&lBeacmcAuth commands
+                &#ffbb00&m       &r
                 &7auth
-                &7 - #ffbb00reload &8:&7 reload config
-                &7 - #ffbb00delete <account> &8:&7 delete account
-                &7 - #ffbb00changepass <account> <pass> &8:&7 change account password
+                &7 - &#ffbb00reload &8:&7 reload config
+                &7 - &#ffbb00delete <account> &8:&7 delete account
+                &7 - &#ffbb00changepass <account> <pass> &8:&7 change account password
+                &7 - &#ffbb00unlink <account> <telegram/discord> &8:&7 unlink telegram or discord
                 """;
         String alreadyAuthed = "&7You are already logged in";
         String notAuthed = "&7You're not logged in";

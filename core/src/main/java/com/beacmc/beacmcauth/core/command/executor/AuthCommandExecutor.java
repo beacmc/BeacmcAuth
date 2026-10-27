@@ -8,6 +8,7 @@ import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.database.Database;
 import com.beacmc.beacmcauth.api.database.dao.ProtectedPlayerDao;
 import com.beacmc.beacmcauth.api.logger.ServerLogger;
+import com.beacmc.beacmcauth.api.model.ProtectedPlayer;
 import com.beacmc.beacmcauth.api.server.player.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,8 +46,12 @@ public class AuthCommandExecutor implements CommandExecutor {
             return;
         }
 
-        if (args.length >= 3 && args[0].equalsIgnoreCase("changepass")) {
-            handleChangePassword(sender, args);
+        if (args.length >= 3) {
+            switch (args[0]) {
+                case "changepass" -> handleChangePassword(sender, args);
+                case "unlink" -> handleUnlinkSocial(sender, args);
+            }
+
             return;
         }
 
@@ -84,6 +89,42 @@ public class AuthCommandExecutor implements CommandExecutor {
             }
         }).exceptionally(e -> {
             logger.error("AuthCommandExecutor#handleDeleteAccount have " + e.getCause().getClass().getSimpleName());
+            logger.error("Message: " + e.getMessage());
+            return null;
+        });
+    }
+
+    private void handleUnlinkSocial(CommandSender sender, String[] args) {
+        final Config config = plugin.getConfig();
+
+        authManager.getProtectedPlayer(args[1].toLowerCase()).thenAccept(protectedPlayer -> {
+            if (protectedPlayer == null) {
+                sender.sendMessage(config.getMessages().getAccountNotFound());
+                return;
+            }
+
+            String social = args[2].toLowerCase();
+
+            try {
+                ProtectedPlayer updated = switch (social) {
+                    case "telegram" -> protectedPlayer.setTelegram(0);
+                    case "discord" -> protectedPlayer.setDiscord(0);
+                    default -> null;
+                };
+
+                if (updated == null) {
+                    sender.sendMessage(config.getMessages().getAuthHelp());
+                    return;
+                }
+
+                dao.createOrUpdate(updated);
+                database.getPlayersCache().updateCache(updated);
+                sender.sendMessage(config.getMessages().getAccountUnlinked());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }).exceptionally(e -> {
+            logger.error("AuthCommandExecutor#handleUnlinkSocial have " + e.getCause().getClass().getSimpleName());
             logger.error("Message: " + e.getMessage());
             return null;
         });

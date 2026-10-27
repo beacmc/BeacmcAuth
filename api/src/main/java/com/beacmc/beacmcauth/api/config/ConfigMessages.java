@@ -48,6 +48,8 @@ public interface ConfigMessages {
 
     String getAccountDeleted();
 
+    String getAccountUnlinked();
+
     String getAccountNotRegistered();
 
     String getYourAccountDeletedDisconnect();
