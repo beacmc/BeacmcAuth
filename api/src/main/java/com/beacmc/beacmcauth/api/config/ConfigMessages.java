@@ -50,6 +50,8 @@ public interface ConfigMessages {
 
     String getAccountUnlinked();
 
+    String getAccountDisabledPremium();
+
     String getAccountNotRegistered();
 
     String getYourAccountDeletedDisconnect();

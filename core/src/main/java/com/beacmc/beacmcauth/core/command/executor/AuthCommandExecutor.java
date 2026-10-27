@@ -41,8 +41,11 @@ public class AuthCommandExecutor implements CommandExecutor {
             return;
         }
 
-        if (args.length >= 2 && args[0].equalsIgnoreCase("delete")) {
-            handleDeleteAccount(sender, args);
+        if (args.length >= 2) {
+            switch (args[0]) {
+                case "delete" -> handleDeleteAccount(sender, args);
+                case "disablepremium" -> handleDisablePremium(sender, args);
+            }
             return;
         }
 
@@ -120,6 +123,29 @@ public class AuthCommandExecutor implements CommandExecutor {
                 dao.createOrUpdate(updated);
                 database.getPlayersCache().updateCache(updated);
                 sender.sendMessage(config.getMessages().getAccountUnlinked());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }).exceptionally(e -> {
+            logger.error("AuthCommandExecutor#handleUnlinkSocial have " + e.getCause().getClass().getSimpleName());
+            logger.error("Message: " + e.getMessage());
+            return null;
+        });
+    }
+
+    private void handleDisablePremium(CommandSender sender, String[] args) {
+        final Config config = plugin.getConfig();
+
+        authManager.getProtectedPlayer(args[1].toLowerCase()).thenAccept(protectedPlayer -> {
+            if (protectedPlayer == null) {
+                sender.sendMessage(config.getMessages().getAccountNotFound());
+                return;
+            }
+
+            try {
+                dao.createOrUpdate(protectedPlayer.setOnlineUuid(null));
+                database.getPlayersCache().updateCache(protectedPlayer);
+                sender.sendMessage(config.getMessages().getAccountDisabledPremium());
             } catch (SQLException e) {
                 e.printStackTrace();
             }

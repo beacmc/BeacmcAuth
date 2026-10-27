@@ -119,6 +119,7 @@ public class BaseConfig implements Config {
         String accountNotFound = "&7Account not found";
         String accountDeleted = "&7Account deleted";
         String accountUnlinked = "&7Account successfully unlinked";
+        String accountDisabledPremium = "&7Premium access for the account has been disabled";
         String accountNotRegistered = "&7Account not yet registered";
         String yourAccountDeletedDisconnect = "&cYour account has been deleted";
         String accountPasswordChanged = "&7Account password successfully changed";
