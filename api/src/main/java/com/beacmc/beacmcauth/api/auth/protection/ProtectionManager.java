@@ -14,6 +14,8 @@ public interface ProtectionManager {
 
     ProtectionManager setAttackStatusProvider(AttackStatusProvider provider);
 
+    AntiBruteForceManager getAntiBruteForceManager();
+
     boolean isBlockedAction(AuthActionType actionType);
 
     boolean isBlockedAction(ServerPlayer player, AuthActionType actionType);
