@@ -3,7 +3,9 @@ package com.beacmc.beacmcauth.core.dialog.listener;
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.auth.AuthManager;
 import com.beacmc.beacmcauth.api.auth.AuthenticatingPlayer;
+import com.beacmc.beacmcauth.api.auth.protection.model.AttemptResult;
 import com.beacmc.beacmcauth.api.cache.Cache;
+import com.beacmc.beacmcauth.api.config.AntiBruteForceSettings;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.dialog.DialogClickListener;
 import com.beacmc.beacmcauth.api.event.type.AuthLoginEvent;
@@ -69,7 +71,18 @@ public class LoginListener implements DialogClickListener {
                     return;
                 }
 
-                if (!authPlayer.useAttempt()) {
+                AntiBruteForceSettings.Distributed distributedSettings = plugin.getProtectionConfig()
+                        .getAntiBruteForceSettings()
+                        .getDistributed();
+                AttemptResult attemptResult = plugin.getProtectionManager()
+                        .getAntiBruteForceManager()
+                        .recordFailedAttempt(player);
+
+                boolean distributedKickCheck = distributedSettings.isEnabled()
+                        && distributedSettings.isKickAfterSingleLoginAttemptDuringAttack()
+                        && attemptResult.distributedAttackDetected();
+
+                if (!authPlayer.useAttempt() || distributedKickCheck) {
                     player.disconnect(config.getMessages().getAttemptsLeft());
                 } else {
                     Dialog dialog = buildDialogWithError(

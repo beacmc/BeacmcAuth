@@ -6,6 +6,7 @@ import com.beacmc.beacmcauth.api.auth.AuthenticatingPlayer;
 import com.beacmc.beacmcauth.api.auth.action.AuthActionTypes;
 import com.beacmc.beacmcauth.api.auth.premium.PremiumChangerProvider;
 import com.beacmc.beacmcauth.api.auth.premium.PremiumPlayer;
+import com.beacmc.beacmcauth.api.auth.protection.AntiBruteForceManager;
 import com.beacmc.beacmcauth.api.auth.protection.ProtectionManager;
 import com.beacmc.beacmcauth.api.cache.Cache;
 import com.beacmc.beacmcauth.api.cache.ConcurrentCache;
@@ -107,6 +108,7 @@ public class BaseAuthManager implements AuthManager {
         final InetAddress address = player.getInetAddress();
         final AccountLimiterSettings accountLimiter = config.getAccountLimiterSettings();
         final ProtectionManager protectionManager = plugin.getProtectionManager();
+        final AntiBruteForceManager antiBruteForceManager = protectionManager.getAntiBruteForceManager();
         final ConfigMessages messages = config.getMessages();
 
         if (address == null || isAuthenticating(player)) {
@@ -117,6 +119,11 @@ public class BaseAuthManager implements AuthManager {
         if (!config.getNicknameRegex().matcher(player.getName()).matches()) {
             player.disconnect(messages.getInvalidCharacterInName());
             return CompletableFuture.failedFuture(new SecurityException("The name does not match the parameters."));
+        }
+
+        if (antiBruteForceManager.isAccountLocked(player) || antiBruteForceManager.isIpLocked(player)) {
+            player.disconnect(messages.getTemporaryBannedMessage());
+            return CompletableFuture.failedFuture(new IllegalStateException("Account temporarily blocked"));
         }
 
         if (protectionManager.isBlockedAction(player, AuthActionTypes.LOGIN)) {

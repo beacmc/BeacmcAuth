@@ -3,8 +3,10 @@ package com.beacmc.beacmcauth.core.command.executor;
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.auth.AuthManager;
 import com.beacmc.beacmcauth.api.auth.AuthenticatingPlayer;
+import com.beacmc.beacmcauth.api.auth.protection.model.AttemptResult;
 import com.beacmc.beacmcauth.api.command.CommandSender;
 import com.beacmc.beacmcauth.api.command.executor.CommandExecutor;
+import com.beacmc.beacmcauth.api.config.AntiBruteForceSettings;
 import com.beacmc.beacmcauth.api.config.Config;
 import com.beacmc.beacmcauth.api.config.ConfigMessages;
 import com.beacmc.beacmcauth.api.event.type.AuthLoginEvent;
@@ -75,7 +77,18 @@ public class LoginCommandExecutor implements CommandExecutor {
                         return;
                     }
 
-                    if (!authPlayer.useAttempt()) {
+                    AntiBruteForceSettings.Distributed distributedSettings = plugin.getProtectionConfig()
+                            .getAntiBruteForceSettings()
+                            .getDistributed();
+                    AttemptResult attemptResult = plugin.getProtectionManager()
+                            .getAntiBruteForceManager()
+                            .recordFailedAttempt(player);
+
+                    boolean distributedKickCheck = distributedSettings.isEnabled()
+                            && distributedSettings.isKickAfterSingleLoginAttemptDuringAttack()
+                            && attemptResult.distributedAttackDetected();
+
+                    if (!authPlayer.useAttempt() || distributedKickCheck) {
                         player.disconnect(messages.getAttemptsLeft());
                     } else {
                         player.sendMessage(messages.getWrongPassword().replace(

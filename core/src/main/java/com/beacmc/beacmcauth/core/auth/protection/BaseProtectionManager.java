@@ -2,6 +2,7 @@ package com.beacmc.beacmcauth.core.auth.protection;
 
 import com.beacmc.beacmcauth.api.BeacmcAuth;
 import com.beacmc.beacmcauth.api.auth.action.AuthActionType;
+import com.beacmc.beacmcauth.api.auth.protection.AntiBruteForceManager;
 import com.beacmc.beacmcauth.api.auth.protection.AwaitingDangerousCommand;
 import com.beacmc.beacmcauth.api.auth.protection.ProtectionManager;
 import com.beacmc.beacmcauth.api.auth.protection.attack.AttackStatusProvider;
@@ -29,6 +30,7 @@ public class BaseProtectionManager implements ProtectionManager {
             = Collections.synchronizedList(new ArrayList<>());
     private final BeacmcAuth plugin;
     private @Nullable AttackStatusProvider attackStatusProvider;
+    private AntiBruteForceManager antiBruteForceManager;
 
     @Override
     public boolean isBlockedAction(AuthActionType actionType) {
@@ -69,6 +71,14 @@ public class BaseProtectionManager implements ProtectionManager {
                 command,
                 settings.getConfirmationLifetimeMillis()
         ));
+    }
+
+    @Override
+    public AntiBruteForceManager getAntiBruteForceManager() {
+        if (antiBruteForceManager == null) {
+            antiBruteForceManager = new BaseAntiBruteForceManager(plugin);
+        }
+        return antiBruteForceManager;
     }
 
     @Override
