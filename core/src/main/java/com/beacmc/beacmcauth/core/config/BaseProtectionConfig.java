@@ -8,6 +8,7 @@ import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.Map;
@@ -74,6 +75,7 @@ public class BaseProtectionConfig implements ProtectionConfig {
 
         @Getter
         @Configuration
+        @NoArgsConstructor
         @AllArgsConstructor
         public static class BaseLimiter implements AntiBruteForceSettings.Limiter {
 
@@ -89,6 +91,7 @@ public class BaseProtectionConfig implements ProtectionConfig {
             private boolean enabled = true;
             private int uniqueIpsThreshold = 5;
             private int trackingPeriodSeconds = 120;
+            private boolean kickAfterSingleLoginAttemptDuringAttack = true;
         }
     }
 }

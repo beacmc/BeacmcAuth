@@ -15,6 +15,14 @@ public interface AntiBruteForceSettings {
         int getTrackingPeriodSeconds();
 
         int getLockDurationSeconds();
+
+        default long getTrackingExpiresAtMillis() {
+            return getTrackingPeriodSeconds() * 1000L + System.currentTimeMillis();
+        }
+
+        default long getLockExpiresAtMillis() {
+            return getTrackingPeriodSeconds() * 1000L + System.currentTimeMillis();
+        }
     }
 
     interface Distributed {
@@ -24,5 +32,11 @@ public interface AntiBruteForceSettings {
         int getUniqueIpsThreshold();
 
         int getTrackingPeriodSeconds();
+
+        boolean isKickAfterSingleLoginAttemptDuringAttack();
+
+        default long getTrackingExpiresAtMillis() {
+            return getTrackingPeriodSeconds() * 1000L + System.currentTimeMillis();
+        }
     }
 }
