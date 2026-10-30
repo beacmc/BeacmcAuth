@@ -159,4 +159,6 @@ public interface ConfigMessages {
     String getLoginBlockedDisconnect();
 
     String getDangerousCommandConfirmationMessage();
+
+    String getTemporaryBannedMessage();
 }
